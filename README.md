@@ -47,7 +47,14 @@ Das Ziel ist es eine neue Möglichkeit zu schaffen, die Simulation von eleketron
  - Die Bauteilerkennung wurde mittels ML-Algorithmus realisiert und es wurde eine GUI für die Software entwickelt
 ### Christoph Weberbauer
  - Die Verdrahtungserkennung wurde realisiert und die durch die Algorithmen erfasste Schaltung wird für die Simulation durch andere Programme weiter verarbeitet.
- - 
+
+## **Meilensteine ⏱️**
+| Datum | Bezeichnung |
+| :---: | :---: |
+| 17.11.2021  | 1. Review |
+| 12.01.2022  | 2. Review |
+| 23.02.2022  | 3. Review |
+| 23.03.2022  | 4. Review |
+
 ## **Dokumente 📝**
  - Readme
-
