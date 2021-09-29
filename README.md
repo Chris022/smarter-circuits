@@ -25,10 +25,10 @@ Hauptverantwortlich: Gerfried Susani Etzerodt
 | Weberbauer Christoph | Verdrahtungserkennung und verarbeitung der erkannten Daten | 5BHEL | 180 Stunden |
 
 ## **Ausgangslage 🔙**
-Beim Schaltungsentwurf ist es häufig der Fall, dass eine Schaltung zuerst hänisch gezeichnet und dimensioniert wird, nur um anschließend, zur überprüfung, erneut in einem Simulationsprogramm aufgebaut zu werden.Dies ist meist sinnlos doppelte Arbeit, welche in einen Schritt kombiniert werden könnte.
+Die Simulation einer Hardware-Schaltung erfolgt meist in 2 Schritten. Zuerst wird die Schaltung manuell berechnet und am Papier skizziert. Danach wird sie in ein Simulationsprogramm übernommen und simuliert. Die Schaltung muss also mindestens zweimal gezeichnet werden, was einen erhöhten Arbeitsaufwand darstellt.
 
 ## **Zielsetzung 🔜**
-Das Ziel ist es eine neue Möglichkeit zu schaffen, die Simulation von eleketronischen Schaltungen durchzufürhen. Dazu werden handschriftlich gezeichnete Schaltungen erkannt und in ein, von bereits vorhanden Simulatoren, verständliches Format umgewandelt. 
+Simulationen elektronischer Schaltungen sollen mit diesem Projekt komfortabel auf eine völlig neue weise durchgeführt werden. Handschriftlich gezeichnete Schaltungen werden dabei erkannt und in ein, von bereits vorhanden Simulatoren, verständliches Format umgewandelt.
 
 ## **Untersuchungsanliegen der individuellen Themenstellungen 👨‍🎓**
 ### Markus Mayrhofer-Reinhartshuber
@@ -43,18 +43,17 @@ Das Ziel ist es eine neue Möglichkeit zu schaffen, die Simulation von eleketron
  - Entwicklung eines Algroithmus zur Bauteil und Verdrahtungserkennung
 
 ## **Geplantes Ergebnis der Prüfungskandidaten 🏌️‍♂️**
-### Markus Mayrhofer-Reinhartshuber
- - Die Bauteilerkennung wurde mittels ML-Algorithmus realisiert und es wurde eine GUI für die Software entwickelt
-### Christoph Weberbauer
- - Die Verdrahtungserkennung wurde realisiert und die durch die Algorithmen erfasste Schaltung wird für die Simulation durch andere Programme weiter verarbeitet.
+Handschriftlich gezeichnete elektronische Schaltungen werden mittels Machine Learning Algorithmus erkannt.  Der Algorithmus sowie die weitere Verarbeitung sollen vorerst in Python implementiert werden. In der graphischen Oberfläche kann die Schaltung direkt am PC gezeichnet werden und die Software bedient werden.
 
 ## **Meilensteine ⏱️**
 | Datum | Bezeichnung |
 | :---: | :---: |
-| 17.11.2021  | 1. Review |
-| 12.01.2022  | 2. Review |
-| 23.02.2022  | 3. Review |
-| 23.03.2022  | 4. Review |
+| 17.11.2021 | 1. Review |
+| 12.01.2022 | 2. Review |
+| 19.01.2022 | Präsentation |
+| 23.02.2022 | 3. Review |
+| 23.03.2022 | 4. Review |
+
 
 ## **Dokumente 📝**
  - Readme
