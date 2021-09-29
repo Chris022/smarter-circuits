@@ -51,7 +51,7 @@ Das Ziel ist es eine neue Möglichkeit zu schaffen, die Simulation von eleketron
 
 
 ## **Dokumente**
- - Dokumente
+ - Readme
 
 ## **Finaler Title der Arbeit - Deutsch**
 **Smater Circuits** ein Projekt über die Erfassung von handschriftlich gezeichneten elektronischen Schaltungen. 
