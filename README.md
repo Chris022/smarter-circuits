@@ -1,6 +1,6 @@
 # **MaturaProjekt**
 
-## **Title**
+## **Titel**
 **Smater Circuits**
 
 ## **Schule**
