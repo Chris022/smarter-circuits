@@ -1,7 +1,7 @@
 # **MaturaProjekt ✨**
 
 ## **Finaler Title der Arbeit - Deutsch 🎉**
-**Smater Circuits** ein Projekt über die Erfassung von handschriftlich gezeichneten elektronischen Schaltungen. 
+**Smarter Circuits** - Entwicklung einer Handschrifterkennung für elektronische Schaltungen.
 
 ## **Schule 🏫**
 Höhere technische Bundeslehr- und Versuchsanstalt SALZBURG
