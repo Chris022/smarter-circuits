@@ -2,3 +2,6 @@
 
 ## Computer Vision ##
 - https://machinelearningmastery.com/object-recognition-with-deep-learning/
+
+## Object Detection ##
+- https://www.fritz.ai/object-detection/
