@@ -5,3 +5,6 @@
 
 ## Object Detection ##
 - https://www.fritz.ai/object-detection/
+
+## Keywords ##
+- bounding box regression
