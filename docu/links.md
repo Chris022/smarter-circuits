@@ -5,6 +5,7 @@
 
 ## Object Detection ##
 - https://www.fritz.ai/object-detection/
+- https://www.datacamp.com/community/tutorials/object-detection-guide
 
 ## Keywords ##
 - bounding box regression
