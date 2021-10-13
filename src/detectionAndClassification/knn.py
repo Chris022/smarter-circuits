@@ -9,7 +9,7 @@ class KNN():
 def getImageCategory(path,label,count):
     trainData = []
     for x in range(0,count):
-        image = Image.open('.{path}/{x}.png'.format(path=path,x=x)).convert('L')
+        image = Image.open('{path}/{x}.png'.format(path=path,x=x)).convert('L')
         data = 1 - asarray(image)/255
         trainData.append([label,data])
     return trainData
