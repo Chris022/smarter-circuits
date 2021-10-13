@@ -1,6 +1,8 @@
 from PIL import Image
 from numpy import asarray, argmin
 
+import math
+
 class KNN():
     def __init__(self,trainingPairs) -> None:
         self.trainingPairs = trainingPairs
@@ -13,6 +15,11 @@ def getImageCategory(path,label,count):
         data = 1 - asarray(image)/255
         trainData.append([label,data])
     return trainData
+
+def loadImage(path,name):
+    image = Image.open('{path}/{name}.png'.format(path=path,name=name)).convert('L')
+    testData = 1 - asarray(image)/255   
+    return testData
 
 
 def _distance(referenceImage,otherImage):
@@ -30,7 +37,7 @@ def evaluate(knn, testImage) -> tuple((str,float)):
     trainLables = list(map(lambda x: x[0],knn.trainingPairs))
 
     distances = list(map(lambda x: _distance(testImage,x),trainImages))
-
+    print(distances)
     # Find minimal distance,get index and get the Lable of the training Image
     min_index = argmin(distances)
     min_dist = min(distances)
@@ -42,6 +49,10 @@ def evaluate(knn, testImage) -> tuple((str,float)):
     #get maximum
     max_dist = max(distances)
 
-    certainty = 100*(second_min_dist-min_dist)/(max_dist-min_dist)
+    try:
+        certainty = 100*(second_min_dist-min_dist)/(max_dist-min_dist)
+        return (trainLables[min_index],certainty)
+    except:
+         return (trainLables[min_index],0)
 
-    return (trainLables[min_index],certainty)
+
