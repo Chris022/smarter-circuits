@@ -1,4 +1,3 @@
-from typing import Tuple
 from PIL import Image
 from numpy import asarray, argmin
 
@@ -26,7 +25,7 @@ def _distance(referenceImage,otherImage):
     return math.sqrt(sum_)
 
 # returns a label, certainty pair
-def evaluate(knn, testImage) -> Tuple(str,float):
+def evaluate(knn, testImage) -> tuple((str,float)):
     trainImages = list(map(lambda x: x[1],knn.trainingPairs))
     trainLables = list(map(lambda x: x[0],knn.trainingPairs))
 
