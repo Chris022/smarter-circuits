@@ -1,6 +1,30 @@
 import numpy
 import math
-import filter as ft
+
+def getRegion(filter, x, y, image):
+    yOffset = math.floor(len(filter)/2)
+    xOffset = math.floor(len(filter[0])/2)
+    return image[y-yOffset:y+yOffset+1, x-xOffset:x+xOffset+1]
+
+def whiteFilter(image):
+    filter = numpy.asarray([[0,0,0],[0,0,0],[0,0,0]])
+    image = numpy.asarray(image)
+    features = numpy.empty_like(image)
+    for y in range(1,len(image)-1):
+        for x in range(1,len(image[y])-1):
+            if numpy.all(numpy.equal(filter, getRegion(filter, x, y, image))):
+                features[y][x] = 255
+            else:
+                features[y][x] = 0
+    return features
+
+def applyFilter(filter, image, points):
+    image = numpy.asarray(image)
+    features = []
+    for (x, y) in points:
+        if numpy.all(numpy.equal(filter, getRegion(filter, x, y, image))):
+            features.append((x,y))
+    return features
 
 def rotateFilters(filters):
     rotatedFilters = []
@@ -29,7 +53,7 @@ def getFeatures(image):
     intersectionFilters = rotateFilters(filters)
 
     # filter white regions
-    whiteFeatures = ft.whiteFilter(image)
+    whiteFeatures = whiteFilter(image)
     points = []
     for y in range(1, len(whiteFeatures)-1):
         for x in range(1, len(whiteFeatures[y])-1):
@@ -39,12 +63,12 @@ def getFeatures(image):
     # apply endpoint filters
     endPoints = []
     for filter in endPointFilters:
-        endPoints = endPoints + ft.applyFilter(filter, image, points)
+        endPoints = endPoints + applyFilter(filter, image, points)
 
     # apply intersection filters
     intersections = []
     for filter in intersectionFilters:
-        intersections = intersections + ft.applyFilter(filter, image, points)
+        intersections = intersections + applyFilter(filter, image, points)
 
     # remove unnecessary intersections
     filteredIntersections = []
