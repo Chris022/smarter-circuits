@@ -90,4 +90,3 @@ def getBoundingBox(intersectionList: List[point],endPointList: List[point]):
     rectList2 = algorithm2(intersectionList,endPointList)
 
     return rectList1 + rectList2
-
