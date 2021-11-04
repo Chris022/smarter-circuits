@@ -1,5 +1,6 @@
 import numpy
 import math
+import classes
 
 def getRegion(filter, x, y, image):
     yOffset = math.floor(len(filter)/2)
@@ -85,5 +86,8 @@ def getFeatures(image):
         if not connected:
             filteredIntersections.append(inter)
 
-    return endPoints, filteredIntersections
+    endPointsAsPoints = list(map(lambda x: classes.Point(x[1], x[0]), endPoints))
+    intersectionsAsPoints = list(map(lambda x: classes.Point(x[1], x[0]), intersections))
+
+    return endPointsAsPoints, intersectionsAsPoints
 

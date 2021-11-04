@@ -82,7 +82,7 @@ def algorithm2(intersectionList,endPointList):
 
 
 #main function
-def getBoundingBox(intersectionList: List[point],endPointList: List[point]):
+def getBoundingBox(intersectionList: List[point], endPointList: List[point]):
     # Algorithm 1
     rectList1 = algorithm1(intersectionList,endPointList)
 
