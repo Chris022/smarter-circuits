@@ -36,11 +36,25 @@ def rotateFilters(filters):
 
 def getFeatures(image):
 
+    # filter white regions
+    whiteFeatures = whiteFilter(image)
+    points = []
+    for y in range(1, len(whiteFeatures)-1):
+        for x in range(1, len(whiteFeatures[y])-1):
+            if whiteFeatures[y][x] == 0:
+                points.append((x,y))
+
     # create filters
     filters = []
     filters.append([[0,0,0],[0,255,255],[0,0,0]])
     filters.append([[255,0,0],[0,255,0],[0,0,0]])
     endPointFilters = rotateFilters(filters)
+
+    # apply endpoint filters
+    endPoints = []
+    for filter in endPointFilters:
+        endPoints = endPoints + applyFilter(filter, image, points)
+
 
     filters = []
     filters.append([[0,0,0],[255,255,255],[0,255,0]])
@@ -52,19 +66,6 @@ def getFeatures(image):
     filters.append([[255,0,255],[0,255,255],[0,255,0]])
     filters.append([[255,0,255],[255,255,0],[0,255,0]])
     intersectionFilters = rotateFilters(filters)
-
-    # filter white regions
-    whiteFeatures = whiteFilter(image)
-    points = []
-    for y in range(1, len(whiteFeatures)-1):
-        for x in range(1, len(whiteFeatures[y])-1):
-            if whiteFeatures[y][x] == 0:
-                points.append((x,y))
-
-    # apply endpoint filters
-    endPoints = []
-    for filter in endPointFilters:
-        endPoints = endPoints + applyFilter(filter, image, points)
 
     # apply intersection filters
     intersections = []
@@ -87,7 +88,7 @@ def getFeatures(image):
             filteredIntersections.append(inter)
 
     endPointsAsPoints = list(map(lambda x: classes.Point(x[1], x[0]), endPoints))
-    intersectionsAsPoints = list(map(lambda x: classes.Point(x[1], x[0]), intersections))
+    intersectionsAsPoints = list(map(lambda x: classes.Point(x[1], x[0]), filteredIntersections))
 
     return endPointsAsPoints, intersectionsAsPoints
 
