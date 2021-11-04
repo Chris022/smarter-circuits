@@ -72,7 +72,7 @@ def getFeatures(image):
     for filter in intersectionFilters:
         intersections = intersections + applyFilter(filter, image, points)
 
-    # remove unnecessary intersections
+    #remove unnecessary intersections
     filteredIntersections = []
 
     filteredIntersections.append(intersections[0])
@@ -82,7 +82,7 @@ def getFeatures(image):
         connected = False
         for filtered in filteredIntersections:
             dist = math.sqrt((inter[0] - filtered[0])**2 + (inter[1] - filtered[1])**2)
-            if dist < 2:
+            if dist < 5:
                 connected = True
         if not connected:
             filteredIntersections.append(inter)
