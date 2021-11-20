@@ -18,7 +18,7 @@ def zip2d(arg0, arg1, arg2):
 def loadImage(path, name, transpose = True, resize = (650, 450), invert = True, color = False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
     if not color:
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
     if invert:
         image = 255 - image
