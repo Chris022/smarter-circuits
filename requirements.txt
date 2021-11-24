@@ -1,0 +1,10 @@
+###### Requirements without Version Specifiers ######
+matplotlib
+cairocffi
+pycairo 
+
+###### Requirements with Version Specifiers ######
+numpy==1.19.5
+opencv-contrib-python==4.5.4.58
+tensorflow==2.7.0
+igraph==0.9.8
