@@ -6,7 +6,7 @@ import json
 import matplotlib.pyplot as plt
 import itertools
 
-from utils import getPixel,loadImage,colorPixels,isOneColor,drawRect
+from utils import getPixel,colorPixels,isOneColor
 from constants import *
 
 
@@ -196,9 +196,9 @@ def getPatternMatches(graph,pattern):
 # returns: the modified Graph
 def connectCapsTougehter(graph):
     ground = g.Graph(directed=False)
-    ground.add_vertex(0,color="blue")
-    ground.add_vertex(1,color="red")
-    ground.add_vertex(2,color="blue")
+    ground.add_vertex(0,color=END_COLOR)
+    ground.add_vertex(1,color=INTERSECTION_COLOR)
+    ground.add_vertex(2,color=END_COLOR)
     ground.add_edge(1,0)
     ground.add_edge(1,2)
 
@@ -215,7 +215,7 @@ def connectCapsTougehter(graph):
         #get Intersection node in every combination
         redOne = list(filter(lambda x: graph.vs.select(name=str(x))['color'][0] == INTERSECTION_COLOR,combination[0]))
         redTwo = list(filter(lambda x: graph.vs.select(name=str(x))['color'][0] == INTERSECTION_COLOR,combination[1]))
-        if len(redOne)== 1 and len(redTwo) == 1:
+        if len(redOne)== 1 and len(redTwo) == 1 and redOne != redTwo:
             redOne = redOne[0]
             redTwo = redTwo[0]
             #check distance between the two
@@ -289,6 +289,7 @@ def generateBoudingBoxes(image):
     union = generateWholeGraph(image,FOREGROUND,BACKGROUND)
     # Connect Caps
     union = connectCapsTougehter(union)
+
     
     patterns =  [    capPattern(), \
                     resistorPattern(), \
