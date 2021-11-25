@@ -6,7 +6,7 @@ import json
 import matplotlib.pyplot as plt
 import itertools
 
-from utils import getPixel,colorPixels,isOneColor
+from utils import getPixel,colorPixels,isOneColor,load1Pixel,drawRect
 from constants import *
 
 
@@ -299,3 +299,14 @@ def generateBoudingBoxes(image):
     matches = sum(matches,[]) # Flattens a List of List
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,5),matches))
     return boundingBoxes
+
+#imageArray = load1Pixel("./../src/testImages","2.png",binary=True)
+#colorImage = load1Pixel("./../src/testImages","2.png",color=True)
+#
+#boundingBoxes = generateBoudingBoxes(imageArray)
+#
+#for boundingBox in boundingBoxes:
+#    drawRect(colorImage,boundingBox,(255,0,0))
+#colorImage = cv2.cvtColor(255-colorImage, cv2.COLOR_BGR2RGB)
+#plt.imshow(colorImage,interpolation="bilinear")
+#plt.waitforbuttonpress(0)
