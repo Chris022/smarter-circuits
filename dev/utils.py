@@ -15,9 +15,8 @@ def zip2d(arg0, arg1, arg2):
     return arr
 
 # load image
-def loadImage(path, name, transpose=False, resize=(650, 450), invert=False, color=False, binary=False):
+def loadImage(path, name, transpose=True, resize=(650, 450), invert=True, color=False, binary=False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
-    image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         if binary:
@@ -27,8 +26,8 @@ def loadImage(path, name, transpose=False, resize=(650, 450), invert=False, colo
                         image[y][x] = 0
                     else:
                         image[y][x] = 255
-    else:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
     if invert:
         image = 255 - image
     if transpose:
@@ -36,13 +35,11 @@ def loadImage(path, name, transpose=False, resize=(650, 450), invert=False, colo
     return np.asarray(image)
 
 def thinnImage(image):
-    image = 255 - image
     image = cv2.ximgproc.thinning(image)
-    return 255 - image
+    return image
 
-def saveImage(name, image, invert=False, transpose=False, color=False):
-    if transpose:
-        image = np.transpose(image)
+def saveImage(name, image, invert = True, color=False):
+    image = np.transpose(image)
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
     if invert:
