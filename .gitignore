@@ -2,3 +2,6 @@ src/*.png
 dev/img
 dev/trainData
 src/img
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
