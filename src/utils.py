@@ -32,16 +32,20 @@ def loadImage(path, name, transpose=False, resize=(650, 450), invert=False, colo
 
     return np.asarray(image)
 
-def load1PixelBinary(path, name):
+def load1Pixel(path, name,color=False,binary=False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    for y in range(0, len(image)):
-        for x in range(0, len(image[y])):
-            if image[y][x] < 125:
-                image[y][x] = 0
-            else:
-                image[y][x] = 255
-                
+    if not color:
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        if binary:
+            for y in range(0, len(image)):
+                for x in range(0, len(image[y])):
+                    if image[y][x] < 125:
+                        image[y][x] = 0
+                    else:
+                        image[y][x] = 255
+    else:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
     return np.asarray(image)
 
 def thinnImage(image):
@@ -74,9 +78,16 @@ def mapPixel(image,function):
 # coords can either be a array with x y value or two seperate arguments with x and y
 def getPixel(image,*coords):
     if len(coords) == 1:
-        return image[coords[0][1]][coords[0][0]]
+        try:
+            return image[coords[0][1]][coords[0][0]]
+        except:
+            return image[0][0]
     else:
-        return image[coords[1]][coords[0]]
+        try:
+            return image[coords[1]][coords[0]]
+        except:
+            return image[0][0]
+        
 
 # coords can either be a array with x y value or two seperate arguments with x and y
 def setPixel(image,color,*coords):
