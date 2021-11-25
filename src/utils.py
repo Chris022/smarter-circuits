@@ -92,3 +92,23 @@ def isOneColor(image,color):
             if not j == color:
                 return False
     return True
+
+# Draws a Rectangle
+def drawRect(image,boundingBoxes,color):
+    corner1 = boundingBoxes[0]
+    corner2 = boundingBoxes[1]
+    startX = corner1[0]
+    startY = corner1[1]
+
+    endX = corner2[0]
+    endY = corner2[1]
+
+    for x in range(startX,endX):
+        image[startY][x] = color
+        image[endY][x] = color
+
+    for y in range(startY,endY):
+        image[y][startX] = color
+        image[y][endX] = color
+
+    return image

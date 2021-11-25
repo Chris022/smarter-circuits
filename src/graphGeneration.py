@@ -1,9 +1,12 @@
+import re
 import igraph as g
 import math as m
 import cv2
 import json
+import matplotlib.pyplot as plt
+import itertools
 
-from utils import getPixel,loadImage,colorPixels,isOneColor
+from utils import getPixel,loadImage,colorPixels,isOneColor,drawRect
 from constants import *
 
 
@@ -157,19 +160,25 @@ def getColorListEdge(graph):
             colorList.append(0)
     return colorList
 
+#Retuns a node by name
+def getNode(graph,name):
+    graph
+
 #Takes a Graph and a Pattern and returns a list of lists of mathching coordinates
 # [[PatternMatches],[OtherPatternMatch]]
 # If sort = True -> All the Coordinates in a Match get Sorted
 # Double Matches are remove
-def getPatternMatches(graph,pattern,sort=False):
+def getPatternMatches(graph,pattern):
     mapings = graph.get_subisomorphisms_vf2(pattern,color1=getColorListNode(graph),color2=getColorListNode(pattern),edge_color1=getColorListEdge(graph),edge_color2=getColorListEdge(pattern))
     result = []
     for i in range(0,len(mapings)):
-        if(sort):
-            result.append(sorted(list( map(lambda node:json.loads(union.vs.find(node)["label"]) ,mapings[i]) )))
-        else:
-            result.append(list( map(lambda node:json.loads(union.vs.find(node)["label"]) ,mapings[i]) ))
+        # Get all the coordinates of the Notes that match the pattern
+        result.append(list( map(lambda node:json.loads(graph.vs.find(node)["label"]) ,mapings[i]) ))
 
+    #result is a 2D array [List of Matched Patterns] [[List of Coordinates that match]]
+    #Sort the List of Coorinates that match, in order to remove doubles
+    #for i in range(0,len(result)):
+    #    result[i] = list(sorted(result[i]))
     #remove duplicated
     final = []
     for i in result:
@@ -193,22 +202,31 @@ def connectCapsTougehter(graph):
     ground.add_edge(1,0)
     ground.add_edge(1,2)
 
-    capMatches = getPatternMatches(graph,ground,False)
-    for cap1Match in capMatches:
-        cap1Coord = cap1Match[1]
-        for cap2Match in capMatches:
-            cap2Coord = cap2Match[1]
-            if not cap2Coord == cap1Coord:
-                if m.sqrt((cap2Coord[0] - cap1Coord[0])**2 + (cap2Coord[1] - cap1Coord[1])**2)  < 20:
-                    #only if the two are not directly connected
-                    numberOfNodesBetween = graph.shortest_paths_dijkstra(source=str(cap1Coord), target = str(cap2Coord), mode="all")[0][0]
-                    if not numberOfNodesBetween == 1:
-                        graph.vs.select(name=str(cap1Coord))['color'] = OTHER_NODE_COLOR
-                        graph.vs.select(name=str(cap2Coord))['color'] = OTHER_NODE_COLOR
-                        graph.add_edge(str(cap1Coord),str(cap2Coord),color=OTHER_EDGE_COLOR)
-                        break
-    return graph
+    # Match all ground Symbols
+    groundMatches = getPatternMatches(graph,ground)
 
+    #now calculate the distance between each and every ground
+    #create parinings (permutations without order) example: [1,2,3] -> [1,2],[2,3],[1,3]
+    combintations = list(itertools.combinations(groundMatches,2))
+    #for every combination
+    for combination in combintations:
+        #check distance between two red nodes of the Ground symbol      (End)--(Center/Intersection)--(End)
+
+        #get Intersection node in every combination
+        redOne = list(filter(lambda x: graph.vs.select(name=str(x))['color'][0] == INTERSECTION_COLOR,combination[0]))
+        redTwo = list(filter(lambda x: graph.vs.select(name=str(x))['color'][0] == INTERSECTION_COLOR,combination[1]))
+        if len(redOne)== 1 and len(redTwo) == 1:
+            redOne = redOne[0]
+            redTwo = redTwo[0]
+            #check distance between the two
+            if m.sqrt((redOne[0] - redTwo[0])**2 + (redOne[1] - redTwo[1])**2)  < 25:
+                #only if the two are not directly connected
+                numberOfNodesBetween = graph.shortest_paths_dijkstra(source=str(redOne), target = str(redTwo), mode="all")[0][0]
+                if not numberOfNodesBetween == 1:
+                    graph.vs.select(name=str(redOne))['color'] = OTHER_NODE_COLOR
+                    graph.vs.select(name=str(redTwo))['color'] = OTHER_NODE_COLOR
+                    graph.add_edge(str(redOne),str(redTwo),color=OTHER_EDGE_COLOR)
+    return graph
 
 # Ground Graph Patterns
 def groundPattern():
@@ -265,12 +283,18 @@ def generateBoundingBox(listOfCoords,offset):
     to_ = [max(xCoords)+offset,max(yCoords)+offset]
     return [from_,to_]
 
-
-
-imageArray = loadImage("./../src/testImages","3.png",transpose=False,binary=True)
-colorImage = loadImage("./../src/testImages","3.png",transpose=False,color=True)
-
-union = generateWholeGraph(imageArray,FOREGROUND,BACKGROUND)
-union = connectCapsTougehter(union)
-layout = union.layout("fr")
-g.plot(union, layout=layout,bbox = (1000,1000))
+# 
+def generateBoudingBoxes(image):
+    # Generate the Graph without the Cap connections
+    union = generateWholeGraph(image,FOREGROUND,BACKGROUND)
+    # Connect Caps
+    union = connectCapsTougehter(union)
+    
+    patterns =  [    capPattern(), \
+                    resistorPattern(), \
+                    groundPattern(), \
+                ]
+    matches = (getPatternMatches(union, pattern) for pattern in patterns)
+    matches = sum(matches,[]) # Flattens a List of List
+    boundingBoxes = list(map(lambda x: generateBoundingBox(x,5),matches))
+    return boundingBoxes
