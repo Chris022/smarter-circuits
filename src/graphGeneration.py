@@ -300,13 +300,13 @@ def generateBoudingBoxes(image):
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,5),matches))
     return boundingBoxes
 
-imageArray = load1Pixel("./../src/testImages","2.png",binary=True)
-colorImage = load1Pixel("./../src/testImages","2.png",color=True)
-
-boundingBoxes = generateBoudingBoxes(imageArray)
-print(len(boundingBoxes))
-for boundingBox in boundingBoxes:
-    drawRect(colorImage,boundingBox,(255,0,0))
-colorImage = cv2.cvtColor(255-colorImage, cv2.COLOR_BGR2RGB)
-plt.imshow(colorImage,interpolation="bilinear")
-plt.waitforbuttonpress(0)
+#imageArray = load1Pixel("./../src/testImages","2.png",binary=True)
+#colorImage = load1Pixel("./../src/testImages","2.png",color=True)
+#
+#boundingBoxes = generateBoudingBoxes(imageArray)
+#print(len(boundingBoxes))
+#for boundingBox in boundingBoxes:
+#    drawRect(colorImage,boundingBox,(255,0,0))
+#colorImage = cv2.cvtColor(255-colorImage, cv2.COLOR_BGR2RGB)
+#plt.imshow(colorImage,interpolation="bilinear")
+#plt.waitforbuttonpress(0)
