@@ -8,4 +8,4 @@ OTHER_EDGE_COLOR = "green"
 FOREGROUND = 0
 BACKGROUND = 255
 
-CLASS_NAMES = ['capacitor', 'inductor', 'resistor']
+CLASS_NAMES = ['capacitor', 'ground', 'inductor', 'resistor']
