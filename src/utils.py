@@ -7,18 +7,20 @@ def createIndependetCopy(img):
     newImg[:] = img
     return newImg
 
-def zip2d(arg0, arg1, arg2):
-    arr = np.zeros((len(arg0),len(arg0[0]),3))
-    for x in range(0, len(arr)):
-        for y in range(0, len(arr[x])):
-            arr[x][y] = (arg0[x][y], arg1[x][y], arg2[x][y])
-    return arr
+#def zip2d(arg0, arg1, arg2):
+#    arr = np.zeros((len(arg0),len(arg0[0]),3))
+#    for x in range(0, len(arr)):
+#        for y in range(0, len(arr[x])):
+#            arr[x][y] = (arg0[x][y], arg1[x][y], arg2[x][y])
+#    return arr
 
 # load image
-def loadImage(path, name, transpose = False, resize = (650, 450), invert = False, color = False):
+def loadImage(path, name, transpose=False, resize=(650, 450), invert=False, color=False, binary=False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if binary:
+            (thresh, image) = cv2.threshold(image, 100, 255, cv2.THRESH_BINARY)
     image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
     if invert:
         image = 255 - image
@@ -27,11 +29,13 @@ def loadImage(path, name, transpose = False, resize = (650, 450), invert = False
     return np.asarray(image)
 
 def thinnImage(image):
+    image = 255 - image
     image = cv2.ximgproc.thinning(image)
-    return image
+    return 255 - image
 
-def saveImage(name, image, invert = True, color=False):
-    image = np.transpose(image)
+def saveImage(name, image, invert=False, transpose=False, color=False):
+    if transpose:
+        image = np.transpose(image)
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
     if invert:
