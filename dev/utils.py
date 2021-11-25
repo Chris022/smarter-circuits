@@ -15,7 +15,7 @@ def zip2d(arg0, arg1, arg2):
     return arr
 
 # load image
-def loadImage(path, name, transpose = True, resize = (650, 450), invert = True, color = False):
+def loadImage(path, name, transpose = False, resize = (650, 450), invert = False, color = False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

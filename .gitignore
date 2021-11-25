@@ -1,6 +1,5 @@
 src/*.png
 dev/img
-dev/trainData
 dev/saved_model
 dev/__pycache__
 dev/-p
