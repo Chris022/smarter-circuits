@@ -7,35 +7,53 @@ def createIndependetCopy(img):
     newImg[:] = img
     return newImg
 
-#def zip2d(arg0, arg1, arg2):
-#    arr = np.zeros((len(arg0),len(arg0[0]),3))
-#    for x in range(0, len(arr)):
-#        for y in range(0, len(arr[x])):
-#            arr[x][y] = (arg0[x][y], arg1[x][y], arg2[x][y])
-#    return arr
+def zip2d(arg0, arg1, arg2):
+    arr = np.zeros((len(arg0),len(arg0[0]),3))
+    for x in range(0, len(arr)):
+        for y in range(0, len(arr[x])):
+            arr[x][y] = (arg0[x][y], arg1[x][y], arg2[x][y])
+    return arr
 
 # load image
 def loadImage(path, name, transpose=False, resize=(650, 450), invert=False, color=False, binary=False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
-    if not color:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        if binary:
-            (thresh, image) = cv2.threshold(image, 100, 255, cv2.THRESH_BINARY)
     image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
-    if invert:
-        image = 255 - image
-    if transpose:
-        image = np.transpose(image)
+    if not color:
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        if binary:
+            for y in range(0, len(image)):
+                for x in range(0, len(image[y])):
+                    if image[y][x] < 125:
+                        image[y][x] = 0
+                    else:
+                        image[y][x] = 255
+    else:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    return np.asarray(image)
+
+def load1Pixel(path, name,color=False,binary=False):
+    image = cv2.imread('{path}/{name}'.format(path=path,name=name))
+    if not color:
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        if binary:
+            for y in range(0, len(image)):
+                for x in range(0, len(image[y])):
+                    if image[y][x] < 125:
+                        image[y][x] = 0
+                    else:
+                        image[y][x] = 255
+    else:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
     return np.asarray(image)
 
 def thinnImage(image):
-    image = 255 - image
     image = cv2.ximgproc.thinning(image)
-    return 255 - image
+    return image
 
-def saveImage(name, image, invert=False, transpose=False, color=False):
-    if transpose:
-        image = np.transpose(image)
+def saveImage(name, image, invert = True, color=False):
+    image = np.transpose(image)
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
     if invert:
@@ -60,9 +78,16 @@ def mapPixel(image,function):
 # coords can either be a array with x y value or two seperate arguments with x and y
 def getPixel(image,*coords):
     if len(coords) == 1:
-        return image[coords[0][1]][coords[0][0]]
+        try:
+            return image[coords[0][1]][coords[0][0]]
+        except:
+            return image[0][0]
     else:
-        return image[coords[1]][coords[0]]
+        try:
+            return image[coords[1]][coords[0]]
+        except:
+            return image[0][0]
+        
 
 # coords can either be a array with x y value or two seperate arguments with x and y
 def setPixel(image,color,*coords):
