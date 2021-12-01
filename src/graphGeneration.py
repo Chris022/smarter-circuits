@@ -205,27 +205,57 @@ def connectCapsTougehter(graph):
     # Match all ground Symbols
     groundMatches = getPatternMatches(graph,ground)
 
-    #now calculate the distance between each and every ground
-    #create parinings (permutations without order) example: [1,2,3] -> [1,2],[2,3],[1,3]
-    combintations = list(itertools.combinations(groundMatches,2))
-    #for every combination
-    for combination in combintations:
-        #check distance between two red nodes of the Ground symbol      (End)--(Center/Intersection)--(End)
+    up =[]
+    down = []
+    left = []
+    right = []
 
-        #get Intersection node in every combination
-        redOne = list(filter(lambda x: graph.vs.select(name=str(x))['color'][0] == INTERSECTION_COLOR,combination[0]))
-        redTwo = list(filter(lambda x: graph.vs.select(name=str(x))['color'][0] == INTERSECTION_COLOR,combination[1]))
-        if len(redOne)== 1 and len(redTwo) == 1 and redOne != redTwo:
-            redOne = redOne[0]
-            redTwo = redTwo[0]
-            #check distance between the two
-            if m.sqrt((redOne[0] - redTwo[0])**2 + (redOne[1] - redTwo[1])**2)  < 25:
-                #only if the two are not directly connected
-                numberOfNodesBetween = graph.shortest_paths_dijkstra(source=str(redOne), target = str(redTwo), mode="all")[0][0]
-                if not numberOfNodesBetween == 1:
-                    graph.vs.select(name=str(redOne))['color'] = OTHER_NODE_COLOR
-                    graph.vs.select(name=str(redTwo))['color'] = OTHER_NODE_COLOR
-                    graph.add_edge(str(redOne),str(redTwo),color=OTHER_EDGE_COLOR)
+    for match in groundMatches:
+        intersection = list(filter(lambda x: graph.vs.select(name=str(x))['color'][0] == INTERSECTION_COLOR, match))
+        graph.vs.find(name_eq=str(intersection[0])).index
+        neighbors = graph.neighbors(graph.vs.find(name_eq=str(intersection[0])))
+        intersection[0]
+        for n in neighbors:
+            if not graph.vs[n]['color'] == 'blue':
+                xOff = intersection[0][0] - json.loads(graph.vs[n]['name'])[0]
+                yOff = intersection[0][1] - json.loads(graph.vs[n]['name'])[1]
+
+                if abs(xOff) > abs(yOff):
+                    if xOff > 0:
+                        left.append(intersection[0])
+                    else:
+                        right.append(intersection[0])
+                else:
+                    if yOff > 0:
+                        up.append(intersection[0])
+                    else:
+                        down.append(intersection[0])
+                break
+
+    for lCap in left:
+        min = m.sqrt((lCap[0] - right[0][0])**2 + (lCap[1] - right[0][1])**2)
+        minCap = right[0]
+        for rCap in right:
+            dist = m.sqrt((lCap[0] - rCap[0])**2 + (lCap[1] - rCap[1])**2)
+            if dist < min and graph.shortest_paths_dijkstra(source=str(lCap), target = str(minCap), mode="all")[0][0] != 1:
+                min = dist
+                minCap = rCap
+        graph.vs.select(name=str(lCap))['color'] = OTHER_NODE_COLOR
+        graph.vs.select(name=str(minCap))['color'] = OTHER_NODE_COLOR
+        graph.add_edge(str(lCap),str(minCap),color=OTHER_EDGE_COLOR)
+
+    for dCap in down:
+        min = m.sqrt((dCap[0] - up[0][0])**2 + (dCap[1] - up[0][1])**2)
+        minCap = up[0]
+        for uCap in up:
+            dist = m.sqrt((dCap[0] - uCap[0])**2 + (dCap[1] - uCap[1])**2)
+            if dist < min and graph.shortest_paths_dijkstra(source=str(dCap), target = str(minCap), mode="all")[0][0] != 1:
+                min = dist
+                minCap = uCap
+        graph.vs.select(name=str(dCap))['color'] = OTHER_NODE_COLOR
+        graph.vs.select(name=str(minCap))['color'] = OTHER_NODE_COLOR
+        graph.add_edge(str(dCap),str(minCap),color=OTHER_EDGE_COLOR)
+
     return graph
 
 # Ground Graph Patterns
