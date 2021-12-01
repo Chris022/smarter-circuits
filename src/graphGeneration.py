@@ -237,7 +237,7 @@ def connectCapsTougehter(graph):
         minCap = right[0]
         for rCap in right:
             dist = m.sqrt((lCap[0] - rCap[0])**2 + (lCap[1] - rCap[1])**2)
-            if dist < min and graph.shortest_paths_dijkstra(source=str(lCap), target = str(minCap), mode="all")[0][0] != 1:
+            if dist < min and graph.shortest_paths_dijkstra(source=str(lCap), target = str(rCap), mode="all")[0][0] != 1:
                 min = dist
                 minCap = rCap
         graph.vs.select(name=str(lCap))['color'] = OTHER_NODE_COLOR
@@ -249,7 +249,7 @@ def connectCapsTougehter(graph):
         minCap = up[0]
         for uCap in up:
             dist = m.sqrt((dCap[0] - uCap[0])**2 + (dCap[1] - uCap[1])**2)
-            if dist < min and graph.shortest_paths_dijkstra(source=str(dCap), target = str(minCap), mode="all")[0][0] != 1:
+            if dist < min and graph.shortest_paths_dijkstra(source=str(dCap), target = str(uCap), mode="all")[0][0] != 1:
                 min = dist
                 minCap = uCap
         graph.vs.select(name=str(dCap))['color'] = OTHER_NODE_COLOR
