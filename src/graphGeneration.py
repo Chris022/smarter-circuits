@@ -58,60 +58,97 @@ def findFirstIntersection(image,startPoint,color):
     return recursiveFindValidPoint(startPoint,None,0)
 
 # Converts one connected Line into a Graph
-#
-# startPoint  -> coordinates of a Intersection
-# color -> the color of the lines
-# returns the generate graph and all visited Pixels
+# image -> binary image
+# startingPoint -> tuple with the starting coords
+# color -> the color of the foreground Pixels
 def generatePartGraph(image,startPoint,color):
-    visitedPixels = []
+    #init recustion
+    visitedCoords = []
+    #count
     graph = g.Graph(directed=False)
-    graph.add_vertex(str(startPoint), label=str(startPoint) ,color=INTERSECTION_COLOR)
-    
-    def recursiveGenerateGraph(currentPixel,lastPixel,lastGraphNode,dirGradientOld):
-        dirGradient = list(dirGradientOld)
 
-        #get Direction
-        if(abs(currentPixel[0] - lastPixel[0]) < abs(currentPixel[1] - lastPixel[1])):
-            dirGradient.append(1)
+    #add the starting Vector
+    graph.add_vertex(str(startPoint), label=str(startPoint) ,color=INTERSECTION_COLOR,coordinate=tuple(startPoint))
+
+    # recursive Function
+    # currentCoord -> the coordinate of the current pixel
+    # lastCoords -> the coordinates of the last visited pixels
+    # lastVertexName -> name of the last added Vertex                                                           |------ knows only about verticies in this branch
+    # dirGradient -> a list of all the directional steps the function took: 1->horizontal,0->vertical       ----|
+    def recursiveGenerateGraph(currentCoord,lastCoords,lastVertexName,dirGradient):       #                     |------ knows only about verticies in this branch
+
+        # start by creating an independent copy of the dirGradient list
+        newDirGradient = list(dirGradient)
+
+        #get the new directional Step
+        # 1 = horizontal
+        # 0 = vertical
+        if(abs(currentCoord[0] - lastCoords[0]) < abs(currentCoord[1] - lastCoords[1])):
+            newDirGradient.append(1)
         else:
-            dirGradient.append(0)
+            newDirGradient.append(0)
 
-        #End Recursion if loop ends
-        if currentPixel in visitedPixels:
-            if len(graph.vs.select(name=str(currentPixel))):
-                graph.add_edge(str(lastGraphNode),str(currentPixel))
+        # If the currentCoordinate has already been visited, this means a loop hast benn closed and you have to create a connection
+        # from the last Vertex to this Vertex -> end recursion
+        if currentCoord in visitedCoords:
+            # check if the currentCoordinate has even a Vertex in the graph
+            if len(graph.vs.select(name=str(currentCoord))):
+                graph.add_edge(lastVertexName,str(currentCoord))
             return
+        
+        # add the current Cooridante to the visited Cooridantes
+        visitedCoords.append(currentCoord)
 
-        visitedPixels.append(currentPixel)
-        adjacentPixels = getAdjacentPixel(image,currentPixel,color,[lastPixel])
+        # get the adjacent Pixels to the current one
+        adjacentPixels = getAdjacentPixel(image,currentCoord,color,[lastCoords])
+
+        # if there are no more adjacent Pixels
         if len(adjacentPixels) == 0:
             #ENDPOINT
-            if(str(currentPixel) != lastGraphNode):
-                graph.add_vertex(str(currentPixel),label=str(currentPixel),color=END_COLOR)
-                graph.add_edge(str(lastGraphNode),str(currentPixel))
+
+            # to prevent self Loop
+            if(str(currentCoord) != lastVertexName):
+                graph.add_vertex(str(currentCoord),label=str(currentCoord),color=END_COLOR,coordinate=tuple(currentCoord))
+                # connect lastVertexId to the just added Vertex
+
+                graph.add_edge(lastVertexName,str(currentCoord))
+        
+        #if there is exactly one adjacent Pixel
         elif len(adjacentPixels) == 1:
             #LINE
-            if len(dirGradient) > 6:
-                currDire = sum(dirGradient[-4:])/4 < 0.5
-                lastDire = sum(dirGradient[-5:-1])/4 < 0.5
+
+            # check if the dir Gradent is longer then 6 -> otherwhise ignore dir changes and recursive call
+            if len(newDirGradient) > 6:
+
+                # calculate the current dir by taking the last 4 elements and avaraging them
+                currDire = sum(newDirGradient[-4:])/4 < 0.5
+                # calcualte the newDirGradient dir by taking the 4 elements form the 5 least to the second least and avaraging them
+                lastDire = sum(newDirGradient[-5:-1])/4 < 0.5
+                # if the direction changed add a new corner vertex else just recursive call the function
                 if not  currDire == lastDire:
-                    graph.add_vertex(str(currentPixel),label=str(currentPixel),color=CORNER_COLOR)
-                    graph.add_edge(str(lastGraphNode),str(currentPixel))
-                    recursiveGenerateGraph(adjacentPixels[0],currentPixel,str(currentPixel),dirGradient)
+                    # to prevent self Loop
+                    graph.add_vertex(str(currentCoord),label=str(currentCoord),color=CORNER_COLOR,coordinate=tuple(currentCoord))
+                    graph.add_edge(lastVertexName,str(currentCoord))
+                    recursiveGenerateGraph(adjacentPixels[0],currentCoord,str(currentCoord),newDirGradient)
                 else:
-                    recursiveGenerateGraph(adjacentPixels[0],currentPixel,lastGraphNode,dirGradient)
+                    recursiveGenerateGraph(adjacentPixels[0],currentCoord,lastVertexName,newDirGradient)
             else:
-                recursiveGenerateGraph(adjacentPixels[0],currentPixel,lastGraphNode,dirGradient)
+                recursiveGenerateGraph(adjacentPixels[0],currentCoord,lastVertexName,newDirGradient)
+
         else:
             #INTERSECTION
-            if(str(currentPixel) != lastGraphNode):
-                graph.add_vertex(str(currentPixel),label=str(currentPixel),color=INTERSECTION_COLOR)
-                graph.add_edge(str(lastGraphNode),str(currentPixel))
-            for adjacentPixel in adjacentPixels:
-                recursiveGenerateGraph(adjacentPixel,currentPixel,str(currentPixel),[])
 
+            # to prevent self Loop
+            if(str(currentCoord) != lastVertexName):
+                # to prevent self Loop
+                graph.add_vertex(str(currentCoord),label=str(currentCoord),color=INTERSECTION_COLOR,coordinate=tuple(currentCoord))
+                graph.add_edge(lastVertexName,str(currentCoord))
+            #for every line going out of the intersection recursive call
+            for adjacentPixel in adjacentPixels:
+                recursiveGenerateGraph(adjacentPixel,currentCoord,str(currentCoord),[])
+            
     recursiveGenerateGraph(startPoint,[0,0],str(startPoint),[])
-    return graph,visitedPixels
+    return graph,visitedCoords
 
 
 def generateWholeGraph(image,foregroundColor,backgroundColor):
@@ -299,6 +336,7 @@ def generateBoudingBoxes(image):
     matches = sum(matches,[]) # Flattens a List of List
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,5),matches))
     return boundingBoxes
+
 
 #imageArray = load1Pixel("./../src/testImages","2.png",binary=True)
 #colorImage = load1Pixel("./../src/testImages","2.png",color=True)
