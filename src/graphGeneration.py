@@ -93,7 +93,7 @@ def generatePartGraph(image,startPoint,color):
         if currentCoord in visitedCoords:
             # check if the currentCoordinate has even a Vertex in the graph
             if len(graph.vs.select(name=str(currentCoord))):
-                graph.add_edge(lastVertexName,str(currentCoord))
+                graph.add_edge(lastVertexName,str(currentCoord),color=EDGE_COLOR)
             return
         
         # add the current Cooridante to the visited Cooridantes
@@ -111,7 +111,7 @@ def generatePartGraph(image,startPoint,color):
                 graph.add_vertex(str(currentCoord),label=str(currentCoord),color=END_COLOR,coordinate=tuple(currentCoord))
                 # connect lastVertexId to the just added Vertex
 
-                graph.add_edge(lastVertexName,str(currentCoord))
+                graph.add_edge(lastVertexName,str(currentCoord),color=EDGE_COLOR)
         
         #if there is exactly one adjacent Pixel
         elif len(adjacentPixels) == 1:
@@ -128,7 +128,7 @@ def generatePartGraph(image,startPoint,color):
                 if not  currDire == lastDire:
                     # to prevent self Loop
                     graph.add_vertex(str(currentCoord),label=str(currentCoord),color=CORNER_COLOR,coordinate=tuple(currentCoord))
-                    graph.add_edge(lastVertexName,str(currentCoord))
+                    graph.add_edge(lastVertexName,str(currentCoord),color=EDGE_COLOR)
                     recursiveGenerateGraph(adjacentPixels[0],currentCoord,str(currentCoord),newDirGradient)
                 else:
                     recursiveGenerateGraph(adjacentPixels[0],currentCoord,lastVertexName,newDirGradient)
@@ -142,7 +142,7 @@ def generatePartGraph(image,startPoint,color):
             if(str(currentCoord) != lastVertexName):
                 # to prevent self Loop
                 graph.add_vertex(str(currentCoord),label=str(currentCoord),color=INTERSECTION_COLOR,coordinate=tuple(currentCoord))
-                graph.add_edge(lastVertexName,str(currentCoord))
+                graph.add_edge(lastVertexName,str(currentCoord),color=EDGE_COLOR)
             #for every line going out of the intersection recursive call
             for adjacentPixel in adjacentPixels:
                 recursiveGenerateGraph(adjacentPixel,currentCoord,str(currentCoord),[])

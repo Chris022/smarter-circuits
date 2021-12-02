@@ -4,6 +4,7 @@ CORNER_COLOR = "yellow"
 OTHER_NODE_COLOR = "white"
 
 OTHER_EDGE_COLOR = "green"
+EDGE_COLOR = "balck"
 
 FOREGROUND = 0
 BACKGROUND = 255
