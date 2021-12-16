@@ -14,6 +14,12 @@ class Graph:
     def __init__(self) -> None:
         self.incidenceMatrix = IncidenceMatrix()
 
+    def getVertex(self, id):
+        return self.ve[id]
+
+    def getEdge(self, id):
+        return self.ed[id]
+
     def addVertex(self,vertex):
         vertex.__setId__(self.veIdCounter)
         self.veIdCounter +=1
@@ -55,12 +61,24 @@ class Graph:
                 return True
         return False
 
-    
+    def getNeighbors(self,vertex):
+        vertexIndex = self.incidenceMatrix.rows.index(vertex)
+        neighbors = []
+        for column in self.incidenceMatrix.columns:
+            edge = self.incidenceMatrix.getColumn(column)
+            if edge[vertexIndex] == 2:
+                neighbors.append(vertex)
+            elif edge[vertexIndex] == 1:
+                edge[vertexIndex] = 0
+                neighbors.append(self.incidenceMatrix.rows[edge.index(1)])
+
+        return neighbors
+
     def convertToIGraph(self):
         pass
 
-g = Graph()
 
+g = Graph()
 
 v1 = Vertex()
 v2 = Vertex()
@@ -79,3 +97,5 @@ g.addEdge(e2, v1.id, v3.id)
 
 print(g.adjacent(v1.id,v2.id))
 print(g.adjacent(v2.id,v3.id))
+
+print(g.getNeighbors(v3.id))
