@@ -31,8 +31,8 @@ class Graph:
         self.incidenceMatrix.addRow(vertex.id)
     
     def addEdge(self,edge,from_,to_):
-        edge.__setId__(self.veIdCounter)
-        self.veIdCounter +=1
+        edge.__setId__(self.edIdCounter)
+        self.edIdCounter +=1
 
         self.ed[edge.id] = edge
         self.incidenceMatrix.addColumn(edge.id)
@@ -90,6 +90,40 @@ class Graph:
                 verticesList = [pair[1],pair[1]]
         return verticesList
 
+    def edgeWithAttribute(self, key, value):
+        edges = []
+        for edge in self.ed.values():
+            try:
+                if edge.attr[key] == value:
+                    edges.append(edge.id)
+            except:
+                pass
+        return edges
+
+    def edgeWithColor(self, color):
+        edges = []
+        for edge in self.ed.values():
+            if edge.color == color:
+                edges.append(edge.id)
+        return edges
+
+    def verticesWithAttribute(self, key, value):
+        vertices = []
+        for vertex in self.ve.values():
+            try:
+                if vertex.attr[key] == value:
+                    vertices.append(vertex.id)
+            except:
+                pass
+        return vertices
+
+    def verticesWithColor(self, color):
+        vertices = []
+        for vertex in self.ve.values():
+            if vertex.color == color:
+                vertices.append(vertex.id)
+        return vertices
+
     def convertToIGraph(self):
 
         xmlns = xml.Element("graphml")
@@ -136,26 +170,3 @@ class Graph:
         xml_str = xml.tostring(xmlns, encoding='unicode')
 
         return '<?xml version="1.0" encoding="UTF-8"?>\n'+xml_str
-
-
-g = Graph()
-
-v1 = Vertex()
-v2 = Vertex()
-v3 = Vertex()
-
-g.addVertex(v1)
-g.addVertex(v2)
-g.addVertex(v3)
-
-
-e1 = Edge()
-e2 = Edge()
-
-g.addEdge(e1, v1.id, v2.id)
-g.addEdge(e2, v1.id, v3.id)
-
-print(g.adjacent(v1.id,v2.id))
-print(g.adjacent(v2.id,v3.id))
-
-print(g.getNeighbors(v3.id))
