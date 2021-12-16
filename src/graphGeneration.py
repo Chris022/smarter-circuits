@@ -335,7 +335,7 @@ def generateBoudingBoxes(image):
     matches = (getPatternMatches(union, pattern) for pattern in patterns)
     matches = sum(matches,[]) # Flattens a List of List
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,5),matches))
-    return boundingBoxes
+    return [boundingBoxes, matches]
 
 
 #imageArray = load1Pixel("./../src/testImages","2.png",binary=True)

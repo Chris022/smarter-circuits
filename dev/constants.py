@@ -3,6 +3,7 @@ END_COLOR = "blue"
 CORNER_COLOR = "yellow"
 OTHER_NODE_COLOR = "white"
 COMPONENT_NODE_COLOR = "green"
+CONNECTION_NODE_COLOR = "#cc00cc"
 
 EDGE_COLOR = "balck"
 OTHER_EDGE_COLOR = "green"
