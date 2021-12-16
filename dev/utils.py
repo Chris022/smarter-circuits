@@ -1,6 +1,5 @@
 import numpy as np
 import cv2
-
 #create an independent copy of a numpy array
 def createIndependetCopy(img):
     newImg = np.empty_like(img)
