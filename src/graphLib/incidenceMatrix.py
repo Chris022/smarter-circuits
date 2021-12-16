@@ -1,7 +1,7 @@
 class IncidenceMatrix:
     rows = []
     columns = []
-    values = [[]]
+    values = []
 
     def __init__(self,rows=[],columns=[],defaultValue=0) -> None:
         self.rows       = rows
@@ -26,7 +26,6 @@ class IncidenceMatrix:
     def addColumn(self,column,defaultValue=0):
         self.columns.append(column)
         for r in range(0,len(self.rows)):
-            print(self.values[r])
             self.values[r].append(defaultValue)
 
     def deleteColumn(self,column):
@@ -55,11 +54,11 @@ class IncidenceMatrix:
 
     def getRow(self,row):
         index = self.rows.index(row)
-        return self.rows[index]
+        return self.values[index]
 
     def getColumn(self,column):
         index = self.columns.index(column)
         columnValues = []
-        for r in self.rows:
+        for r in self.values:
             columnValues.append(r[index])
         return columnValues

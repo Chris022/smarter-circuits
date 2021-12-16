@@ -28,9 +28,9 @@ class Graph:
         self.ed[edge.id] = edge
         self.incidenceMatrix.addColumn(edge.id)
         #From
-        self.incidenceMatrix.addValue(from_,edge)
+        self.incidenceMatrix.addValue(from_,edge.id)
         #To
-        self.incidenceMatrix.addValue(to_,edge)
+        self.incidenceMatrix.addValue(to_,edge.id)
 
     def deleteEdge(self,edgeId):
         del self.ed[edgeId]
@@ -46,8 +46,8 @@ class Graph:
                 self.deleteEdge(edge)
     
     def adjacent(self,vertex1,vertex2):
-        v1Index =  self.incidenceMatrix.rows.find(vertex1)
-        v2Index =  self.incidenceMatrix.rows.find(vertex2)
+        v1Index = self.incidenceMatrix.rows.index(vertex1)
+        v2Index = self.incidenceMatrix.rows.index(vertex2)
 
         for column in self.incidenceMatrix.columns:
             edge = self.incidenceMatrix.getColumn(column)
@@ -61,6 +61,7 @@ class Graph:
 
 g = Graph()
 
+
 v1 = Vertex()
 v2 = Vertex()
 v3 = Vertex()
@@ -69,9 +70,6 @@ g.addVertex(v1)
 g.addVertex(v2)
 g.addVertex(v3)
 
-print(v1)
-
-print(g.incidenceMatrix.rows)
 
 e1 = Edge()
 e2 = Edge()
@@ -79,5 +77,5 @@ e2 = Edge()
 g.addEdge(e1, v1.id, v2.id)
 g.addEdge(e2, v1.id, v3.id)
 
-#print(g.adjacent(v1,v2))
-#print(g.adjacent(v2,v3))
+print(g.adjacent(v1.id,v2.id))
+print(g.adjacent(v2.id,v3.id))
