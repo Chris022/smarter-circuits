@@ -2,6 +2,7 @@ class IncidenceMatrix:
     rows = []
     columns = []
     values = [[]]
+
     def __init__(self,rows=[],columns=[],defaultValue=0) -> None:
         self.rows       = rows
         self.columns    = columns
@@ -15,7 +16,7 @@ class IncidenceMatrix:
 
     def addRow(self,row,defaultValue=0):
         self.rows.append(row)
-        self.values.append(defaultValue for c in self.columns)
+        self.values.append([defaultValue for c in self.columns])
 
     def deleteRow(self,row):
         index = self.rows.find(row)
@@ -25,32 +26,39 @@ class IncidenceMatrix:
     def addColumn(self,column,defaultValue=0):
         self.columns.append(column)
         for r in range(0,len(self.rows)):
-            self.rows[r].append(defaultValue)
+            print(self.values[r])
+            self.values[r].append(defaultValue)
 
     def deleteColumn(self,column):
-        index = self.columns.find(column)
+        index = self.columns.index(column)
         del self.columns[index]
         for r in range(0,len(self.rows)):
             del self.rows[r][column]
 
     def setValue(self,row,column,value):
-        self.values[row][column] = value
+        rowIndex = self.rows.index(row)
+        columnIndex = self.columns.index(column)
+        self.values[rowIndex][columnIndex] = value
     
     def getValue(self,row,column):
-        return self.values[row][column]
+        rowIndex = self.rows.index(row)
+        columnIndex = self.columns.index(column)
+        return self.values[rowIndex][columnIndex]
 
     def changeValue(self,row,column,func):
-        self.values[row][column] = func(self.values[row][column])
+        rowIndex = self.rows.index(row)
+        columnIndex = self.columns.index(column)
+        self.values[rowIndex][columnIndex] = func(self.values[rowIndex][columnIndex])
 
     def addValue(self,row,column,value=1):
         self.changeValue(row,column,lambda x: x+value)
 
     def getRow(self,row):
-        index = self.rows.find(row)
+        index = self.rows.index(row)
         return self.rows[index]
 
     def getColumn(self,column):
-        index = self.columns.find(column)
+        index = self.columns.index(column)
         columnValues = []
         for r in self.rows:
             columnValues.append(r[index])
