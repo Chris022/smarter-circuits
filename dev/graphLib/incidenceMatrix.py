@@ -1,18 +1,9 @@
 class IncidenceMatrix:
-    rows = []
-    columns = []
-    values = []
 
-    def __init__(self,rows=[],columns=[],defaultValue=0) -> None:
-        self.rows       = rows
-        self.columns    = columns
+    def __init__(self) -> None:
+        self.rows = []
+        self.columns = []
         self.values = []
-        for r in rows:
-            filledRow = []
-            for c in columns:
-                filledRow.append(defaultValue)
-            self.values.append(filledRow)
-                
 
     def addRow(self,row,defaultValue=0):
         self.rows.append(row)
