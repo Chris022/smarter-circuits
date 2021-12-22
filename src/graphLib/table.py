@@ -1,8 +1,8 @@
 class Table:
 
-    def __init__(self,defaultValue=0) -> None:
-        self.rows       = []
-        self.columns    = []
+    def __init__(self,) -> None:
+        self.rows = []
+        self.columns = []
         self.values = []
 
     @classmethod
