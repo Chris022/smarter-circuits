@@ -1,16 +1,16 @@
 import xml.etree.ElementTree as xml
 #import igraph
 
-from graphLib.edge import Edge
-from graphLib.vertex import Vertex
-from graphLib.incidenceMatrix import IncidenceMatrix
+from edge import Edge
+from vertex import Vertex
+from table import Table
 
 
 class Graph:
-    veIdCounter = 0
-    ve = {}   # type_: {id:Vertex}
-    edIdCounter = 0
-    ed = {}   # type_: {id:Edge}
+    #veIdCounter = 0
+    #ve = {}   # type_: {id:Vertex}
+    #edIdCounter = 0
+    #ed = {}   # type_: {id:Edge}
 
     incidenceMatrix = None
 
@@ -19,7 +19,7 @@ class Graph:
         self.ve = {}   # type_: {id:Vertex}
         self.edIdCounter = 0
         self.ed = {}   # type_: {id:Edge}
-        self.incidenceMatrix = IncidenceMatrix()
+        self.incidenceMatrix = Table()
 
     def getVertex(self, id):
         return self.ve[id]

@@ -1,9 +1,4 @@
 class Vertex:
-    id = None
-    color = None
-    label = None
-    attr = {}
-
     def __init__(self,color="black",label="",attr={}) -> None:
         self.id = None
         self.color = color
