@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import igraph
 #create an independent copy of a numpy array
 def createIndependetCopy(img):
     newImg = np.empty_like(img)
@@ -130,3 +131,13 @@ def drawRect(image,boundingBoxes,color):
         image[y][endX] = color
 
     return image
+
+def convertToIgraph(graphCollection):
+    igraphCollection = []
+    for i in range(0, len(graphCollection)):
+        f = open("out.graph", "w")
+        f.write(graphCollection[i].convertToIGraph())
+        f.close()
+        igraphCollection.append(igraph.Graph().Read("out.graph",format="graphml"))
+
+    return igraphCollection

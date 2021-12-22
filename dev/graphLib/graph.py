@@ -15,6 +15,10 @@ class Graph:
     incidenceMatrix = None
 
     def __init__(self) -> None:
+        self.veIdCounter = 0
+        self.ve = {}   # type_: {id:Vertex}
+        self.edIdCounter = 0
+        self.ed = {}   # type_: {id:Edge}
         self.incidenceMatrix = IncidenceMatrix()
 
     def getVertex(self, id):
@@ -29,6 +33,14 @@ class Graph:
 
         self.ve[vertex.id] = vertex
         self.incidenceMatrix.addRow(vertex.id)
+
+    def addVertecies(self,vertecies):
+        for vertex in vertecies:
+            vertex.__setId__(self.veIdCounter)
+            self.veIdCounter +=1
+
+            self.ve[vertex.id] = vertex
+            self.incidenceMatrix.addRow(vertex.id)
     
     def addEdge(self,edge,from_,to_):
         edge.__setId__(self.edIdCounter)
@@ -40,6 +52,19 @@ class Graph:
         self.incidenceMatrix.addValue(from_,edge.id)
         #To
         self.incidenceMatrix.addValue(to_,edge.id)
+
+    def getVertecies(self, edge):
+
+        column = self.incidenceMatrix.getColumn(edge)
+        ids = []
+        for i in range(0, len(column)):
+            if column[i] == 2:
+                ids.append(self.incidenceMatrix.rows[i])
+                ids.append(self.incidenceMatrix.rows[i])
+            if column[i] == 1:
+                ids.append(self.incidenceMatrix.rows[i])
+
+        return ids
 
     def deleteEdge(self,edgeId):
         del self.ed[edgeId]
@@ -131,53 +156,6 @@ class Graph:
                 vertices.append(vertex.id)
         return vertices
 
-    #def convertToIGraph(self):
-#
-    #    #xmlns = xml.Element("graphml")
-#
-    #    #key1 = xml.SubElement(xmlns,"key")
-    #    #key1.attrib= {"id":"v_name","for":"node","attr.name":"name","attr.type":"string"}
-    #    #key2 = xml.SubElement(xmlns,"key")
-    #    #key2.attrib= {"id":"v_color","for":"node","attr.name":"color","attr.type":"string"}
-    #    #key3 = xml.SubElement(xmlns,"key")
-    #    #key3.attrib= {"id":"v_label","for":"node","attr.name":"label","attr.type":"string"}
-    #    #key4 = xml.SubElement(xmlns,"key")
-    #    #key4.attrib= {"id":"e_color","for":"edge","attr.name":"color","attr.type":"string"}
-#
-    #    graph = xml.Element("graph")
-    #    graph.attrib = {"id":"G","edgedefault":"undirected"}
-#
-    #    #add nodes
-    #    for vertex in (self.ve).values():
-    #        node = xml.SubElement(graph,"node")
-    #        node.attrib = {"id":"n"+str(vertex.id)}
-#
-    #        data1 = xml.SubElement(node,"data")
-    #        data1.attrib = {"key":"v_name"}
-    #        data1.text = str(vertex.label)
-#
-    #        data2 = xml.SubElement(node,"data")
-    #        data2.attrib = {"key":"v_color"}
-    #        data2.text = str(vertex.color)
-#
-    #        data3 = xml.SubElement(node,"data")
-    #        data3.attrib = {"key":"v_label"}
-    #        data3.text = str(vertex.label)
-#
-    #    #add edges
-    #    for e in (self.ed).values():
-    #        edge = xml.SubElement(graph,"edge")
-    #        verticeIds = self.verticesForEdge(e.id)
-    #        edge.attrib = {"source":"n"+str(verticeIds[0]),"target":"n"+str(verticeIds[1])}
-#
-    #        data1 = xml.SubElement(edge,"data")
-    #        data1.attrib = {"key":"e_color"}
-    #        data1.text = str(e.color)
-#
-    #    xml_str = xml.tostring(graph, encoding='unicode')
-#
-    #    return xml_str
-#
     def convertToIGraph(self):
 
         xmlns = xml.Element("graphml")
@@ -224,3 +202,16 @@ class Graph:
         xml_str = xml.tostring(xmlns, encoding='unicode')
 
         return '<?xml version="1.0" encoding="UTF-8"?>\n'+xml_str
+
+def union(graphList):
+    union = graphList[0]
+    for i in range(1, len(graphList)):
+        for vertex in graphList[i].ve.values():
+            union.addVertex(vertex)
+        print(len(union.incidenceMatrix.values))
+        print(len(union.incidenceMatrix.rows))
+
+        for edge in graphList[i].ed.values():
+            v1Id, v2Id = graphList[i].getVertecies(edge.id)
+            union.addEdge(edge, v1Id+union.veIdCounter, v2Id+union.veIdCounter)
+    return union
