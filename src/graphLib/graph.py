@@ -34,72 +34,72 @@ class Graph:
             self.veIdCounter +=1
 
             self.ve[vertex.id] = vertex
-            self.tabel.addRow(vertex.id)
+            self.table.addRow(vertex.id)
     
     def addEdge(self, edge, vertexId1, vertexId2):
         edge.__setId__(self.edIdCounter)
         self.edIdCounter +=1
 
         self.ed[edge.id] = edge
-        self.tabel.addColumn(edge.id)
+        self.table.addColumn(edge.id)
         #From
-        self.tabel.addValue(vertexId1,edge.id)
+        self.table.addValue(vertexId1,edge.id)
         #To
-        self.tabel.addValue(vertexId2,edge.id)
+        self.table.addValue(vertexId2,edge.id)
 
     def getVertices(self, edgeId):
 
-        column = self.tabel.getColumn(edgeId)
+        column = self.table.getColumn(edgeId)
         vertices = []
         for i in range(0, len(column)):
             if column[i] == 2:
-                vertices.append(self.getVertex(self.tabel.rows[i]))
-                vertices.append(self.getVertex(self.tabel.rows[i]))
+                vertices.append(self.getVertex(self.table.rows[i]))
+                vertices.append(self.getVertex(self.table.rows[i]))
             if column[i] == 1:
-                vertices.append(self.getVertex(self.tabel.rows[i]))
+                vertices.append(self.getVertex(self.table.rows[i]))
 
         return vertices
 
     def deleteEdge(self, edgeId):
         del self.ed[edgeId]
-        self.tabel.deleteColumn(edgeId)
+        self.table.deleteColumn(edgeId)
     
     def deleteVertex(self, vertexId):
         del self.vs[vertexId]
-        self.tabel.deleteRow(vertexId)
+        self.table.deleteRow(vertexId)
 
         for edge in (self.ed).values():
-            numOfConnectedVertices = sum(self.tabel.getColumn(edge))
+            numOfConnectedVertices = sum(self.table.getColumn(edge))
             if numOfConnectedVertices <= 1:
                 self.deleteEdge(edge)
     
     def adjacent(self, vertex1, vertex2):
-        v1Index = self.tabel.rows.index(vertex1)
-        v2Index = self.tabel.rows.index(vertex2)
+        v1Index = self.table.rows.index(vertex1)
+        v2Index = self.table.rows.index(vertex2)
 
-        for column in self.tabel.columns:
-            edge = self.tabel.getColumn(column)
+        for column in self.table.columns:
+            edge = self.table.getColumn(column)
             if edge[v1Index] > 0 and edge[v2Index] > 0:
                 return True
         return False
 
     def getNeighbors(self, vertexId):
-        vertexIndex = self.tabel.rows.index(vertexId)
+        vertexIndex = self.table.rows.index(vertexId)
         neighbors = []
-        for column in self.tabel.columns:
-            edge = self.tabel.getColumn(column)
+        for column in self.table.columns:
+            edge = self.table.getColumn(column)
             if edge[vertexIndex] == 2:
                 neighbors.append(self.getVertex(vertexIndex))
             elif edge[vertexIndex] == 1:
                 edge[vertexIndex] = 0
-                neighbors.append(self.getVertex(self.tabel.rows[edge.index(1)]))
+                neighbors.append(self.getVertex(self.table.rows[edge.index(1)]))
 
         return neighbors
 
     def verticesForEdge(self, edgeId):
         verticesList = []
-        collectionValues = self.tabel.getColumn(edgeId)
-        vertices = self.tabel.rows
+        collectionValues = self.table.getColumn(edgeId)
+        vertices = self.table.rows
 
         con = zip(collectionValues,vertices)
         for pair in con:
@@ -151,7 +151,7 @@ class Graph:
         return vertices
 
     def getVertexGrade(self,vertexId):
-        row = self.tabel.getRow(vertexId)
+        row = self.table.getRow(vertexId)
         return sum(row)
 
     def convertToIGraph(self):
@@ -190,8 +190,8 @@ class Graph:
         #add edges
         for e in (self.ed).values():
             edge = xml.SubElement(graph,"edge")
-            verticeIds = self.verticesForEdge(e.id)
-            edge.attrib = {"source":"n"+str(verticeIds[0]),"target":"n"+str(verticeIds[1])}
+            vertices = self.verticesForEdge(e.id)
+            edge.attrib = {"source":"n"+str(vertices[0].id),"target":"n"+str(vertices[1].id)}
 
             data1 = xml.SubElement(edge,"data")
             data1.attrib = {"key":"e_color"}
