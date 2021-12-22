@@ -5,6 +5,7 @@ class Vertex:
     attr = {}
 
     def __init__(self,color="black",label="",attr={}) -> None:
+        self.id = None
         self.color = color
         self.label = label
         self.attr = dict(attr)

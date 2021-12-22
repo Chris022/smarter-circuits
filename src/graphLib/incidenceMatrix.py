@@ -6,7 +6,7 @@ class IncidenceMatrix:
     def __init__(self,rows=[],columns=[],defaultValue=0) -> None:
         self.rows       = rows
         self.columns    = columns
-
+        self.values = []
         for r in rows:
             filledRow = []
             for c in columns:
