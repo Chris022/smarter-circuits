@@ -38,6 +38,11 @@ class Table:
         for r in range(0,len(self.rows)):
             del self.rows[r][columnName]
 
+    def setColumn(self,columnName,value):
+        columnIndex = self.columns.index(columnName)
+        for rowIndex in range(0,len(self.values)):
+            self.values[rowIndex][columnIndex] = value
+
     def setValue(self,rowName,columnName,value):
         rowIndex = self.rows.index(rowName)
         columnIndex = self.columns.index(columnName)

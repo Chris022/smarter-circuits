@@ -156,6 +156,10 @@ class Graph:
                 vertices.append(vertex.id)
         return vertices
 
+    def getVertexGrade(self,vertexId):
+        row = self.incidenceMatrix.getRow(vertexId)
+        return sum(row)
+
     def convertToIGraph(self):
 
         xmlns = xml.Element("graphml")
