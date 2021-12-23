@@ -4,6 +4,7 @@ import copy
 # Constructing Graph
 bigGraph = Graph()
 v1 = Vertex()
+v1.color = "red"
 v2 = Vertex()
 v3 = Vertex()
 v4 = Vertex()
@@ -27,6 +28,7 @@ bigGraph.addEdge(e5, v3.id, v5.id)
 
 searchGraph = Graph()
 v6 = Vertex()
+v6.color = "red"
 v7 = Vertex()
 v8 = Vertex()
 v9 = Vertex()
@@ -79,11 +81,13 @@ def generateMatchingTable(heystack,needle):
     for heystackVertexId in heystackVertexIds:
         # get grade (and color)
         heystackGrade = heystack.getVertexGrade(heystackVertexId)
+        heystackColor = heystack.getVertex(heystackVertexId).color
         
         # now get all needle vertices with higher or equal grade and same color
         for needleVertexId in needleVertexIds:
             needleGrade = needle.getVertexGrade(needleVertexId)
-            if heystackGrade >= needleGrade:
+            needleColor = needle.getVertex(needleVertexId).color
+            if heystackGrade >= needleGrade and needleColor == heystackColor:
                 matchingTable.setValue(
                     needleVertexId,
                     heystackVertexId,
