@@ -89,12 +89,25 @@ class Graph:
         for column in self.table.columns:
             edge = self.table.getColumn(column)
             if edge[vertexIndex] == 2:
-                neighbors.append(self.getVertex(vertexIndex))
+                neighbors.append(self.getVertex(self.table.rows[vertexIndex]))
             elif edge[vertexIndex] == 1:
                 edge[vertexIndex] = 0
                 neighbors.append(self.getVertex(self.table.rows[edge.index(1)]))
 
         return neighbors
+
+    def getNeighborIds(self, vertexId):
+        vertexIndex = self.table.rows.index(vertexId)
+        neighborIds = []
+        for column in self.table.columns:
+            edge = self.table.getColumn(column)
+            if edge[vertexIndex] == 2:
+                neighborIds.append(self.table.rows[vertexIndex])
+            elif edge[vertexIndex] == 1:
+                edge[vertexIndex] = 0
+                neighborIds.append(self.table.rows[edge.index(1)])
+
+        return neighborIds
 
     def verticesForEdge(self, edgeId):
         verticesList = []
