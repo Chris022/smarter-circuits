@@ -43,6 +43,11 @@ class Table:
         for rowIndex in range(0,len(self.values)):
             self.values[rowIndex][columnIndex] = value
 
+    def changeRowByIndex(self,rowIndex,func):
+        for columnIndex in range(0,len(self.columns)):
+            self.values[rowIndex][columnIndex] = func(self.values[rowIndex][columnIndex],self.columns[columnIndex])
+            
+
     def setValue(self,rowName,columnName,value):
         rowIndex = self.rows.index(rowName)
         columnIndex = self.columns.index(columnName)
@@ -52,6 +57,13 @@ class Table:
         rowIndex = self.rows.index(rowName)
         columnIndex = self.columns.index(columnName)
         return self.values[rowIndex][columnIndex]
+
+    def findInRow(self,rowName,value):
+        row = self.getRow(rowName)
+        for column in self.columns:
+            index = self.columns.index(column)
+            if row[index] == value:
+                return column
 
     def changeValue(self,rowName,columnName,func):
         rowIndex = self.rows.index(rowName)

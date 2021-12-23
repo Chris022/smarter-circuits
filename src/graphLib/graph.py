@@ -89,13 +89,13 @@ class Graph:
                 return True
         return False
 
-    def getNeighbors(self,vertex):
-        vertexIndex = self.incidenceMatrix.rows.index(vertex)
+    def getNeighbors(self,vertexId):
+        vertexIndex = self.incidenceMatrix.rows.index(vertexId)
         neighbors = []
         for column in self.incidenceMatrix.columns:
             edge = self.incidenceMatrix.getColumn(column)
             if edge[vertexIndex] == 2:
-                neighbors.append(vertex)
+                neighbors.append(vertexId)
             elif edge[vertexIndex] == 1:
                 edge[vertexIndex] = 0
                 neighbors.append(self.incidenceMatrix.rows[edge.index(1)])
