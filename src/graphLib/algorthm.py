@@ -48,13 +48,13 @@ def isValidIsomorphism(heystack,needle,matchingTable):
     for needlesVertexId in needleVertexIds:
         
         #get neighbours of needlesVertex
-        needlesNeighbours = needle.getNeighbors(needlesVertexId)
+        needlesNeighbours = needle.getNeighborIds(needlesVertexId)
         
         #get the matching heystackVertex
         heystackVertexId = matchingTable.findInRow(needlesVertexId,1)
 
         #get the neighbours of the heystackVertex
-        heystackNeighbours = heystack.getNeighbors(heystackVertexId)
+        heystackNeighbours = heystack.getNeighborIds(heystackVertexId)
 
         #for every needleNeighbour check if it matches with a heystackNeighbour
         for needleNeighbour in needlesNeighbours:

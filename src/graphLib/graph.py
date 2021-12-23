@@ -7,112 +7,119 @@ from table import Table
 
 
 class Graph:
-    #veIdCounter = 0
-    #ve = {}   # type_: {id:Vertex}
-    #edIdCounter = 0
-    #ed = {}   # type_: {id:Edge}
-
-    incidenceMatrix = None
 
     def __init__(self) -> None:
         self.veIdCounter = 0
         self.ve = {}   # type_: {id:Vertex}
         self.edIdCounter = 0
         self.ed = {}   # type_: {id:Edge}
-        self.incidenceMatrix = Table()
+        self.table = Table()
 
-    def getVertex(self, id):
-        return self.ve[id]
+    def getVertex(self, vertexId):
+        return self.ve[vertexId]
 
-    def getEdge(self, id):
-        return self.ed[id]
+    def getEdge(self, edgeId):
+        return self.ed[edgeId]
 
-    def addVertex(self,vertex):
+    def addVertex(self, vertex):
         vertex.__setId__(self.veIdCounter)
         self.veIdCounter +=1
 
         self.ve[vertex.id] = vertex
-        self.incidenceMatrix.addRow(vertex.id)
+        self.table.addRow(vertex.id)
 
-    def addVertecies(self,vertecies):
-        for vertex in vertecies:
+    def addVertices(self, vertices):
+        for vertex in vertices:
             vertex.__setId__(self.veIdCounter)
             self.veIdCounter +=1
 
             self.ve[vertex.id] = vertex
-            self.incidenceMatrix.addRow(vertex.id)
+            self.table.addRow(vertex.id)
     
-    def addEdge(self,edge,from_,to_):
+    def addEdge(self, edge, vertexId1, vertexId2):
         edge.__setId__(self.edIdCounter)
         self.edIdCounter +=1
 
         self.ed[edge.id] = edge
-        self.incidenceMatrix.addColumn(edge.id)
+        self.table.addColumn(edge.id)
         #From
-        self.incidenceMatrix.addValue(from_,edge.id)
+        self.table.addValue(vertexId1,edge.id)
         #To
-        self.incidenceMatrix.addValue(to_,edge.id)
+        self.table.addValue(vertexId2,edge.id)
 
-    def getVertecies(self, edge):
+    def getVertices(self, edgeId):
 
-        column = self.incidenceMatrix.getColumn(edge)
-        ids = []
+        column = self.table.getColumn(edgeId)
+        vertices = []
         for i in range(0, len(column)):
             if column[i] == 2:
-                ids.append(self.incidenceMatrix.rows[i])
-                ids.append(self.incidenceMatrix.rows[i])
+                vertices.append(self.getVertex(self.table.rows[i]))
+                vertices.append(self.getVertex(self.table.rows[i]))
             if column[i] == 1:
-                ids.append(self.incidenceMatrix.rows[i])
+                vertices.append(self.getVertex(self.table.rows[i]))
 
-        return ids
+        return vertices
 
-    def deleteEdge(self,edgeId):
+    def deleteEdge(self, edgeId):
         del self.ed[edgeId]
-        self.incidenceMatrix.deleteColumn(edgeId)
+        self.table.deleteColumn(edgeId)
     
-    def deleteVertex(self,vertexId):
+    def deleteVertex(self, vertexId):
         del self.vs[vertexId]
-        self.incidenceMatrix.deleteRow(vertexId)
+        self.table.deleteRow(vertexId)
 
         for edge in (self.ed).values():
-            numOfConnectedVertices = sum(self.incidenceMatrix.getColumn(edge))
+            numOfConnectedVertices = sum(self.table.getColumn(edge))
             if numOfConnectedVertices <= 1:
                 self.deleteEdge(edge)
     
-    def adjacent(self,vertex1,vertex2):
-        v1Index = self.incidenceMatrix.rows.index(vertex1)
-        v2Index = self.incidenceMatrix.rows.index(vertex2)
+    def adjacent(self, vertex1, vertex2):
+        v1Index = self.table.rows.index(vertex1)
+        v2Index = self.table.rows.index(vertex2)
 
-        for column in self.incidenceMatrix.columns:
-            edge = self.incidenceMatrix.getColumn(column)
+        for column in self.table.columns:
+            edge = self.table.getColumn(column)
             if edge[v1Index] > 0 and edge[v2Index] > 0:
                 return True
         return False
 
-    def getNeighbors(self,vertexId):
-        vertexIndex = self.incidenceMatrix.rows.index(vertexId)
+    def getNeighbors(self, vertexId):
+        vertexIndex = self.table.rows.index(vertexId)
         neighbors = []
-        for column in self.incidenceMatrix.columns:
-            edge = self.incidenceMatrix.getColumn(column)
+        for column in self.table.columns:
+            edge = self.table.getColumn(column)
             if edge[vertexIndex] == 2:
-                neighbors.append(vertexId)
+                neighbors.append(self.getVertex(self.table.rows[vertexIndex]))
             elif edge[vertexIndex] == 1:
                 edge[vertexIndex] = 0
-                neighbors.append(self.incidenceMatrix.rows[edge.index(1)])
+                neighbors.append(self.getVertex(self.table.rows[edge.index(1)]))
 
         return neighbors
 
-    def verticesForEdge(self,edgeId):
+    def getNeighborIds(self, vertexId):
+        vertexIndex = self.table.rows.index(vertexId)
+        neighborIds = []
+        for column in self.table.columns:
+            edge = self.table.getColumn(column)
+            if edge[vertexIndex] == 2:
+                neighborIds.append(self.table.rows[vertexIndex])
+            elif edge[vertexIndex] == 1:
+                edge[vertexIndex] = 0
+                neighborIds.append(self.table.rows[edge.index(1)])
+
+        return neighborIds
+
+    def verticesForEdge(self, edgeId):
         verticesList = []
-        collectionValues = self.incidenceMatrix.getColumn(edgeId)
-        vertices = self.incidenceMatrix.rows
+        collectionValues = self.table.getColumn(edgeId)
+        vertices = self.table.rows
 
         con = zip(collectionValues,vertices)
         for pair in con:
             if pair[0] == 1:
-                verticesList.append(pair[1])
+                verticesList.append(self.getVertex(pair[1]))
             if pair[0] == 2:
-                verticesList = [pair[1],pair[1]]
+                verticesList = [self.getVertex(pair[1]),self.getVertex(pair[1])]
         return verticesList
 
     def edgeWithAttribute(self, key, value):
@@ -120,7 +127,7 @@ class Graph:
         for edge in self.ed.values():
             try:
                 if edge.attr[key] == value:
-                    edges.append(edge.id)
+                    edges.append(edge)
             except:
                 pass
         return edges
@@ -129,7 +136,7 @@ class Graph:
         edges = []
         for edge in self.ed.values():
             if edge.color == color:
-                edges.append(edge.id)
+                edges.append(edge)
         return edges
 
     def verticesWithAttribute(self, key, value):
@@ -137,7 +144,7 @@ class Graph:
         for vertex in self.ve.values():
             try:
                 if vertex.attr[key] == value:
-                    vertices.append(vertex.id)
+                    vertices.append(vertex)
             except:
                 pass
         return vertices
@@ -146,18 +153,18 @@ class Graph:
         vertices = []
         for vertex in self.ve.values():
             if vertex.color == color:
-                vertices.append(vertex.id)
+                vertices.append(vertex)
         return vertices
 
     def verticesWithLabel(self, label):
         vertices = []
         for vertex in self.ve.values():
-            if vertex.label == label:
-                vertices.append(vertex.id)
+            if vertex.label == str(label):
+                vertices.append(vertex)
         return vertices
 
     def getVertexGrade(self,vertexId):
-        row = self.incidenceMatrix.getRow(vertexId)
+        row = self.table.getRow(vertexId)
         return sum(row)
 
     def convertToIGraph(self):
@@ -196,8 +203,8 @@ class Graph:
         #add edges
         for e in (self.ed).values():
             edge = xml.SubElement(graph,"edge")
-            verticeIds = self.verticesForEdge(e.id)
-            edge.attrib = {"source":"n"+str(verticeIds[0]),"target":"n"+str(verticeIds[1])}
+            vertices = self.verticesForEdge(e.id)
+            edge.attrib = {"source":"n"+str(vertices[0].id),"target":"n"+str(vertices[1].id)}
 
             data1 = xml.SubElement(edge,"data")
             data1.attrib = {"key":"e_color"}
@@ -212,10 +219,7 @@ def union(graphList):
     for i in range(1, len(graphList)):
         for vertex in graphList[i].ve.values():
             union.addVertex(vertex)
-        print(len(union.incidenceMatrix.values))
-        print(len(union.incidenceMatrix.rows))
-
         for edge in graphList[i].ed.values():
-            v1Id, v2Id = graphList[i].getVertecies(edge.id)
-            union.addEdge(edge, v1Id+union.veIdCounter, v2Id+union.veIdCounter)
+            v1, v2 = graphList[i].getVertices(edge.id)
+            union.addEdge(edge, v1.id, v2.id)
     return union
