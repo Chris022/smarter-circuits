@@ -1,5 +1,6 @@
 from graphLib.graph import Graph,Vertex,Edge,Table
 import copy
+import time
 
 #create Graph
 #heystack = Graph()
@@ -61,7 +62,6 @@ import copy
 #needle.addVertex(v24)
 #needle.addEdge(Edge(),v22.id,v23.id)
 #needle.addEdge(Edge(),v23.id,v24.id)
-
 #needle = Graph()
 #v1 = Vertex(color="red")
 #v2 = Vertex(color="yellow")
@@ -130,26 +130,26 @@ def generateMatchingTable(heystack,needle):
 
 def simplify(heystack,needle,matchingTable):
 
-    # for every 1 in the Table
-    for y in matchingTable.rows:
-        for x in matchingTable.columns:
-            if matchingTable.getValue(y,x) == 1:
-                
-                #get the neighbours of the needles
-                needleNeighbours = needle.getNeighborIds(y)
+    somethingChanged = True
+    while somethingChanged:
+        somethingChanged = False
+        # for every 1 in the Table
+        for y in matchingTable.rows:
+            for x in matchingTable.columns:
+                if matchingTable.getValue(y,x) == 1:
 
-                #get the neighbours of the heystack
-                heystackNeighbours = heystack.getNeighborIds(x)
+                    needleNeighbors = needle.getNeighborIds(y)
+                    heystackNeighbors = heystack.getNeighborIds(x)
 
-                #for every needle neighbour
-                match = False
-                for needleNeighbour in needleNeighbours:
-                    for heystackNeighbour in heystackNeighbours:
-                        if matchingTable.getValue(needleNeighbour,heystackNeighbour) == 1:
-                            match = True
-                if not match:
-                    matchingTable.setValue(y,x,0)
-        
+                    for needleNeighbor in needleNeighbors:
+                        isThereOne = False
+                        for heystackNeighbor in heystackNeighbors:
+
+                            if matchingTable.getValue(needleNeighbor,heystackNeighbor) == 1:
+                                isThereOne = True
+                        if not isThereOne:
+                            matchingTable.setValue(y,x,0)
+                            somethingChanged = True
     return matchingTable
 
 
@@ -160,6 +160,7 @@ def depthFirstSearch(heystack,needle,matchingTable):
         #Create independant copies of arguments
         usedColumns = list(usedColumns)
         matchingTable = copy.deepcopy(matchingTable)
+        matchingTable = simplify(heystack,needle,matchingTable)
 
         #End Condition
         # If the last Row
@@ -173,8 +174,6 @@ def depthFirstSearch(heystack,needle,matchingTable):
             if every and isValidIsomorphism(heystack,needle,matchingTable):
                 matches.append(matchingTable)
             return
-
-        matchingTable = simplify(heystack,needle,matchingTable)
 
         #For every unused Column
         for columnName in matchingTable.columns:
@@ -209,14 +208,10 @@ def convertMatchingTablesToList(heystack,matchingTables):
         matchingsList.append(matchList)
     return matchingsList
 
-def subisomorphism(heystack,needle):
-    print("1")
+def subisomorphism(heystack,needle): 
     matchingTable = generateMatchingTable(heystack,needle)
-    print("2")
-    matchingTable = simplify(heystack,needle,matchingTable)
-    print(matchingTable)
     solutions = depthFirstSearch(heystack,needle,matchingTable)
-    print("4")
     matches = convertMatchingTablesToList(heystack,solutions)
-    print("5")
     return matches
+
+#subisomorphism(heystack,needle)
