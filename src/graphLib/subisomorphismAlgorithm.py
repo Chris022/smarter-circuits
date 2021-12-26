@@ -89,12 +89,17 @@ def isValidIsomorphism(heystack,needle,matchingTable):
         heystackVertexId = matchingTable.findInRow(needlesVertexId,1)
 
         #get the neighbours of the heystackVertex
-        heystackNeighbours = heystack.getNeighborIds(heystackVertexId)
+        heystackNeighbors = heystack.getNeighborIds(heystackVertexId)
+
+        #get the colors of all edges between the needle and the needleNeighbors
+        needleEdgeColors = [] #TODO
 
         #for every needleNeighbour check if it matches with a heystackNeighbour
         for needleNeighbour in needlesNeighbours:
             connectedHeystack = matchingTable.findInRow(needleNeighbour,1)
-            if not connectedHeystack in heystackNeighbours:
+            #get the color of the edge between the connectedHeystack and the Heystack
+            heystackColor = None #TODO
+            if not connectedHeystack in heystackNeighbors and heystackColor in needleEdgeColors:
                 return False
     return True
 
@@ -213,5 +218,3 @@ def subisomorphism(heystack,needle):
     solutions = depthFirstSearch(heystack,needle,matchingTable)
     matches = convertMatchingTablesToList(heystack,solutions)
     return matches
-
-subisomorphism(heystack,needle)
