@@ -82,6 +82,13 @@ class Graph:
             if edge[v1Index] > 0 and edge[v2Index] > 0:
                 return True
         return False
+    
+    def getEdgeBetweenVertices(self,vertex1Id,vertex2Id):
+        row1 = self.table.getRow(vertex1Id)
+        row2 = self.table.getRow(vertex2Id)
+        for i in range(0,len(row1)):
+            if row1[i] == 1 and row2[i] == 1:
+                return self.ed[i]
 
     def getNeighbors(self, vertexId):
         vertexIndex = self.table.rows.index(vertexId)
@@ -98,16 +105,15 @@ class Graph:
 
     def getNeighborIds(self, vertexId):
         vertexIndex = self.table.rows.index(vertexId)
-        neighborIds = []
-        for column in self.table.columns:
-            edge = self.table.getColumn(column)
-            if edge[vertexIndex] == 2:
-                neighborIds.append(self.table.rows[vertexIndex])
-            elif edge[vertexIndex] == 1:
-                edge[vertexIndex] = 0
-                neighborIds.append(self.table.rows[edge.index(1)])
-
-        return neighborIds
+        neighbors = []
+        for columnName in self.table.columns:
+            column = self.table.getColumn(columnName)
+            if column[vertexIndex] == 1:
+                for index in range(0,len(column)):
+                    if not index == vertexIndex:
+                        if column[index] == 1:
+                            neighbors.append(self.table.rows[index])  
+        return neighbors
 
     def verticesForEdge(self, edgeId):
         verticesList = []
