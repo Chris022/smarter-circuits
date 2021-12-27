@@ -231,5 +231,3 @@ def subisomorphism(heystack,needle):
     solutions = depthFirstSearch(heystack,needle,matchingTable)
     matches = convertMatchingTablesToList(heystack,solutions)
     return matches
-
-print(subisomorphism(heystack,needle))
