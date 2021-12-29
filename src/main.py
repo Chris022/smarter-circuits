@@ -5,9 +5,9 @@ import componentClassification as cc
 import cv2
 import lib.utils as utils
 
-image = utils.loadImage(path="./../src/testImages",name="raf1.png")
+image = utils.loadImage(path="./../resources/testImages",name="1.png")
 
-colorImage = utils.loadImage(path="./../src/testImages",name="raf1.png", color=True)
+colorImage = utils.loadImage(path="./../resources/testImages",name="1.png", color=True)
 
 preprocessedImage = ip.preprocessImage(image)
 
