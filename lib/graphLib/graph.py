@@ -249,6 +249,21 @@ class Graph:
         for replacementVertexId in replacementVertexIds:
             self.addEdge(Edge(),replacementVertex.id,replacementVertexId)
 
+    def insertVertex(self,vertex1Id,vertex2Id,insertionVertex):
+
+        #get Edge between vertex1 and vertex2
+        edge = self.getEdgeBetweenVertices(vertex1Id,vertex2Id)
+
+        #delete Edge
+        self.deleteEdge(edge.id)
+
+        #add insertionVertex to graph
+        self.addVertex(insertionVertex)
+
+        #add edges
+        self.addEdge(Edge(),vertex1Id,insertionVertex.id)
+        self.addEdge(Edge(),insertionVertex.id,vertex2Id)
+
 def union(graphList):
     union = graphList[0]
     for i in range(1, len(graphList)):
