@@ -9,7 +9,7 @@ def isValidIsomorphism(heystack,needle,matchingTable):
     for needlesVertexId in needleVertexIds:
         
         #get neighbours of needlesVertex
-        needlesNeighbours = needle.getNeighborIds(needlesVertexId)
+        needlesNeighbourIds = needle.getNeighborIds(needlesVertexId)
         
         #get the matching heystackVertex
         heystackVertexId = matchingTable.findInRow(needlesVertexId,1)
@@ -19,17 +19,19 @@ def isValidIsomorphism(heystack,needle,matchingTable):
 
         #get the colors of all edges between the needle and the needleNeighbors
         needleEdgeColors = []
-        for needleNeighbour in needlesNeighbours:
+        for needleNeighbour in needlesNeighbourIds:
             connectingEdge = needle.getEdgeBetweenVertices(needleNeighbour,needlesVertexId)
             needleEdgeColors.append(connectingEdge.color)
     
         #for every needleNeighbour check if it matches with a heystackNeighbour
-        for needleNeighbour in needlesNeighbours:
-            connectedHeystackId = matchingTable.findInRow(needleNeighbour,1)
+        for needleNeighbourId in needlesNeighbourIds:
+            connectedHeystackId = matchingTable.findInRow(needleNeighbourId,1)
             #get the color of the edge between the connectedHeystack and the heystackVertex
             connectingEdge = heystack.getEdgeBetweenVertices(connectedHeystackId,heystackVertexId)
-            heystackColor = connectingEdge.color
-            if not connectedHeystackId in heystackNeighborIds or not heystackColor in needleEdgeColors:
+
+            heystackEdgeColor = connectingEdge.color
+            needleEdgeColor = needle.getEdgeBetweenVertices(needlesVertexId,needleNeighbourId).color
+            if not connectedHeystackId in heystackNeighborIds or not heystackEdgeColor == needleEdgeColor:
                 return False
     return True
 
