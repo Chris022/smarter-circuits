@@ -89,7 +89,7 @@ class Graph:
         row2 = self.table.getRow(vertex2Id)
         for i in range(0,len(row1)):
             if row1[i] == 1 and row2[i] == 1:
-                return self.ed[i]
+                return list(self.ed.values())[i]
 
     def getNeighbors(self, vertexId):
         vertexIndex = self.table.rows.index(vertexId)
