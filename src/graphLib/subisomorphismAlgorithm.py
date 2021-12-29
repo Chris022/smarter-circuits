@@ -1,14 +1,15 @@
 from graph import Graph,Vertex,Edge,Table
 import copy
-import time
 
-#create Graph
+#import graphUtils
+#
+##create Graph
 #heystack = Graph()
 #
 #v0 = Vertex("blue")
 #v1 = Vertex("red")
 #v2 = Vertex("blue")
-#v3 = Vertex("red")
+#v3 = Vertex("yellow")
 #v4 = Vertex("red")
 #v5 = Vertex("red")
 #v6 = Vertex("blue")
@@ -19,7 +20,7 @@ import time
 #v11 = Vertex("red")
 #v12 = Vertex("yellow")
 #v13 = Vertex("yellow")
-#v14 = Vertex("red")
+#v14 = Vertex("yellow")
 #v15 = Vertex("red")
 #v16 = Vertex("blue")
 #v17 = Vertex("blue")
@@ -42,15 +43,20 @@ import time
 #heystack.addEdge(Edge(),v11.id,v12.id)
 #heystack.addEdge(Edge(),v12.id,v13.id)
 #heystack.addEdge(Edge(),v13.id,v8.id)
-#heystack.addEdge(Edge(),v11.id,v14.id)
+#heystack.addEdge(Edge(),v11.id,v18.id)
 #heystack.addEdge(Edge(),v14.id,v15.id)
 #heystack.addEdge(Edge(),v15.id,v16.id)
 #heystack.addEdge(Edge(),v15.id,v17.id)
 #heystack.addEdge(Edge(),v14.id,v18.id)
-#heystack.addEdge(Edge(),v18.id,v13.id)
 #heystack.addEdge(Edge(),v18.id,v20.id)
 #heystack.addEdge(Edge(),v20.id,v19.id)
 #heystack.addEdge(Edge(),v20.id,v21.id)
+#
+#v22 = Vertex(color="green")
+#
+#heystack.group([v8,v9,v10,v11,v12,v13],v22)
+#
+#graphUtils.drawGraph(heystack)
 #
 #
 #needle = Graph()
@@ -67,6 +73,8 @@ import time
 #needle.addEdge(Edge(), v4.id, v5.id)
 #needle.addEdge(Edge(), v5.id, v6.id)
 #needle.addEdge(Edge(), v6.id, v1.id)
+
+
 
 #heystack = Graph()
 #v1 = Vertex("blue")
