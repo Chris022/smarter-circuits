@@ -1,4 +1,8 @@
 # Smarter Circuits #
+import sys
+sys.path.append('../')
+
+
 import imagePreprocessing as ip
 import graphGeneration as gg
 import componentClassification as cc
