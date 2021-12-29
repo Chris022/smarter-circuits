@@ -6,8 +6,8 @@ import json
 import matplotlib.pyplot as plt
 import itertools
 
-from utils import getPixel,colorPixels,isOneColor,load1Pixel,drawRect
-from constants import *
+from lib.utils import getPixel,colorPixels,isOneColor,load1Pixel,drawRect
+from lib.constants import *
 
 
 # Returns all Adjacent Pixels with a specific color

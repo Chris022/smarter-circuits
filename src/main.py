@@ -3,7 +3,7 @@ import imagePreprocessing as ip
 import graphGeneration as gg
 import componentClassification as cc
 import cv2
-import utils
+import lib.utils as utils
 
 image = utils.loadImage(path="./../src/testImages",name="raf1.png")
 

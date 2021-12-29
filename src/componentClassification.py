@@ -3,7 +3,7 @@ from tensorflow.keras import layers, models
 
 import numpy as np
 import cv2
-from constants import CLASS_NAMES
+from lib.constants import CLASS_NAMES
 
 def convertImg(image, size=(32,32)):
     image = cv2.resize(image, size, interpolation=cv2.INTER_AREA)
@@ -17,7 +17,7 @@ def convertImg(image, size=(32,32)):
 
 def classify(boxes, image):
     
-    model = tf.keras.models.load_model('saved_model/my_model')
+    model = tf.keras.models.load_model('../resources/saved_model/my_model')
 
     components = []
     for box in boxes:

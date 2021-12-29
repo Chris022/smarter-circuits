@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-import utils
+import lib.utils as utils
 import math
 
 def getRegion(size, pos, image):
