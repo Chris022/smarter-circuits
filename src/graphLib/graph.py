@@ -65,13 +65,14 @@ class Graph:
         self.table.deleteColumn(edgeId)
     
     def deleteVertex(self, vertexId):
-        del self.vs[vertexId]
+        del self.ve[vertexId]
         self.table.deleteRow(vertexId)
 
-        for edge in (self.ed).values():
-            numOfConnectedVertices = sum(self.table.getColumn(edge))
+        clone = list((self.ed).values())
+        for edge in clone:
+            numOfConnectedVertices = sum(self.table.getColumn(edge.id))
             if numOfConnectedVertices <= 1:
-                self.deleteEdge(edge)
+                self.deleteEdge(edge.id)
     
     def adjacent(self, vertex1, vertex2):
         v1Index = self.table.rows.index(vertex1)
@@ -220,6 +221,34 @@ class Graph:
 
         return '<?xml version="1.0" encoding="UTF-8"?>\n'+xml_str
 
+    def group(self,vertices,replacementVertex):
+
+        vertexIds = list(map(lambda x: x.id,vertices))
+        
+        #set of all vertices that have to be connected to the new replacementVertex
+        replacementVertexIds = set()
+    
+        #for every vertex that shall be replaced
+        for vertexId in vertexIds:
+            #get its neighbors
+            neighborVertexIds = self.getNeighborIds(vertexId)
+    
+            #if the id is not part of the vertexids add it to the replacementVertexIds
+            for neighborVertexId in neighborVertexIds:
+                if not neighborVertexId in vertexIds:
+                    replacementVertexIds.add(neighborVertexId)
+        
+        #remove all vertexIds
+        for vertexId in vertexIds:
+            self.deleteVertex(vertexId)
+    
+        #add new vertex
+        self.addVertex(replacementVertex)
+    
+        #add all edges to the new Vertex
+        for replacementVertexId in replacementVertexIds:
+            self.addEdge(Edge(),replacementVertex.id,replacementVertexId)
+
 def union(graphList):
     union = graphList[0]
     for i in range(1, len(graphList)):
@@ -229,3 +258,4 @@ def union(graphList):
             v1, v2 = graphList[i].getVertices(edge.id)
             union.addEdge(edge, v1.id, v2.id)
     return union
+
