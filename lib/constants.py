@@ -10,4 +10,4 @@ BACKGROUND = 255
 
 CLASS_NAMES = ['capacitor', 'ground', 'inductor', 'resistor']
 
-INTERSECTION_COMBINATION_DIST = 5
+INTERSECTION_COMBINATION_DIST = 3
