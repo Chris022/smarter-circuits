@@ -74,9 +74,9 @@ class Graph:
             if numOfConnectedVertices <= 1:
                 self.deleteEdge(edge.id)
     
-    def adjacent(self, vertex1, vertex2):
-        v1Index = self.table.rows.index(vertex1)
-        v2Index = self.table.rows.index(vertex2)
+    def adjacent(self, vertex1Id, vertex2Id):
+        v1Index = self.table.rows.index(vertex1Id)
+        v2Index = self.table.rows.index(vertex2Id)
 
         for column in self.table.columns:
             edge = self.table.getColumn(column)
