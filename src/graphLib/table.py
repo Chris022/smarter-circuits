@@ -23,7 +23,7 @@ class Table:
 
     # rowName -> name of the row
     def deleteRow(self,rowName):
-        index = self.rows.find(rowName)
+        index = self.rows.index(rowName)
         del self.rows[index]
         del self.values[index]
 
@@ -36,7 +36,7 @@ class Table:
         index = self.columns.index(columnName)
         del self.columns[index]
         for r in range(0,len(self.rows)):
-            del self.rows[r][columnName]
+            del self.values[r][index]
 
     def setColumn(self,columnName,value):
         columnIndex = self.columns.index(columnName)
