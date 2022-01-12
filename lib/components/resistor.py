@@ -1,4 +1,3 @@
-from lib.utils import fmap
 from math import dist
 
 from lib.components.baseComponent import BaseComponent

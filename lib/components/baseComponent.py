@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from lib.constants import POSSIBLE_ROTATIONS
+from lib.utils import fmap
 
 class BaseComponent(ABC):
 
