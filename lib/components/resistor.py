@@ -1,6 +1,6 @@
 from math import dist
 
-from lib.components.baseComponent import BaseComponent
+from lib.components.baseComponent import BaseComponent,getMeasurePoint
 
 #        |-------------|
 # #0-----|             |--------#1
@@ -10,7 +10,7 @@ class Resistor(BaseComponent):
     @staticmethod
     def connect(rotation,intersectionVertices):
         
-        basePos = BaseComponent().getMeasurePoint(0,rotation,intersectionVertices)
+        basePos = getMeasurePoint(0,rotation,intersectionVertices)
     
         #now get the distance from the (x|y) point to each intersection
         #and map the smalles to connection 0, the second smallest to 1 ...
