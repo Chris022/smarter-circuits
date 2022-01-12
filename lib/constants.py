@@ -1,3 +1,5 @@
+from lib.components.resistor import Resistor
+
 INTERSECTION_COLOR = "red"
 END_COLOR = "blue"
 CORNER_COLOR = "yellow"
@@ -11,5 +13,6 @@ FOREGROUND = 0
 BACKGROUND = 255
 
 CLASS_NAMES = {"cap":'capacitor', "gnd":'ground', "ind":'inductor', "res":'resistor'}
+CLASS_OBJECTS = {"resistor":Resistor(),}
 
 INTERSECTION_COMBINATION_DIST = 3
