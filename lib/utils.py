@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 import numpy as np
 import cv2
 import igraph
@@ -17,21 +20,15 @@ def zip2d(arg0, arg1, arg2):
     return arr
 
 # load image
-def loadImage(path, name, transpose=False, resize=(650, 450), invert=False, color=False, binary=False):
+def loadImage(path, name, transpose = False, resize = (650, 450), invert = False, color = False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
-    image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
     if not color:
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        if binary:
-            for y in range(0, len(image)):
-                for x in range(0, len(image[y])):
-                    if image[y][x] < 125:
-                        image[y][x] = 0
-                    else:
-                        image[y][x] = 255
-    else:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
+    if invert:
+        image = 255 - image
+    if transpose:
+        image = np.transpose(image)
     return np.asarray(image)
 
 def load1Pixel(path, name,color=False,binary=False):
@@ -51,17 +48,19 @@ def load1Pixel(path, name,color=False,binary=False):
     return np.asarray(image)
 
 def thinnImage(image):
-    image = cv2.ximgproc.thinning(image)
-    return image
+    image = cv2.ximgproc.thinning(255-image)
+    return 255-image
 
-def saveImage(name, image, invert = True, color=False):
-    image = np.transpose(image)
+def saveImage(name, image, path='./../resources/img/', transpose=False, invert=False, color=False):
+    if transpose:
+        image = np.transpose(image)
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
     if invert:
-        cv2.imwrite('./img/' + name, 255 - image)
+        cv2.imwrite(path + name, 255 - image)
     else:
-        cv2.imwrite('./img/' + name, image)
+        cv2.imwrite(path + name, image)
 
 # Runs the function on every Pixel in the image
 def foreachPixel(image,function):
