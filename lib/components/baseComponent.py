@@ -9,11 +9,16 @@ class BaseComponent(ABC):
     def connect(rotation,intersectionVertices):
         pass
 
+    @staticmethod
+    @abstractmethod
+    def draw(vertex):
+        pass
+
 def getMeasurePoint(rotatonOffset, rotation,intersectionVertices):
     xPositions = fmap (lambda x: x.attr["coordinates"][0],intersectionVertices)
     yPositions = fmap (lambda x: x.attr["coordinates"][1],intersectionVertices)
     rot = rotatonOffset + rotation
-    
+
     if      rot == 0:
         x = min(xPositions)
         y = min(yPositions)

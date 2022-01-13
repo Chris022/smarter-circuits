@@ -13,3 +13,7 @@ class Ground(BaseComponent):
         mapings = {0: intersectionVertices[0].attr["coordinates"] }
 
         return mapings
+    
+    @staticmethod
+    def draw():
+        pass
