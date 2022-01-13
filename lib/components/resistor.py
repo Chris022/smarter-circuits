@@ -48,7 +48,8 @@ class Resistor(BaseComponent):
         if rotation == 0 or rotation == 180:
             d.append(draw.Rectangle(
                 position[0]*rel-resW/2 ,wHeight-position[1]*rel-resH/2
-                ,resW,resH
+                ,resW,resH,
+                fill='none'
             ))
             d.append(draw.Lines(
                 position[0]*rel-resW/2,     wHeight-position[1]*rel,
@@ -62,7 +63,8 @@ class Resistor(BaseComponent):
             d.append(draw.Rectangle(
                 position[0]*rel-resW/2,     wHeight-position[1]*rel-resH/2,
                 resH,   resW,
-                stroke='#1248ff'
+                stroke='#1248ff',
+                fill='none'
             ))
 
             d.append(draw.Lines(
