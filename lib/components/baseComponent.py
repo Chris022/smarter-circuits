@@ -11,7 +11,7 @@ class BaseComponent(ABC):
 
     @staticmethod
     @abstractmethod
-    def draw(vertex):
+    def draw(vertex,rel,wWidth,wHeight,d):
         pass
 
 def getMeasurePoint(rotatonOffset, rotation,intersectionVertices):

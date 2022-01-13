@@ -34,8 +34,7 @@ class Resistor(BaseComponent):
         return mapings
 
     @staticmethod
-    def draw(resistorVertex,wWidth,wHeight,d):
-        rel = 40
+    def draw(resistorVertex,rel,wWidth,wHeight,d):
         resW = 40
         resH = 20
         position = resistorVertex.attr["coordinates"]
