@@ -61,7 +61,7 @@ class Resistor(BaseComponent):
             ))
         elif rotation == 90 or rotation == 270:
             d.append(draw.Rectangle(
-                position[0]*rel-resW/2,     wHeight-position[1]*rel-resH/2,
+                position[0]*rel-resH/2,     wHeight-position[1]*rel-resW/2,
                 resH,   resW,
                 stroke='#1248ff',
                 fill='none'
