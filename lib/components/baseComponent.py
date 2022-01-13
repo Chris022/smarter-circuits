@@ -14,6 +14,11 @@ class BaseComponent(ABC):
     def draw(vertex,rel,wWidth,wHeight,d):
         pass
 
+    @staticmethod
+    @abstractmethod
+    def generate(vertex,rel):
+        pass
+
 def getMeasurePoint(rotatonOffset, rotation,intersectionVertices):
     xPositions = fmap (lambda x: x.attr["coordinates"][0],intersectionVertices)
     yPositions = fmap (lambda x: x.attr["coordinates"][1],intersectionVertices)

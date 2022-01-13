@@ -75,3 +75,14 @@ class Resistor(BaseComponent):
                 to2[0]*rel,         wHeight-to2[1]*rel ,
                 stroke="#ff4477"
             ))
+
+    @staticmethod
+    def generate(resistorVertex,rel):
+        rotation = resistorVertex.attr["rotation"]
+        position = resistorVertex.attr["coordinates"]
+
+        if rotation == 0 or rotation == 180:
+            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]*rel+56),y=int(position[1]*rel-16))
+        else:
+            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]*rel+56),y=int(position[1]*rel-16))
+        return text

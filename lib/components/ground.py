@@ -31,3 +31,9 @@ class Ground(BaseComponent):
             position[0]*rel+groundSize  ,wHeight-position[1]*rel,
             stroke="#ff4477"
         ))
+
+    @staticmethod
+    def generate(groundVertex,rel):
+        position = groundVertex.attr["coordinates"]
+        text = "FLAG {x} {y} 0\n".format(x=int(position[0]*rel-40),y=int(position[1]*rel))
+        return text
