@@ -35,7 +35,7 @@ class Resistor(BaseComponent):
 
     @staticmethod
     def draw(resistorVertex,rel,wWidth,wHeight,d):
-        resW = 40
+        resW = rel
         resH = 20
         position = resistorVertex.attr["coordinates"]
         rotation = resistorVertex.attr["rotation"]
