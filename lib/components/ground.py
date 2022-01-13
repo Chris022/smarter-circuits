@@ -18,7 +18,6 @@ class Ground(BaseComponent):
     @staticmethod
     def draw(groundVertex,rel,wWidth,wHeight,d):
 
-        rel = 40
         groundSize = 15
         position = groundVertex.attr["connectionMap"][0]
 
