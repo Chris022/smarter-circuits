@@ -159,22 +159,22 @@ def drawArrow(image,boundingBoxes,direction,color):
     endY = (int)(centerY)
 
 
-    if direction == 'up':
+    if direction == 90:
         endY -= 20
         for i in range(endY, centerY):
             image[i][centerX] = color
     
-    if direction == 'down':
+    if direction == 270:
         endY += 20
         for i in range(centerY, endY):
             image[i][centerX] = color
 
-    if direction == 'left':
+    if direction == 180:
         endX -= 20
         for i in range(endX, centerX):
             image[centerY][i] = color
 
-    if direction == 'right':
+    if direction == 0:
         endX += 20
         for i in range(centerX, endX):
             image[centerY][i] = color
