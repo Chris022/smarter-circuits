@@ -33,7 +33,7 @@ class Ground(BaseComponent):
         ))
 
     @staticmethod
-    def generate(groundVertex,rel):
+    def generate(groundVertex):
         position = groundVertex.attr["coordinates"]
         to = groundVertex.attr["connectionMap"][0]
         text = "FLAG {x} {y} 0\n".format(x=int(position[0]),y=int(position[1]))
