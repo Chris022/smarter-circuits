@@ -28,26 +28,28 @@ def toRelative(buildingPartDefinitons,graph):
         yDist = max(yVals) - min(yVals)
 
         if xDist > yDist:
-            if xDist > len:
+            if xDist > len and xDist > len:
                 len = xDist
         else:
-            if yDist > len:
+            if yDist > len and xDist > len:
                 len = yDist
 
-
-        #convert all coordinates to values, relative to the resistor
-        for vertex in graph.ve.values():
-            x = vertex.attr["coordinates"][0]
-            y = vertex.attr["coordinates"][1]
-            vertex.attr["coordinates"] = [x/len,y/len]
+    print("len" + str(len))
+    #convert all coordinates to values, relative to the resistor
+    for vertex in graph.ve.values():
+        x = vertex.attr["coordinates"][0]
+        y = vertex.attr["coordinates"][1]
+        vertex.attr["coordinates"] = [80.0*x/len,80.0*y/len]
     return graph
 
 def snapCoordinatesToGrid(graph):
-    gridSize = 1
+    gridSize = 32*3
     for vertex in graph.ve.values():
         x = math.floor(vertex.attr["coordinates"][0]/gridSize)*gridSize
         y = math.floor(vertex.attr["coordinates"][1]/gridSize)*gridSize
         vertex.attr["coordinates"] = [x,y]
+        print(vertex.attr["coordinates"])
+    return graph
 
 def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
     #Get all the vertices connected to a building part
@@ -109,12 +111,12 @@ def insertConnectionNodes(graph):
     return graph
 
 def generateFile(graph,fileName):
-    relativeFactor = 80
+    relativeFactor = 1
     width,height = 1000,1000
     def generateWire(connectionVertex,rel):
         from_ = connectionVertex.attr["from"]
         to_ = connectionVertex.attr["to"]
-        text = "WIRE {x1} {y1} {x2} {y2}\n".format(x1= from_[0]*rel,y1 = from_[1]*rel,x2=to_[0]*rel,y2=to_[1]*rel)
+        text = "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(from_[0]*rel),y1 =int(from_[1]*rel),x2=int(to_[0]*rel),y2=int(to_[1]*rel))
         return text
 
     string = "Version 4\nSHEET 1 {w} {h}\n".format(w=width,h=height)
@@ -130,3 +132,15 @@ def generateFile(graph,fileName):
     file = open(fileName,"w")
     file.write(string)
     file.close()
+
+def createLTSpiceFile(predictions,graph,fileName):
+    map = []
+    for i in range(0, len(predictions)):
+        map.append((predictions[i][2],predictions[i][3],predictions[i][1]))
+    graph = toRelative(map,graph)
+    graph = snapCoordinatesToGrid(graph)
+    graph = seperateBuildingPartsAndConnection(map,graph)
+    graph = insertConnectionNodes(graph)
+    generateFile(graph,fileName)
+
+
