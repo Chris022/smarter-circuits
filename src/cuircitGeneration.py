@@ -111,22 +111,21 @@ def insertConnectionNodes(graph):
     return graph
 
 def generateFile(graph,fileName):
-    relativeFactor = 1
     width,height = 1000,1000
-    def generateWire(connectionVertex,rel):
+    def generateWire(connectionVertex):
         from_ = connectionVertex.attr["from"]
         to_ = connectionVertex.attr["to"]
-        text = "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(from_[0]*rel),y1 =int(from_[1]*rel),x2=int(to_[0]*rel),y2=int(to_[1]*rel))
+        text = "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(from_[0]),y1 =int(from_[1]),x2=int(to_[0]),y2=int(to_[1]))
         return text
 
     string = "Version 4\nSHEET 1 {w} {h}\n".format(w=width,h=height)
     for vertex in graph.ve.values():
         if not vertex.color == COMPONENT_COLOR: continue
-        string += CLASS_OBJECTS[vertex.attr["type"]].generate(vertex,relativeFactor)
+        string += CLASS_OBJECTS[vertex.attr["type"]].generate(vertex)
 
     for vertex in graph.ve.values():
         if not vertex.color == CONNECTION_COLOR: continue
-        string += generateWire(vertex,relativeFactor)
+        string += generateWire(vertex)
 
 
     file = open(fileName,"w")

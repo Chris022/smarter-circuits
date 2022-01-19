@@ -34,7 +34,7 @@ class Resistor(BaseComponent):
         return mapings
 
     @staticmethod
-    def draw(resistorVertex,rel,wWidth,wHeight,d):
+    def draw(resistorVertex,wWidth,wHeight,d):
         resW = rel
         resH = 20
         position = resistorVertex.attr["coordinates"]
@@ -47,39 +47,39 @@ class Resistor(BaseComponent):
 
         if rotation == 0 or rotation == 180:
             d.append(draw.Rectangle(
-                position[0]*rel-resW/2 ,wHeight-position[1]*rel-resH/2
+                position[0]-resW/2 ,wHeight-position[1]-resH/2
                 ,resW,resH,
                 fill='none'
             ))
             d.append(draw.Lines(
-                position[0]*rel-resW/2,     wHeight-position[1]*rel,
-                to1[0]*rel,                 wHeight-to1[1]*rel ,
+                position[0]-resW/2,     wHeight-position[1],
+                to1[0],                 wHeight-to1[1] ,
             ))
             d.append(draw.Lines(
-                position[0]*rel+resW/2,     wHeight-position[1]*rel,
-                to2[0]*rel,                 wHeight-to2[1]*rel
+                position[0]+resW/2,     wHeight-position[1],
+                to2[0],                 wHeight-to2[1]
             ))
         elif rotation == 90 or rotation == 270:
             d.append(draw.Rectangle(
-                position[0]*rel-resH/2,     wHeight-position[1]*rel-resW/2,
+                position[0]-resH/2,     wHeight-position[1]-resW/2,
                 resH,   resW,
                 stroke='#1248ff',
                 fill='none'
             ))
 
             d.append(draw.Lines(
-                position[0]*rel,    wHeight-(position[1]*rel-resW/2),
-                to1[0]*rel,         wHeight-to1[1]*rel
+                position[0],    wHeight-(position[1]-resW/2),
+                to1[0],         wHeight-to1[1]
                 ,stroke="#ff4477"
             ))
             d.append(draw.Lines(
-                position[0]*rel,    wHeight-(position[1]*rel+resW/2),
-                to2[0]*rel,         wHeight-to2[1]*rel ,
+                position[0],    wHeight-(position[1]+resW/2),
+                to2[0],         wHeight-to2[1] ,
                 stroke="#ff4477"
             ))
 
     @staticmethod
-    def generate(resistorVertex,rel):
+    def generate(resistorVertex):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
@@ -87,11 +87,11 @@ class Resistor(BaseComponent):
         to2 = resistorVertex.attr["connectionMap"][1]
 
         if rotation == 0 or rotation == 180:
-            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]*rel+56),y=int(position[1]*rel-16))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel-40),y1=int(position[1]*rel),x2=int(to1[0]),y2=int(to1[1]))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel+40),y1=int(position[1]*rel),x2=int(to2[0]),y2=int(to2[1]))
+            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]-16))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-40),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+40),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
-            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R0\n".format(x=int(position[0]*rel-16),y=int(position[1]*rel-56))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel-40),x2=int(to2[0]),y2=int(to2[1]))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel+40),x2=int(to1[0]),y2=int(to1[1]))
+            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-56))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-40),x2=int(to2[0]),y2=int(to2[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to1[0]),y2=int(to1[1]))
         return text

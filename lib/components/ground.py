@@ -16,19 +16,19 @@ class Ground(BaseComponent):
         return mapings
     
     @staticmethod
-    def draw(groundVertex,rel,wWidth,wHeight,d):
+    def draw(groundVertex,wWidth,wHeight,d):
 
         groundSize = 15
         position = groundVertex.attr["connectionMap"][0]
 
         d.append(draw.Lines(
-            position[0]*rel             ,wHeight-position[1]*rel, 
-            position[0]*rel-groundSize  ,wHeight-position[1]*rel
+            position[0]             ,wHeight-position[1], 
+            position[0]-groundSize  ,wHeight-position[1]
             ,stroke="#ff4477"
         ))
         d.append(draw.Lines(
-            position[0]*rel             ,wHeight-position[1]*rel,
-            position[0]*rel+groundSize  ,wHeight-position[1]*rel,
+            position[0]             ,wHeight-position[1],
+            position[0]+groundSize  ,wHeight-position[1],
             stroke="#ff4477"
         ))
 
@@ -36,6 +36,6 @@ class Ground(BaseComponent):
     def generate(groundVertex,rel):
         position = groundVertex.attr["coordinates"]
         to = groundVertex.attr["connectionMap"][0]
-        text = "FLAG {x} {y} 0\n".format(x=int(position[0]*rel),y=int(position[1]*rel))
-        text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel),x2=int(to[0]),y2=int(to[1]))
+        text = "FLAG {x} {y} 0\n".format(x=int(position[0]),y=int(position[1]))
+        text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]),x2=int(to[0]),y2=int(to[1]))
         return text
