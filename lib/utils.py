@@ -20,11 +20,25 @@ def zip2d(arg0, arg1, arg2):
     return arr
 
 # load image
-def loadImage(path, name, transpose = False, resize = (650, 450), invert = False, color = False):
+def loadImage(path, name, transpose = False, resize = (650, None), invert = False, color = False):
     image = cv2.imread('{path}/{name}'.format(path=path,name=name))
     if not color:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
+
+    width = len(image[0])
+    height = len(image)
+
+    if resize[0] != None and resize[1] == None:
+        resize = (resize[0], (int)(height * resize[0] / width))
+        image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
+
+    if resize[0] == None and resize[1] != None:
+        resize = ((int)(width * resize[1] / height), resize[1])
+        image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
+
+    if resize[0] != None and resize[1] != None:
+        image = cv2.resize(image, resize, interpolation = cv2.INTER_AREA)
+    
     if invert:
         image = 255 - image
     if transpose:
@@ -130,6 +144,40 @@ def drawRect(image,boundingBoxes,color):
     for y in range(startY,endY):
         image[y][startX] = color
         image[y][endX] = color
+
+    return image
+
+# Draws a Arrow
+def drawArrow(image,boundingBoxes,direction,color):
+    corner1 = boundingBoxes[0]
+    corner2 = boundingBoxes[1]
+
+    centerX = (int)((corner1[0] + corner2[0])/2)
+    centerY = (int)((corner1[1] + corner2[1])/2)
+
+    endX = (int)(centerX)
+    endY = (int)(centerY)
+
+
+    if direction == 'up':
+        endY -= 20
+        for i in range(endY, centerY):
+            image[i][centerX] = color
+    
+    if direction == 'down':
+        endY += 20
+        for i in range(centerY, endY):
+            image[i][centerX] = color
+
+    if direction == 'left':
+        endX -= 20
+        for i in range(endX, centerX):
+            image[centerY][i] = color
+
+    if direction == 'right':
+        endX += 20
+        for i in range(centerX, endX):
+            image[centerY][i] = color
 
     return image
 

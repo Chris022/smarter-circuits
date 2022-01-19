@@ -52,11 +52,11 @@ def getFeatures():
     features = []
     
     feature = [[255,0,255],[0,0,0],[255,0,255]]
-    replacement = [[0,255,255],[255,255,255],[0,255,0]]
+    replacement = [[255,0,255],[0,255,0],[255,0,255]]
     features += addFeature(feature, replacement, rotate=False)
 
     feature = [[255,0,-1],[-1,0,0],[0,0,-1]]
-    replacement = [[255,0,0],[-1,0,255],[0,0,-1]]
+    replacement = [[255,0,255],[-1,0,0],[0,255,-1]]
     features += addFeature(feature, replacement, flip=True)
 
     feature = [[-1,255,0],[0,0,255],[255,0,-1]]

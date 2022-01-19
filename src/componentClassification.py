@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 import tensorflow as tf
 from tensorflow.keras import layers, models
 
@@ -16,8 +19,8 @@ def convertImg(image, size=(32,32)):
     return converted
 
 def classify(boxes, image):
-    
-    model = tf.keras.models.load_model('../resources/saved_model/my_model')
+
+    model = tf.keras.models.load_model('./../resources/saved_model/my_model')
 
     components = []
     for box in boxes:
@@ -29,6 +32,9 @@ def classify(boxes, image):
     predictions = []
 
     for prediction in modelPredictions:
-        predictions.append(CLASS_NAMES[np.argmax(prediction)])
+        
+        predictions.append([CLASS_NAMES[np.argmax(prediction[:-4])],CLASS_NAMES[-4:][np.argmax(prediction[-4:])]])
+
+        #predictions.append(class_names[np.argmax(prediction)])
 
     return predictions
