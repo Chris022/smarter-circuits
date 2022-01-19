@@ -174,6 +174,14 @@ class Graph:
         row = self.table.getRow(vertexId)
         return sum(row)
 
+    def getVerticesForEdge(self,edgeId):
+        column = self.table.getColumn(edgeId)
+        vertexIds = []
+        for index in range(0,len(column)):
+            if column[index] >= 1:
+                vertexIds.append( list(self.ve.values())[index] )
+        return vertexIds
+
     def convertToIGraph(self):
 
         xmlns = xml.Element("graphml")
@@ -248,6 +256,35 @@ class Graph:
         #add all edges to the new Vertex
         for replacementVertexId in replacementVertexIds:
             self.addEdge(Edge(),replacementVertex.id,replacementVertexId)
+
+    def insertVertex(self,vertex1Id,vertex2Id,insertionVertex):
+
+        #get Edge between vertex1 and vertex2
+        edge = self.getEdgeBetweenVertices(vertex1Id,vertex2Id)
+
+        #delete Edge
+        self.deleteEdge(edge.id)
+
+        #add insertionVertex to graph
+        self.addVertex(insertionVertex)
+
+        #add edges
+        self.addEdge(Edge(),vertex1Id,insertionVertex.id)
+        self.addEdge(Edge(),insertionVertex.id,vertex2Id)
+
+    def insertVertexByEdge(self,edgeId,insertionVertex):
+        #get conneced Vertices for edge
+        vertices = self.getVerticesForEdge(edgeId)
+
+        #delete Edge
+        self.deleteEdge(edgeId)
+
+        #add insertionVertex to graph
+        self.addVertex(insertionVertex)
+
+        #add edges
+        self.addEdge(Edge(),vertices[0].id,insertionVertex.id)
+        self.addEdge(Edge(),insertionVertex.id,vertices[1].id)
 
 def union(graphList):
     union = graphList[0]

@@ -188,3 +188,6 @@ def convertToIgraph(graph):
     g = igraph.Graph().Read("out.graph",format="graphml")
     os.remove("out.graph") 
     return g
+
+def fmap(func,l):
+    return list ( map (func, l) ) 
