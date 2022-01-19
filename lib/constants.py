@@ -20,4 +20,6 @@ CLASS_OBJECTS = {"resistor":Resistor(),"ground":Ground()}
 
 POSSIBLE_ROTATIONS = [0,90,180,270]
 
+ROTATION_DICT = {'right':0,'up':90,'left':180,'down':270}
+
 INTERSECTION_COMBINATION_DIST = 3
