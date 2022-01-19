@@ -88,10 +88,10 @@ class Resistor(BaseComponent):
 
         if rotation == 0 or rotation == 180:
             text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]*rel+56),y=int(position[1]*rel-16))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel-40),y1=int(position[1]*rel),x2=to1[0],y2=to1[1])
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel+40),y1=int(position[1]*rel),x2=to2[0],y2=to2[1])
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel-40),y1=int(position[1]*rel),x2=int(to1[0]),y2=int(to1[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel+40),y1=int(position[1]*rel),x2=int(to2[0]),y2=int(to2[1]))
         else:
             text = "SYMBOL Misc\\EuropeanResistor {x} {y} R0\n".format(x=int(position[0]*rel-16),y=int(position[1]*rel-56))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel-40),x2=to2[0],y2=to2[1])
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel+40),x2=to1[0],y2=to1[1])
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel-40),x2=int(to2[0]),y2=int(to2[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel+40),x2=int(to1[0]),y2=int(to1[1]))
         return text

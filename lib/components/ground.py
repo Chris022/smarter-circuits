@@ -37,5 +37,5 @@ class Ground(BaseComponent):
         position = groundVertex.attr["coordinates"]
         to = groundVertex.attr["connectionMap"][0]
         text = "FLAG {x} {y} 0\n".format(x=int(position[0]*rel),y=int(position[1]*rel))
-        text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel),x2=to[0],y2=to[1])
+        text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]*rel),y1=int(position[1]*rel),x2=int(to[0]),y2=int(to[1]))
         return text
