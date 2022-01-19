@@ -125,7 +125,6 @@ def generateWholeGraph(image,foregroundColor,backgroundColor):
             #Remove all visited Pixels
             image = colorPixels(image,visitedPixels,backgroundColor)
             if isOneColor(image,backgroundColor):
-                print("end reached")
                 break
         else:
             print("stoped before end")
