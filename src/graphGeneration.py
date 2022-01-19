@@ -313,19 +313,31 @@ def generateBoundingBox(listOfCoords,offset):
     to_ = [max(xCoords)+offset,max(yCoords)+offset]
     return [from_,to_]
 
-# 
-def generateBoudingBoxes(image):
-    # Generate the Graph without the Cap connections
+def generateGraph(image):
+     # Generate the Graph without the Cap connections
     union = generateWholeGraph(image,FOREGROUND,BACKGROUND)
     # Connect Caps
     union = connectCapsTougehter(union)
+    return union
 
-    
+#returns array of Tuples
+#   Tuble (boundingBoxCoordinates, matchingVertices)
+def getComponents(graph):
+    patterns =  [    capPattern(), \
+                resistorPattern(), \
+                groundPattern(), \
+            ]
+    matches = (getPatternMatches(graph, pattern) for pattern in patterns)
+    matches = sum(matches,[]) # Flattens a List of List
+    components = zip(list(map(lambda x: generateBoundingBox(x,5),matches)),matches)
+    return components
+
+def generateBoudingBoxes(graph):
     patterns =  [    capPattern(), \
                     resistorPattern(), \
                     groundPattern(), \
                 ]
-    matches = (getPatternMatches(union, pattern) for pattern in patterns)
+    matches = (getPatternMatches(graph, pattern) for pattern in patterns)
     matches = sum(matches,[]) # Flattens a List of List
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,5),matches))
     return boundingBoxes
