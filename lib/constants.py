@@ -1,3 +1,4 @@
+from lib.components.capacitor import Capacitor
 from lib.components.resistor import Resistor
 from lib.components.ground import Ground
 
@@ -8,6 +9,7 @@ CORNER_COLOR = "yellow"
 COMPONENT_COLOR = "green"
 CONNECTION_COLOR = "pink"
 OTHER_NODE_COLOR = "white"
+DEFAULT_EDGE_COLOR = "black"
 
 OTHER_EDGE_COLOR = "green"
 
@@ -16,7 +18,7 @@ BACKGROUND = 255
 
 CLASS_NAMES = ['capacitor', 'ground', 'inductor', 'resistor', 'up', 'down', 'left', 'right']
 CLASS_OBJECT_NAMES = {"cap":'capacitor', "gnd":'ground', "ind":'inductor', "res":'resistor'}
-CLASS_OBJECTS = {"resistor":Resistor(),"ground":Ground()}
+CLASS_OBJECTS = {"resistor":Resistor(),"ground":Ground(),"capacitor":Capacitor()}
 
 POSSIBLE_ROTATIONS = [0,90,180,270]
 
