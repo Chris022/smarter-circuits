@@ -6,19 +6,27 @@ from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
 
 from lib.constants import *
+from lib.utils import convertToIgraph
 
+import igraph
 import copy
 import math
 
+def recolorCap(graph):
+    for vertex in graph.ve.values():
+        if vertex.color == OTHER_NODE_COLOR:
+            vertex.color = INTERSECTION_COLOR
+    return graph
+
 def toRelative(buildingPartDefinitons,graph):
     #get lenght of the longest resistor
-    len = -1
+    len = 1000
     for buildingPart in buildingPartDefinitons:
         vertices = buildingPart[2]
         rotation = buildingPart[1]
         type_ = buildingPart[0]
 
-        if not type_ == CLASS_OBJECT_NAMES["res"]:
+        if type_ == CLASS_OBJECT_NAMES["gnd"]:
             continue
         
         xVals = list(map(lambda v: v.attr["coordinates"][0],vertices))
@@ -27,28 +35,28 @@ def toRelative(buildingPartDefinitons,graph):
         xDist = max(xVals) - min(xVals)
         yDist = max(yVals) - min(yVals)
 
-        if xDist > yDist:
-            if xDist > len and xDist > len:
+
+        if rotation == 0 or rotation == 180:
+            if xDist < len and xDist < len:
                 len = xDist
         else:
-            if yDist > len and xDist > len:
+            if yDist < len and xDist < len:
                 len = yDist
 
-    print("len" + str(len))
+    print(len)
     #convert all coordinates to values, relative to the resistor
     for vertex in graph.ve.values():
         x = vertex.attr["coordinates"][0]
         y = vertex.attr["coordinates"][1]
-        vertex.attr["coordinates"] = [80.0*x/len,80.0*y/len]
+        vertex.attr["coordinates"] = [64*x/len,64*y/len]
     return graph
 
 def snapCoordinatesToGrid(graph):
-    gridSize = 32*3
+    gridSize = 32*1
     for vertex in graph.ve.values():
         x = math.floor(vertex.attr["coordinates"][0]/gridSize)*gridSize
         y = math.floor(vertex.attr["coordinates"][1]/gridSize)*gridSize
         vertex.attr["coordinates"] = [x,y]
-        print(vertex.attr["coordinates"])
     return graph
 
 def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
@@ -79,7 +87,11 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
                 vertex.color = CORNER_COLOR
                 continue
             graph.deleteVertex(vertex.id)
-
+        #delete all green edges
+        edges = list(graph.ed.values())
+        for edge in edges:
+            if edge.color == OTHER_EDGE_COLOR:
+                graph.deleteEdge(edge.id)
         #add UNCONECTED component Vertex
         component = Vertex(
                 color=COMPONENT_COLOR,
@@ -136,6 +148,7 @@ def createLTSpiceFile(predictions,graph,fileName):
     map = []
     for i in range(0, len(predictions)):
         map.append((predictions[i][2],predictions[i][3],predictions[i][1]))
+    graph = recolorCap(graph)
     graph = toRelative(map,graph)
     graph = snapCoordinatesToGrid(graph)
     graph = seperateBuildingPartsAndConnection(map,graph)

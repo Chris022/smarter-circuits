@@ -405,7 +405,7 @@ def getComponents(graph):
             ]
     matchingVertices = (getPatternMatches(graph, pattern) for pattern in patterns)
     matches = sum(matchingVertices,[])
-    boundingBoxes = list(map(lambda x: generateBoundingBox(x,5),matches))
+    boundingBoxes = list(map(lambda x: generateBoundingBox(x,7),matches))
     components = zip(boundingBoxes,matches)
     return list(components)
 
