@@ -14,6 +14,10 @@ class Resistor(BaseComponent):
 
     @staticmethod
     def connect(rotation,intersectionVertices):
+        if rotation == 0 or 180:
+            rotation = 0
+        else:
+            rotation = 90
         basePos = getMeasurePoint(0,rotation,intersectionVertices)
     
         #now get the distance from the (x|y) point to each intersection
@@ -35,7 +39,7 @@ class Resistor(BaseComponent):
 
     @staticmethod
     def draw(resistorVertex,wWidth,wHeight,d):
-        resW = rel
+        resW = 1
         resH = 20
         position = resistorVertex.attr["coordinates"]
         rotation = resistorVertex.attr["rotation"]
@@ -92,6 +96,6 @@ class Resistor(BaseComponent):
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+40),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
             text = "SYMBOL Misc\\EuropeanResistor {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-56))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-40),x2=int(to2[0]),y2=int(to2[1]))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to1[0]),y2=int(to1[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-40),x2=int(to1[0]),y2=int(to1[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to2[0]),y2=int(to2[1]))
         return text
