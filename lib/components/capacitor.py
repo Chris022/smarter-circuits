@@ -42,8 +42,8 @@ class Capacitor(BaseComponent):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
-        to1 = resistorVertex.attr["connectionMap"][0]
-        to2 = resistorVertex.attr["connectionMap"][1]
+        to1 = resistorVertex.attr["connectionMap"][0].attr["coordinates"]
+        to2 = resistorVertex.attr["connectionMap"][1].attr["coordinates"]
 
         if rotation == 0 or rotation == 180:
             text = "SYMBOL cap {x} {y} R90\n".format(x=int(position[0]+32),y=int(position[1]-16))

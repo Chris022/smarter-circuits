@@ -39,56 +39,15 @@ class Resistor(BaseComponent):
 
     @staticmethod
     def draw(resistorVertex,wWidth,wHeight,d):
-        resW = 1
-        resH = 20
-        position = resistorVertex.attr["coordinates"]
-        rotation = resistorVertex.attr["rotation"]
-
-        #connect Resistor to connectionpoints
-        to1 = resistorVertex.attr["connectionMap"][0]
-
-        to2 = resistorVertex.attr["connectionMap"][1]
-
-        if rotation == 0 or rotation == 180:
-            d.append(draw.Rectangle(
-                position[0]-resW/2 ,wHeight-position[1]-resH/2
-                ,resW,resH,
-                fill='none'
-            ))
-            d.append(draw.Lines(
-                position[0]-resW/2,     wHeight-position[1],
-                to1[0],                 wHeight-to1[1] ,
-            ))
-            d.append(draw.Lines(
-                position[0]+resW/2,     wHeight-position[1],
-                to2[0],                 wHeight-to2[1]
-            ))
-        elif rotation == 90 or rotation == 270:
-            d.append(draw.Rectangle(
-                position[0]-resH/2,     wHeight-position[1]-resW/2,
-                resH,   resW,
-                stroke='#1248ff',
-                fill='none'
-            ))
-
-            d.append(draw.Lines(
-                position[0],    wHeight-(position[1]-resW/2),
-                to1[0],         wHeight-to1[1]
-                ,stroke="#ff4477"
-            ))
-            d.append(draw.Lines(
-                position[0],    wHeight-(position[1]+resW/2),
-                to2[0],         wHeight-to2[1] ,
-                stroke="#ff4477"
-            ))
+        pass
 
     @staticmethod
     def generate(resistorVertex):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
-        to1 = resistorVertex.attr["connectionMap"][0]
-        to2 = resistorVertex.attr["connectionMap"][1]
+        to1 = resistorVertex.attr["connectionMap"][0].attr["coordinates"]
+        to2 = resistorVertex.attr["connectionMap"][1].attr["coordinates"]
 
         if rotation == 0 or rotation == 180:
             text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]-16))
