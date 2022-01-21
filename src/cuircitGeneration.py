@@ -84,7 +84,6 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         vertexGroup = []
         for vertex in vertices:
             if vertex.color == INTERSECTION_COLOR:
-                vertex.color = CORNER_COLOR
                 continue
             vertexGroup.append(vertex)
 
@@ -95,6 +94,16 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
             )
         #group
         graph.group(vertexGroup,component)
+
+        #remove all direct connection between all Intersection Colors
+        for vertex1 in vertices:
+            if not vertex1.color == INTERSECTION_COLOR: continue
+            for vertex2 in vertices:
+                if not vertex2.color == INTERSECTION_COLOR: continue
+                if vertex1 == vertex2: continue
+                edge = graph.getEdgeBetweenVertices(vertex1.id,vertex2.id)
+                if edge: graph.deleteEdge(edge.id)
+
     return graph
 
 def alignVertices(graph):
