@@ -104,6 +104,11 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
                 edge = graph.getEdgeBetweenVertices(vertex1.id,vertex2.id)
                 if edge: graph.deleteEdge(edge.id)
 
+        #recolor vertices
+        for vertex in vertices:
+            if vertex.color == INTERSECTION_COLOR:
+                vertex.color == CORNER_COLOR
+
     return graph
 
 def alignVertices(graph):
