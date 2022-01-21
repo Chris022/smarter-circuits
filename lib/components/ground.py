@@ -11,7 +11,7 @@ class Ground(BaseComponent):
 
     @staticmethod
     def connect(rotation,intersectionVertices):
-        mapings = {0: intersectionVertices[0].attr["coordinates"] }
+        mapings = {0: intersectionVertices[0] }
 
         return mapings
     

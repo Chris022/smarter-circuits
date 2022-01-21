@@ -27,7 +27,7 @@ class Resistor(BaseComponent):
             position = intersectionVertex.attr["coordinates"]
             
             distance = dist(basePos,position)
-            distances.append((distance,position))
+            distances.append((distance,intersectionVertex))
 
         #sort distances
         mapings = map(lambda x: x[1], sorted(distances, key=lambda x:x[0]))
