@@ -107,7 +107,7 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         #recolor vertices
         for vertex in vertices:
             if vertex.color == INTERSECTION_COLOR:
-                vertex.color == CORNER_COLOR
+                vertex.color = CORNER_COLOR
 
     return graph
 
