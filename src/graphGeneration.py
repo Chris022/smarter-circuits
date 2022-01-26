@@ -86,12 +86,21 @@ def generatePartGraph(image,startPoint,color):
     
     def recursiveGenerateGraph(currentPixel,lastPixel,lastGraphNode,dirGradientOld):
         dirGradient = list(dirGradientOld)
-
         #get Direction
-        if(abs(currentPixel[0] - lastPixel[0]) < abs(currentPixel[1] - lastPixel[1])):
-            dirGradient.append(1)
-        else:
-            dirGradient.append(0)
+        xDir = 0
+        yDir = 0
+
+        if currentPixel[0] - lastPixel[0] > 0:
+            xDir = 1
+        elif currentPixel[0] - lastPixel[0] < 0:
+            xDir = -1
+
+        if currentPixel[1] - lastPixel[1] > 0:
+            yDir = 1
+        elif currentPixel[1] - lastPixel[1] < 0:
+            yDir = -1
+
+        dirGradient.append((xDir,yDir))
 
         #End Recursion if loop ends
         if currentPixel in visitedPixels:
@@ -121,10 +130,19 @@ def generatePartGraph(image,startPoint,color):
 
         elif len(adjacentPixels) == 1:
             #LINE
-            if len(dirGradient) > 6:
-                currDire = sum(dirGradient[-4:])/4 < 0.5
-                lastDire = sum(dirGradient[-5:-1])/4 < 0.5
-                if not  currDire == lastDire:
+            if len(dirGradient) >= 10:
+                currDir = [sum(x) for x in zip(*dirGradient[-5:])]
+                length = m.sqrt(currDir[0]**2 + currDir[1]**2)
+                currDir = (currDir[0]/length, currDir[1]/length)
+
+                
+                lastDir = [sum(x) for x in zip(*dirGradient[-10:-5])]
+                length = m.sqrt(lastDir[0]**2 + lastDir[1]**2)
+                lastDir = (lastDir[0]/length, lastDir[1]/length)
+
+                dist = m.sqrt((currDir[0] - lastDir[0])**2 + (currDir[1] - lastDir[1])**2)
+
+                if dist > 0.8:
                     #graph.add_vertex(str(currentPixel),label=str(currentPixel),color=CORNER_COLOR)
                     #graph.add_edge(str(lastGraphNode),str(currentPixel))
                     vertex = Vertex(color=CORNER_COLOR, label=str(currentPixel))
@@ -134,7 +152,7 @@ def generatePartGraph(image,startPoint,color):
                     v1 = graph.verticesWithLabel(str(lastGraphNode))[0]
                     v2 = graph.verticesWithLabel(str(currentPixel))[0]
                     graph.addEdge(edge,v1.id,v2.id)
-
+                    dirGradient = []
                     recursiveGenerateGraph(adjacentPixels[0],currentPixel,str(currentPixel),dirGradient)
                 else:
                     recursiveGenerateGraph(adjacentPixels[0],currentPixel,lastGraphNode,dirGradient)

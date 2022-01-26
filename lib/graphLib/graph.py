@@ -87,9 +87,13 @@ class Graph:
     def getEdgeBetweenVertices(self,vertex1Id,vertex2Id):
         row1 = self.table.getRow(vertex1Id)
         row2 = self.table.getRow(vertex2Id)
+
+        edges = []
+
         for i in range(0,len(row1)):
             if row1[i] == 1 and row2[i] == 1:
-                return list(self.ed.values())[i]
+                edges.append(list(self.ed.values())[i])
+        return edges
 
     def getNeighbors(self, vertexId):
         vertexIndex = self.table.rows.index(vertexId)
@@ -234,7 +238,7 @@ class Graph:
         vertexIds = list(map(lambda x: x.id,vertices))
         
         #set of all vertices that have to be connected to the new replacementVertex
-        replacementVertexIds = set()
+        edgeIds = set()
     
         #for every vertex that shall be replaced
         for vertexId in vertexIds:
@@ -243,19 +247,26 @@ class Graph:
     
             #if the id is not part of the vertexids add it to the replacementVertexIds
             for neighborVertexId in neighborVertexIds:
-                if not neighborVertexId in vertexIds:
-                    replacementVertexIds.add(neighborVertexId)
+                for edge in self.getEdgeBetweenVertices(vertexId, neighborVertexId):
+                    edgeIds.add(edge.id)
+                #if not neighborVertexId in vertexIds:
+                #    replacementVertexNeighboursIds.add(neighborVertexId)
         
+        #add new vertex
+        self.addVertex(replacementVertex)
+
+        #add all edges to the new Vertex
+        for edgeId in edgeIds:
+            vertices = self.getVerticesForEdge(edgeId)
+
+            if vertices[0].id in vertexIds:
+                self.addEdge(Edge(),vertices[1].id,replacementVertex.id)
+            else:
+                self.addEdge(Edge(),vertices[0].id,replacementVertex.id)
+
         #remove all vertexIds
         for vertexId in vertexIds:
             self.deleteVertex(vertexId)
-    
-        #add new vertex
-        self.addVertex(replacementVertex)
-    
-        #add all edges to the new Vertex
-        for replacementVertexId in replacementVertexIds:
-            self.addEdge(Edge(),replacementVertex.id,replacementVertexId)
 
     def insertVertex(self,vertex1Id,vertex2Id,insertionVertex):
 

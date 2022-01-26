@@ -37,7 +37,6 @@ def combineCloseVertices(graph,vertices, thresholdDistance):
                         label=vertex1.label,
                         attr=dict(vertex1.attr)
                     )
-
         graph.group(toCombineVertices,repV)
     return graph
 
