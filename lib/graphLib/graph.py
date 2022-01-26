@@ -88,6 +88,14 @@ class Graph:
         row1 = self.table.getRow(vertex1Id)
         row2 = self.table.getRow(vertex2Id)
 
+        for i in range(0,len(row1)):
+            if row1[i] == 1 and row2[i] == 1:
+                return list(self.ed.values())[i]
+
+    def getEdgesBetweenVertices(self,vertex1Id,vertex2Id):
+        row1 = self.table.getRow(vertex1Id)
+        row2 = self.table.getRow(vertex2Id)
+
         edges = []
 
         for i in range(0,len(row1)):
@@ -247,7 +255,7 @@ class Graph:
     
             #if the id is not part of the vertexids add it to the replacementVertexIds
             for neighborVertexId in neighborVertexIds:
-                for edge in self.getEdgeBetweenVertices(vertexId, neighborVertexId):
+                for edge in self.getEdgesBetweenVertices(vertexId, neighborVertexId):
                     edgeIds.add(edge.id)
                 #if not neighborVertexId in vertexIds:
                 #    replacementVertexNeighboursIds.add(neighborVertexId)
