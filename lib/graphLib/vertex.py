@@ -8,3 +8,6 @@ class Vertex:
 
     def __setId__(self,id):
         self.id = id
+
+    def __repr__(self) -> str:
+        return "   Vector: [" + str(self.id) + " " + str(self.color) + " " + str(self.attr) + " ]   "

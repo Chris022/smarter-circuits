@@ -1,4 +1,5 @@
 from math import dist
+from turtle import pos
 from lib.components.baseComponent import BaseComponent,getMeasurePoint
 
 import drawSvg as draw
@@ -46,8 +47,17 @@ class Resistor(BaseComponent):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
-        to1 = resistorVertex.attr["connectionMap"][0].attr["coordinates"]
-        to2 = resistorVertex.attr["connectionMap"][1].attr["coordinates"]
+        toVertex1 = resistorVertex.attr["connectionMap"][0]
+        toVertex2 = resistorVertex.attr["connectionMap"][1]
+
+        to1 = toVertex1.attr["coordinates"]
+        to2 = toVertex2.attr["coordinates"]
+
+        if toVertex1.color == "green":
+            to1 = [position[0]+(to1[0]-position[0])/2,position[1]+(to1[1]-position[1])/2]
+
+        if toVertex2.color == "green":
+            to2 = [position[0]+(to2[0]-position[0])/2,position[1]+(to2[1]-position[1])/2]
 
         if rotation == 0 or rotation == 180:
             text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]-16))

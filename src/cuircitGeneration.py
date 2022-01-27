@@ -68,10 +68,6 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         #get all intersections
         intersectionVertices = list (filter(lambda v: v.color == INTERSECTION_COLOR,vertices) )
 
-        #match LTSpice Model connections with graph Model connections
-        connectionMap = {}
-        connectionMap = CLASS_OBJECTS[type_].connect(rotation,intersectionVertices)
-
         #get center of the component
         xVals = list(map(lambda v: v.attr["coordinates"][0],vertices))
         yVals = list(map(lambda v: v.attr["coordinates"][1],vertices))
@@ -80,36 +76,31 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         yDist = max(yVals) - min(yVals)
         center = [min(xVals)+xDist/2,min(yVals)+yDist/2]
 
-        #collect all the vertices that need to be grouped
-        vertexGroup = []
-        for vertex in vertices:
+        for vertex in intersectionVertices:
             if vertex.color == INTERSECTION_COLOR:
-                continue
-            vertexGroup.append(vertex)
+                vertex.color = "purple"
 
         component = Vertex(
                 color=COMPONENT_COLOR,
                 label=type_,
-                attr={"connectionMap":connectionMap,"type":type_,"coordinates":center,"rotation":rotation}
-            )
+                attr={"connectionMap":{},"type":type_,"coordinates":center,"rotation":rotation}
+        )
         #group
-        graph.group(vertexGroup,component)
+        graph.group(vertices,component)
+        
 
-        #remove all direct connection between all Intersection Colors
-        for vertex1 in vertices:
-            if not vertex1.color == INTERSECTION_COLOR: continue
-            for vertex2 in vertices:
-                if not vertex2.color == INTERSECTION_COLOR: continue
-                if vertex1 == vertex2: continue
-                edge = graph.getEdgeBetweenVertices(vertex1.id,vertex2.id)
-                if edge: graph.deleteEdge(edge.id)
+    for vertex in graph.ve.values():
+        if not vertex.color == COMPONENT_COLOR: continue
+        rotation = vertex.attr["rotation"]
+        type_ = vertex.attr["type"]
 
-        #recolor vertices
-        for vertex in vertices:
-            if vertex.color == INTERSECTION_COLOR:
-                vertex.color = CORNER_COLOR
+        #set Connection Map
+        #match LTSpice Model connections with graph Model connections
+        connectionMap = CLASS_OBJECTS[type_].connect(rotation,graph.getNeighbors(vertex.id))
+        vertex.attr["connectionMap"] = connectionMap
 
     return graph
+
 
 def alignVertices(graph):
     #pick Start Vertex
@@ -128,6 +119,7 @@ def alignVertices(graph):
             neighbors = graph.getNeighbors(currentV.id)
             for neighbor in neighbors:
                 if neighbor == lastV: continue
+                #if "passes" in neighbor.attr.keys() and neighbor.attr["passes"] > currentV.attr["passes"]: continue
                 recursiveTraversial(neighbor,currentV)
 
         recursiveTraversial(startV,startV)
@@ -161,9 +153,15 @@ def insertConnectionNodes(graph):
     #freeze graph
     frozenGraph = copy.deepcopy(graph)
     for edge in frozenGraph.ed.values():
-
         #get Vertices connected to Edge
         vertices = graph.getVerticesForEdge(edge.id)
+
+        #if one of the vertices is green -> ignore
+        f = False
+        for vertex in vertices:
+            if vertex.color == COMPONENT_COLOR:
+                f = True
+        if f: continue
 
         #insert Connection Vertex
         connection = Vertex(
@@ -205,8 +203,11 @@ def createLTSpiceFile(predictions,graph,fileName):
     graph = recolorCap(graph)
     graph = toRelative(map,graph)
     graph = seperateBuildingPartsAndConnection(map,graph)
+
     graph = alignVertices(graph)
-    graph = insertConnectionNodes(graph)
-    generateFile(graph,fileName)
+    for vertex in graph.ve.values():
+        vertex.label = str(vertex.id)
+    generateFile(insertConnectionNodes(graph),fileName)
+    return graph
 
 

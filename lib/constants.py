@@ -10,6 +10,7 @@ COMPONENT_COLOR = "green"
 CONNECTION_COLOR = "pink"
 OTHER_NODE_COLOR = "white"
 DEFAULT_EDGE_COLOR = "black"
+BUFFER_COLOR = "pink"
 
 OTHER_EDGE_COLOR = "green"
 
