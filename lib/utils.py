@@ -96,27 +96,25 @@ def getPixel(image,*coords):
         try:
             return image[coords[0][1]][coords[0][0]]
         except:
-            return image[0][0]
-    else:
-        try:
-            return image[coords[1]][coords[0]]
-        except:
-            return image[0][0]
+            raise Exception("tying to get Pixel out of bounds")
+    try:
+        return image[coords[1]][coords[0]]
+    except:
+        raise Exception("tying to get Pixel out of bounds")
         
 
 # coords can either be a array with x y value or two seperate arguments with x and y
 def setPixel(image,color,*coords):
     if len(coords) == 1:
         image[coords[0][1]][coords[0][0]] = color
-        return image
     else:
         image[coords[1]][coords[0]] = color
-        return image
+    return image
 
 # colors all the given pixels in an image
 def colorPixels(image,pixels,color):
-    for visitedPixel in pixels:
-        image = setPixel(image,color,visitedPixel[0],visitedPixel[1])
+    for pixel in pixels:
+        image = setPixel(image,color,pixel[0],pixel[1])
     return image
 
 # check if the whole image has only one Color
