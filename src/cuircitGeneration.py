@@ -205,8 +205,6 @@ def createLTSpiceFile(predictions,graph,fileName):
     graph = seperateBuildingPartsAndConnection(map,graph)
 
     graph = alignVertices(graph)
-    for vertex in graph.ve.values():
-        vertex.label = str(vertex.id)
     generateFile(insertConnectionNodes(graph),fileName)
     return graph
 
