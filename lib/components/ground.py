@@ -16,6 +16,10 @@ class Ground(BaseComponent):
         return mapings
     
     @staticmethod
+    def getRotation(vertices, ROTATION_DICT):
+        return ROTATION_DICT['up']
+    
+    @staticmethod
     def draw(groundVertex,wWidth,wHeight,d):
 
         groundSize = 15

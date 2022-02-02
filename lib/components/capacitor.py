@@ -34,6 +34,27 @@ class Capacitor(BaseComponent):
         return mapings
 
     @staticmethod
+    def getRotation(vertices, ROTATION_DICT):
+        intersections = []
+        for vertex in vertices:
+            if vertex.color != 'blue' and vertex.color != 'yellow':
+                intersections.append(vertex)
+        if len(intersections) > 2:
+            print('Too much intersections in capacitor')
+        pos1 = intersections[0].attr['coordinates']
+        pos2 = intersections[1].attr['coordinates']
+
+        xDiff = abs(pos1[0]-pos2[0])
+        yDiff = abs(pos1[1]-pos2[1])
+
+        if xDiff > yDiff:
+            return ROTATION_DICT['left']
+        if yDiff > xDiff:
+            return ROTATION_DICT['up']
+
+        return -1
+
+    @staticmethod
     def draw(capacitorVertex,wWidth,wHeight,d):
         pass
 
