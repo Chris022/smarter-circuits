@@ -44,7 +44,6 @@ class Capacitor(BaseComponent):
 
         toVertex1 = resistorVertex.attr["connectionMap"][0]
         toVertex2 = resistorVertex.attr["connectionMap"][1]
-        print(toVertex1.color,toVertex1.attr,toVertex1.id)
 
         to1 = toVertex1.attr["coordinates"]
         to2 = toVertex2.attr["coordinates"]
@@ -60,7 +59,7 @@ class Capacitor(BaseComponent):
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-32),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+32),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
-            text = "SYMBOL cap {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]+32))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-32),x2=int(to2[0]),y2=int(to2[1]))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+32),x2=int(to1[0]),y2=int(to1[1]))
+            text = "SYMBOL cap {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-32))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-32),x2=int(to1[0]),y2=int(to1[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+32),x2=int(to2[0]),y2=int(to2[1]))
         return text
