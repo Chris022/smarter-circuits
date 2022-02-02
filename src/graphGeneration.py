@@ -35,7 +35,7 @@ def getAdjacentPixel(image,pixel,color,blacklist=[]):
     validPixels = ([ pixel[0]+adj[0], pixel[1]+adj[1] ] for adj in adjacentPixels)
     #filter all pixels that are not the right color
     validPixels = list(
-        filter(lambda coords: getPixel(image,coords) == color,validPixels)
+        filter(lambda coords: image[coords[1]][coords[0]] == color,validPixels)
     )
     #filter all pixels that are in the blacklist
     validPixels = list(
@@ -45,29 +45,34 @@ def getAdjacentPixel(image,pixel,color,blacklist=[]):
     return validPixels
 
 # returns the coordinates of the first <color> pixel it finds
+# returns -1 if no staring point is found
 def findStaringPoint(image,color):
-    for y in range(0,len(image)):
-        for x in range(0,len(image[y])):
-            if getPixel(image,x,y) == color:
+    for y in range(0,len(image)-1):
+        for x in range(0,len(image[y])-1):
+            if image[y][x] == color:
                 return [x,y]
+    return -1
 
 # Runs along line until it finds the first Intersection
 #
 # image      -> The image
 # startPoint -> Any random Point on the line
 # color      -> The color of the Line
-def findFirstIntersection(image,startPoint,color):
-
-    def recursiveFindValidPoint(currentPixel,lastPixel,dir):
-        adjacentPixels = getAdjacentPixel(image,currentPixel,color)
-        if len(adjacentPixels) > 2:
-            return currentPixel
-        elif len(adjacentPixels) == 1:
-            return recursiveFindValidPoint(adjacentPixels[dir],currentPixel,-1)
-        else:
-            adjacentPixels = getAdjacentPixel(image,currentPixel,color,[lastPixel]) 
-            return recursiveFindValidPoint(adjacentPixels[dir],currentPixel,dir)
-    return recursiveFindValidPoint(startPoint,None,0)
+#def findFirstIntersection(image,startPoint,color):
+#
+#    def recursiveFindValidPoint(currentPixel,lastPixel,dir):
+#        adjacentPixels = getAdjacentPixel(image,currentPixel,color)
+#        if len(adjacentPixels) > 2:
+#            return currentPixel
+#        if len(adjacentPixels) == 1:
+#            return recursiveFindValidPoint(adjacentPixels[dir],currentPixel,-1)
+#        
+#        adjacentPixels = getAdjacentPixel(image,currentPixel,color,[lastPixel]) 
+#        #if there are no adjacentPixels(only relevant if there is a Pixel completely surrounded by white in the drawing) -> return it as a start point
+#        if len(adjacentPixels) == 0:
+#            return currentPixel
+#        return recursiveFindValidPoint(adjacentPixels[dir],currentPixel,dir)
+#    return recursiveFindValidPoint(startPoint,None,0)
 
 # Converts one connected Line into a Graph
 #
@@ -80,7 +85,14 @@ def generatePartGraph(image,startPoint,color):
     #graph.add_vertex(str(startPoint), label=str(startPoint) ,color=INTERSECTION_COLOR)
     graph = g.Graph()
 
-    vertex = Vertex(color=INTERSECTION_COLOR, label=str(startPoint))
+    #check type of starting Vertex
+    adjacentPixels = getAdjacentPixel(image,startPoint,color)
+    if len(adjacentPixels) == 1:
+        vertex = Vertex(color=END_COLOR, label=str(startPoint))
+    elif len(adjacentPixels) == 2:
+        vertex = Vertex(color=CORNER_COLOR, label=str(startPoint))
+    else:
+        vertex = Vertex(color=INTERSECTION_COLOR, label=str(startPoint))
     vertex.attr["coordinates"] = startPoint
     graph.addVertex(vertex)
     
@@ -180,20 +192,16 @@ def generateWholeGraph(image,foregroundColor,backgroundColor):
     graphCollection = []
     while True:
         startingPoint = findStaringPoint(image,foregroundColor)
+        if startingPoint == -1:
+            break
         if(startingPoint):
-            startingPoint = findFirstIntersection(image,startingPoint,foregroundColor)
             G,visitedPixels = generatePartGraph(image,startingPoint,foregroundColor)
             graphCollection.append(G)
             #Remove all visited Pixels
             image = colorPixels(image,visitedPixels,backgroundColor)
-            if isOneColor(image,backgroundColor):
-                print("end reached")
-                break
         else:
-            print("stoped before end")
             break
     return g.union(graphCollection)
-    #return graphCollection
 
 #Returns a List of all the Node Colors in a Graph
 def getColorListNode(graph):
@@ -427,9 +435,9 @@ def getComponents(graph):
     components = zip(boundingBoxes,matches)
     return list(components)
 
-#imageArray = load1Pixel("./../src/testImages","2.png",binary=True)
-#colorImage = load1Pixel("./../src/testImages","2.png",color=True)
-#
+#imageArray = load1Pixel("./../resources/img","preprocessed.png",binary=True)
+#colorImage = load1Pixel("./../resources/img","preprocessed.png",color=True)
+
 #boundingBoxes = generateBoudingBoxes(imageArray)
 #print(len(boundingBoxes))
 #for boundingBox in boundingBoxes:
