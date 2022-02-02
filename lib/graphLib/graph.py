@@ -106,14 +106,13 @@ class Graph:
     def getNeighbors(self, vertexId):
         vertexIndex = self.table.rows.index(vertexId)
         neighbors = []
-        for column in self.table.columns:
-            edge = self.table.getColumn(column)
-            if edge[vertexIndex] == 2:
-                neighbors.append(self.getVertex(self.table.rows[vertexIndex]))
-            elif edge[vertexIndex] == 1:
-                edge[vertexIndex] = 0
-                neighbors.append(self.getVertex(self.table.rows[edge.index(1)]))
-
+        for columnName in self.table.columns:
+            column = self.table.getColumn(columnName)
+            if column[vertexIndex] == 1:
+                for index in range(0,len(column)):
+                    if not index == vertexIndex:
+                        if column[index] == 1:
+                            neighbors.append(self.getVertex(self.table.rows[index]))
         return neighbors
 
     def getNeighborIds(self, vertexId):

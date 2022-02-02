@@ -23,7 +23,7 @@ class Capacitor(BaseComponent):
             position = intersectionVertex.attr["coordinates"]
             
             distance = dist(basePos,position)
-            distances.append((distance,position))
+            distances.append((distance,intersectionVertex))
 
         #sort distances
         mapings = map(lambda x: x[1], sorted(distances, key=lambda x:x[0]))
@@ -42,15 +42,24 @@ class Capacitor(BaseComponent):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
-        to1 = resistorVertex.attr["connectionMap"][0]
-        to2 = resistorVertex.attr["connectionMap"][1]
+        toVertex1 = resistorVertex.attr["connectionMap"][0]
+        toVertex2 = resistorVertex.attr["connectionMap"][1]
+
+        to1 = toVertex1.attr["coordinates"]
+        to2 = toVertex2.attr["coordinates"]
+
+        if toVertex1.color == "green":
+            to1 = [position[0]+(to1[0]-position[0])/2,position[1]+(to1[1]-position[1])/2]
+
+        if toVertex2.color == "green":
+            to2 = [position[0]+(to2[0]-position[0])/2,position[1]+(to2[1]-position[1])/2]
 
         if rotation == 0 or rotation == 180:
             text = "SYMBOL cap {x} {y} R90\n".format(x=int(position[0]+32),y=int(position[1]-16))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-32),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+32),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
-            text = "SYMBOL cap {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]+32))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-32),x2=int(to2[0]),y2=int(to2[1]))
-            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+32),x2=int(to1[0]),y2=int(to1[1]))
+            text = "SYMBOL cap {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-32))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-32),x2=int(to1[0]),y2=int(to1[1]))
+            text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+32),x2=int(to2[0]),y2=int(to2[1]))
         return text

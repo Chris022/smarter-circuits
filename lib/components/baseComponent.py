@@ -22,8 +22,6 @@ class BaseComponent(ABC):
 def getMeasurePoint(rotatonOffset, rotation,intersectionVertices):
     xPositions = fmap (lambda x: x.attr["coordinates"][0],intersectionVertices)
     yPositions = fmap (lambda x: x.attr["coordinates"][1],intersectionVertices)
-    print(xPositions)
-    print(yPositions)
     rot = rotatonOffset + rotation
 
     if      rot == 0:

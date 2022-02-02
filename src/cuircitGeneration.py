@@ -20,13 +20,13 @@ def recolorCap(graph):
 
 def toRelative(buildingPartDefinitons,graph):
     #get lenght of the longest resistor
-    len = 1000
+    len = -1
     for buildingPart in buildingPartDefinitons:
         vertices = buildingPart[2]
         rotation = buildingPart[1]
         type_ = buildingPart[0]
 
-        if type_ == CLASS_OBJECT_NAMES["gnd"]:
+        if not type_ == CLASS_OBJECT_NAMES["res"]:
             continue
         
         xVals = list(map(lambda v: v.attr["coordinates"][0],vertices))
@@ -35,20 +35,19 @@ def toRelative(buildingPartDefinitons,graph):
         xDist = max(xVals) - min(xVals)
         yDist = max(yVals) - min(yVals)
 
-
-        if rotation == 0 or rotation == 180:
-            if xDist < len and xDist < len:
+        if xDist > yDist:
+            if xDist > len:
                 len = xDist
         else:
-            if yDist < len and xDist < len:
+            if yDist > len:
                 len = yDist
 
-    print(len)
+
     #convert all coordinates to values, relative to the resistor
     for vertex in graph.ve.values():
         x = vertex.attr["coordinates"][0]
         y = vertex.attr["coordinates"][1]
-        vertex.attr["coordinates"] = [64*x/len,64*y/len]
+        vertex.attr["coordinates"] = [80*x/len,80*y/len]
     return graph
 
 def snapCoordinatesToGrid(graph):
@@ -69,10 +68,6 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         #get all intersections
         intersectionVertices = list (filter(lambda v: v.color == INTERSECTION_COLOR,vertices) )
 
-        #match LTSpice Model connections with graph Model connections
-        connectionMap = {}
-        connectionMap = CLASS_OBJECTS[type_].connect(rotation,intersectionVertices)
-
         #get center of the component
         xVals = list(map(lambda v: v.attr["coordinates"][0],vertices))
         yVals = list(map(lambda v: v.attr["coordinates"][1],vertices))
@@ -81,24 +76,76 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         yDist = max(yVals) - min(yVals)
         center = [min(xVals)+xDist/2,min(yVals)+yDist/2]
 
-        #delete all vertices of the component accept the intersection points, change type to edge for them!
-        for vertex in vertices:
+        for vertex in intersectionVertices:
             if vertex.color == INTERSECTION_COLOR:
-                vertex.color = CORNER_COLOR
-                continue
-            graph.deleteVertex(vertex.id)
-        #delete all green edges
-        edges = list(graph.ed.values())
-        for edge in edges:
-            if edge.color == OTHER_EDGE_COLOR:
-                graph.deleteEdge(edge.id)
-        #add UNCONECTED component Vertex
+                vertex.color = "purple"
+
         component = Vertex(
                 color=COMPONENT_COLOR,
                 label=type_,
-                attr={"connectionMap":connectionMap,"type":type_,"coordinates":center,"rotation":rotation}
-            )
-        graph.addVertex(component)
+                attr={"connectionMap":{},"type":type_,"coordinates":center,"rotation":rotation}
+        )
+        #group
+        graph.group(vertices,component)
+        
+
+    for vertex in graph.ve.values():
+        if not vertex.color == COMPONENT_COLOR: continue
+        rotation = vertex.attr["rotation"]
+        type_ = vertex.attr["type"]
+
+        #set Connection Map
+        #match LTSpice Model connections with graph Model connections
+        connectionMap = CLASS_OBJECTS[type_].connect(rotation,graph.getNeighbors(vertex.id))
+        vertex.attr["connectionMap"] = connectionMap
+
+    return graph
+
+
+def alignVertices(graph):
+    #pick Start Vertex
+    startVertex = None
+    for vertex in graph.ve.values():
+        if vertex.color == CORNER_COLOR:
+            startVertex = vertex
+            break
+
+    def traversial(graph,func,startV):
+        def recursiveTraversial(currentV, lastV):
+            if(not "passes" in currentV.attr.keys()): currentV.attr["passes"] = 0
+            if(currentV.attr["passes"] == 3): return
+            currentV.attr["passes"] += 1
+            currentV = func(currentV,lastV)
+            neighbors = graph.getNeighbors(currentV.id)
+            for neighbor in neighbors:
+                if neighbor == lastV: continue
+                #if "passes" in neighbor.attr.keys() and neighbor.attr["passes"] > currentV.attr["passes"]: continue
+                recursiveTraversial(neighbor,currentV)
+
+        recursiveTraversial(startV,startV)
+
+    def func(currentV,lastV):
+        #get main Direction
+        mainDir = "y"
+        c_xPos = currentV.attr["coordinates"][0]
+        c_yPos = currentV.attr["coordinates"][1]
+
+        l_xPos = lastV.attr["coordinates"][0]
+        l_yPos = lastV.attr["coordinates"][1]
+
+        mainDir =  "x" if abs(c_xPos - l_xPos) > abs(c_yPos - l_yPos) else "y"
+
+        #the other direction has to corrected
+        if mainDir == "x":
+            c_yPos = l_yPos
+
+        if mainDir == "y":
+            c_xPos = l_xPos
+
+        currentV.attr["coordinates"] = [c_xPos,c_yPos]
+        return currentV
+
+    traversial(graph,func,startVertex)
     return graph
 
 def insertConnectionNodes(graph):
@@ -106,9 +153,15 @@ def insertConnectionNodes(graph):
     #freeze graph
     frozenGraph = copy.deepcopy(graph)
     for edge in frozenGraph.ed.values():
-
         #get Vertices connected to Edge
         vertices = graph.getVerticesForEdge(edge.id)
+
+        #if one of the vertices is green -> ignore
+        f = False
+        for vertex in vertices:
+            if vertex.color == COMPONENT_COLOR:
+                f = True
+        if f: continue
 
         #insert Connection Vertex
         connection = Vertex(
@@ -139,7 +192,6 @@ def generateFile(graph,fileName):
         if not vertex.color == CONNECTION_COLOR: continue
         string += generateWire(vertex)
 
-
     file = open(fileName,"w")
     file.write(string)
     file.close()
@@ -150,9 +202,10 @@ def createLTSpiceFile(predictions,graph,fileName):
         map.append((predictions[i][2],predictions[i][3],predictions[i][1]))
     graph = recolorCap(graph)
     graph = toRelative(map,graph)
-    graph = snapCoordinatesToGrid(graph)
     graph = seperateBuildingPartsAndConnection(map,graph)
-    graph = insertConnectionNodes(graph)
-    generateFile(graph,fileName)
+
+    graph = alignVertices(graph)
+    generateFile(insertConnectionNodes(graph),fileName)
+    return graph
 
 
