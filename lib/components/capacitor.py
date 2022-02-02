@@ -3,9 +3,9 @@ from lib.components.baseComponent import BaseComponent,getMeasurePoint
 
 import drawSvg as draw
 
-#        |-------------|
-# #0-----|             |--------#1
-#        |-------------|
+#        |    |
+# #0-----|    |--------#1
+#        |    |
 class Capacitor(BaseComponent):
 
     @staticmethod

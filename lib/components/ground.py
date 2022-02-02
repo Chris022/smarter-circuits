@@ -39,7 +39,12 @@ class Ground(BaseComponent):
     @staticmethod
     def generate(groundVertex):
         position = groundVertex.attr["coordinates"]
-        to = groundVertex.attr["connectionMap"][0].attr["coordinates"]
+        toVertex = groundVertex.attr["connectionMap"][0]
+        to = toVertex.attr["coordinates"]
+
+        if toVertex.color == "green":
+            to = [position[0]+(to[0]-position[0])/2,position[1]+(to[1]-position[1])/2]
+
         text = "FLAG {x} {y} 0\n".format(x=int(position[0]),y=int(position[1]))
         text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]),x2=int(to[0]),y2=int(to[1]))
         return text

@@ -51,7 +51,7 @@ def toRelative(buildingPartDefinitons,graph):
     return graph
 
 def snapCoordinatesToGrid(graph):
-    gridSize = 32*1
+    gridSize = 16
     for vertex in graph.ve.values():
         x = math.floor(vertex.attr["coordinates"][0]/gridSize)*gridSize
         y = math.floor(vertex.attr["coordinates"][1]/gridSize)*gridSize
@@ -206,6 +206,7 @@ def createLTSpiceFile(predictions,graph,fileName):
     graph = toRelative(map,graph)
     graph = seperateBuildingPartsAndConnection(map,graph)
 
+    graph = snapCoordinatesToGrid(graph)
     graph = alignVertices(graph)
     generateFile(insertConnectionNodes(graph),fileName)
     return graph
