@@ -38,6 +38,27 @@ class Resistor(BaseComponent):
         return mapings
 
     @staticmethod
+    def getRotation(vertices, ROTATION_DICT):
+        intersections = []
+        for vertex in vertices:
+            if vertex.color == 'red':
+                intersections.append(vertex)
+        if len(intersections) > 2:
+            print('Too much intersections in resistor')
+        pos1 = intersections[0].attr['coordinates']
+        pos2 = intersections[1].attr['coordinates']
+
+        xDiff = abs(pos1[0]-pos2[0])
+        yDiff = abs(pos1[1]-pos2[1])
+
+        if xDiff > yDiff:
+            return ROTATION_DICT['left']
+        if yDiff > xDiff:
+            return ROTATION_DICT['up']
+
+        return -1
+
+    @staticmethod
     def draw(resistorVertex,wWidth,wHeight,d):
         resW = 1
         resH = 20

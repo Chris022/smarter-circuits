@@ -43,7 +43,7 @@ def toRelative(buildingPartDefinitons,graph):
             if yDist < len and xDist < len:
                 len = yDist
 
-    print(len)
+    #print(len)
     #convert all coordinates to values, relative to the resistor
     for vertex in graph.ve.values():
         x = vertex.attr["coordinates"][0]
@@ -63,8 +63,10 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
     #Get all the vertices connected to a building part
     for buildingPart in buildingPartDefinitons:
         vertices = buildingPart[2]
-        rotation = buildingPart[1]
+        #rotation = buildingPart[1]
         type_ = buildingPart[0]
+
+        rotation = CLASS_OBJECTS[type_].getRotation(vertices, ROTATION_DICT)
 
         #get all intersections
         intersectionVertices = list (filter(lambda v: v.color == INTERSECTION_COLOR,vertices) )
