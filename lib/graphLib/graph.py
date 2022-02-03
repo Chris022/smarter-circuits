@@ -290,6 +290,24 @@ class Graph:
         self.addEdge(Edge(),vertex1Id,insertionVertex.id)
         self.addEdge(Edge(),insertionVertex.id,vertex2Id)
 
+    def removeVertex(self,vertexId):
+        #get neighbors of vertex
+        neighborVertexIds  = self.getNeighborIds(vertexId)
+
+        #create connection from every neighbor -> to every neighbor
+        c = []
+        for fromNei in neighborVertexIds:
+            for toNei in neighborVertexIds:
+                #if "to" and "from" are the same, don't connect them
+                if fromNei == toNei: continue
+                if set([fromNei,toNei]) in c: continue
+                c.append(set([fromNei,toNei]))
+                #connect "from" with "to"
+                self.addEdge(Edge(),fromNei,toNei)
+
+        #delte the vector that has to be removed
+        self.deleteVertex(vertexId)
+
     def insertVertexByEdge(self,edgeId,insertionVertex):
         #get conneced Vertices for edge
         vertices = self.getVerticesForEdge(edgeId)
