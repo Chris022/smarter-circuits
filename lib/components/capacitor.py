@@ -1,5 +1,6 @@
-from math import dist
+from math import dist,hypot
 from lib.components.baseComponent import BaseComponent,getMeasurePoint
+from lib.components.ground import Ground
 from lib.constants import *
 from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
@@ -110,3 +111,87 @@ class Capacitor(BaseComponent):
         return cap
 
 
+    # Takes a Graph
+    # Searches the Graph for Grounds
+    # checks if the "center" of a Ground is close to the "center" of another
+    # It then checks if there is more than one other Note between the two Intersections (To avoid the connection of 2 close tougheter Caps)
+    # if they are, the two Intersections are replaced with Other-Notes
+    # and they get connected by a Other Line
+    # returns: the modified Graph
+    @staticmethod
+    def prePatternMatching(graph):
+        groundGraph = Ground().graphPattern()
+
+        # Match all ground Symbols
+        groundMatches = graph.getPatternMatches(groundGraph)
+
+        up = []
+        down = []
+        left = []
+        right = []
+        for groundMatchVertices in groundMatches:
+
+            intersectionVertex = None
+            for match in groundMatchVertices:
+                if match.color == INTERSECTION_COLOR:
+                    intersectionVertex = match
+
+            neighborVertices = graph.getNeighbors(intersectionVertex.id)
+
+            for neighborVertex in neighborVertices:
+                if not neighborVertex.color == 'blue':
+
+                    xOff = intersectionVertex.attr['coordinates'][0] - neighborVertex.attr['coordinates'][0]
+                    yOff = intersectionVertex.attr['coordinates'][1] - neighborVertex.attr['coordinates'][1]
+
+                    if abs(xOff) > abs(yOff):
+                        if xOff > 0:
+                            left.append(intersectionVertex)
+                        else:
+                            right.append(intersectionVertex)
+                    else:
+                        if yOff > 0:
+                            up.append(intersectionVertex)
+                        else:
+                            down.append(intersectionVertex)
+                    break
+
+        for lCap in left:
+            lCoord = lCap.attr['coordinates']
+
+            rCoord = right[0].attr['coordinates']
+            minDist = hypot(lCoord[0]-rCoord[0], lCoord[1]-rCoord[1])
+            minCap = right[0]
+
+            for rCap in right:
+                rCoord = rCap.attr['coordinates']
+                dist = hypot(lCoord[0]-rCoord[0], lCoord[1]-rCoord[1])
+
+                if dist < minDist and graph.adjacent(lCap.id, rCap.id) == False:
+                    minDist = dist
+                    minCap = rCap
+
+            lCap.color = OTHER_NODE_COLOR
+            minCap.color = OTHER_NODE_COLOR
+            graph.addEdge(Edge(color=OTHER_EDGE_COLOR),lCap.id, minCap.id)
+
+        for dCap in down:
+            dCoord = dCap.attr['coordinates']
+
+            uCoord = up[0].attr['coordinates']
+            minDist = hypot(dCoord[0]-uCoord[0], dCoord[1]-uCoord[1])
+            minCap = up[0]
+
+            for uCap in up:
+                uCoord = uCap.attr['coordinates']
+                dist = hypot(dCoord[0]-uCoord[0], dCoord[1]-uCoord[1])
+
+                if dist < minDist and graph.adjacent(dCap.id, uCap.id) == False:
+                    minDist = dist
+                    minCap = uCap
+
+            dCap.color = OTHER_NODE_COLOR
+            minCap.color = OTHER_NODE_COLOR
+            graph.addEdge(Edge(color=OTHER_EDGE_COLOR),dCap.id, minCap.id)
+
+        return graph

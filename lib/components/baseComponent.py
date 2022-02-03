@@ -24,6 +24,10 @@ class BaseComponent(ABC):
     def graphPattern():
         pass
 
+    @staticmethod
+    def prePatternMatching(graph):
+        return graph
+
 def getMeasurePoint(rotatonOffset, rotation,intersectionVertices):
     xPositions = fmap (lambda x: x.attr["coordinates"][0],intersectionVertices)
     yPositions = fmap (lambda x: x.attr["coordinates"][1],intersectionVertices)

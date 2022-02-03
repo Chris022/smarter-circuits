@@ -15,7 +15,6 @@ import igraph
 import lib.graphLib.graph as g
 from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
-import lib.graphLib.subisomorphismAlgorithm as algorithm
 
 import lib.graphProcessing as graphProcessing
 
@@ -46,21 +45,6 @@ def getAdjacentPixel(image,pixel,color,blacklist=[]):
 
     return validPixels
 
-def getDiagonalAdjacentPixel(image,pixel,color,blacklist=[]):
-    adjacentPixels = [  [-1,-1],[1,-1], \
-                        [-1,1], [1,1]   ]
-    #create a array with the coordinates of all adjacentPixels
-    validPixels = ([ pixel[0]+adj[0], pixel[1]+adj[1] ] for adj in adjacentPixels)
-    #filter all pixels that are not the right color
-    validPixels = list(
-        filter(lambda coords: image[coords[1]][coords[0]] == color,validPixels)
-    )
-    #filter all pixels that are in the blacklist
-    validPixels = list(
-        filter(lambda x: not x in blacklist, validPixels)
-    )
-
-    return validPixels
 
 # returns the coordinates of the first <color> pixel it finds
 # returns -1 if no staring point is found
@@ -70,27 +54,6 @@ def findStaringPoint(image,color):
             if image[y][x] == color:
                 return [x,y]
     return -1
-
-# Runs along line until it finds the first Intersection
-#
-# image      -> The image
-# startPoint -> Any random Point on the line
-# color      -> The color of the Line
-#def findFirstIntersection(image,startPoint,color):
-#
-#    def recursiveFindValidPoint(currentPixel,lastPixel,dir):
-#        adjacentPixels = getAdjacentPixel(image,currentPixel,color)
-#        if len(adjacentPixels) > 2:
-#            return currentPixel
-#        if len(adjacentPixels) == 1:
-#            return recursiveFindValidPoint(adjacentPixels[dir],currentPixel,-1)
-#        
-#        adjacentPixels = getAdjacentPixel(image,currentPixel,color,[lastPixel]) 
-#        #if there are no adjacentPixels(only relevant if there is a Pixel completely surrounded by white in the drawing) -> return it as a start point
-#        if len(adjacentPixels) == 0:
-#            return currentPixel
-#        return recursiveFindValidPoint(adjacentPixels[dir],currentPixel,dir)
-#    return recursiveFindValidPoint(startPoint,None,0)
 
 class DirGradient:
     def __init__(self):
@@ -235,24 +198,6 @@ def generatePartGraph(image,startPoint,color):
 
     return graph,visitedPixels
 
-#def generateGraphNew(image,startPoint):
-#
-#    visitedPixels = []
-#
-#    def traverse(currentPixel,lastPixel):
-#
-#        #end condition
-#        if currentPixel in visitedPixels:
-#            #TODO: add connection between Vertices
-#            return
-#
-#        adjacentPixel = getAdjacentPixel(image,currentPixel,FOREGROUND)
-#
-#        visitedPixels.append(currentPixel)
-#
-#        if len(adjacentPixel) == 1:
-#            pass
-
 
 def generateWholeGraph(image,foregroundColor,backgroundColor):
     graphCollection = []
@@ -269,142 +214,7 @@ def generateWholeGraph(image,foregroundColor,backgroundColor):
             break
     return g.union(graphCollection)
 
-#Returns a List of all the Node Colors in a Graph
-def getColorListNode(graph):
-    colorList = []
-    for vert in graph.ve:
-        if vert.color == "red":
-            colorList.append(0)
-        elif vert.color == "blue":
-            colorList.append(1)
-        elif vert.color == "yellow":
-            colorList.append(2)
-        elif vert.color == "white":
-            colorList.append(3)
-    return colorList
 
-#Returns a List of all the Edge Colors in a Graph
-def getColorListEdge(graph):
-    colorList = []
-    for edge in graph.ed:
-        try:
-            if edge.color == "red":
-                colorList.append(1)
-            elif edge.color == "blue":
-                colorList.append(2)
-            elif edge.color == "yellow":
-                colorList.append(3)
-            elif edge.color == "white":
-                colorList.append(4)
-            elif edge.color == "green":
-                colorList.append(5)
-            else:
-                colorList.append(0)
-        except:
-            colorList.append(0)
-    return colorList
-
-#Retuns a node by name
-def getNode(graph,name):
-    graph
-
-def getPatternMatches(graph,pattern):
-    mapings = algorithm.subisomorphism(graph, pattern)
-
-    mapings = list(map(lambda match: set(match), mapings))
-
-    
-    #remove duplicated
-    final = []
-    for i in mapings:
-        if i not in final:
-            final.append(i)
-    return list(map(lambda f: list(f), final))
-
-
-# Takes a Graph
-# Searches the Graph for Grounds
-# checks if the "center" of a Ground is close to the "center" of another
-# It then checks if there is more than one other Note between the two Intersections (To avoid the connection of 2 close tougheter Caps)
-# if they are, the two Intersections are replaced with Other-Notes
-# and they get connected by a Other Line
-# returns: the modified Graph
-def connectCapsTougehter(graph):
-    groundGraph = CLASS_OBJECTS["ground"].graphPattern()
-
-    # Match all ground Symbols
-    groundMatches = getPatternMatches(graph,groundGraph)
-
-    up = []
-    down = []
-    left = []
-    right = []
-    for groundMatchVertices in groundMatches:
-
-        intersectionVertex = None
-        for match in groundMatchVertices:
-            if match.color == INTERSECTION_COLOR:
-                intersectionVertex = match
-
-        neighborVertices = graph.getNeighbors(intersectionVertex.id)
-
-        for neighborVertex in neighborVertices:
-            if not neighborVertex.color == 'blue':
-
-                xOff = intersectionVertex.attr['coordinates'][0] - neighborVertex.attr['coordinates'][0]
-                yOff = intersectionVertex.attr['coordinates'][1] - neighborVertex.attr['coordinates'][1]
-
-                if abs(xOff) > abs(yOff):
-                    if xOff > 0:
-                        left.append(intersectionVertex)
-                    else:
-                        right.append(intersectionVertex)
-                else:
-                    if yOff > 0:
-                        up.append(intersectionVertex)
-                    else:
-                        down.append(intersectionVertex)
-                break
-
-    for lCap in left:
-        lCoord = lCap.attr['coordinates']
-
-        rCoord = right[0].attr['coordinates']
-        minDist = m.hypot(lCoord[0]-rCoord[0], lCoord[1]-rCoord[1])
-        minCap = right[0]
-
-        for rCap in right:
-            rCoord = rCap.attr['coordinates']
-            dist = m.hypot(lCoord[0]-rCoord[0], lCoord[1]-rCoord[1])
-
-            if dist < minDist and graph.adjacent(lCap.id, rCap.id) == False:
-                minDist = dist
-                minCap = rCap
-
-        lCap.color = OTHER_NODE_COLOR
-        minCap.color = OTHER_NODE_COLOR
-        graph.addEdge(Edge(color=OTHER_EDGE_COLOR),lCap.id, minCap.id)
-
-    for dCap in down:
-        dCoord = dCap.attr['coordinates']
-
-        uCoord = up[0].attr['coordinates']
-        minDist = m.hypot(dCoord[0]-uCoord[0], dCoord[1]-uCoord[1])
-        minCap = up[0]
-
-        for uCap in up:
-            uCoord = uCap.attr['coordinates']
-            dist = m.hypot(dCoord[0]-uCoord[0], dCoord[1]-uCoord[1])
-
-            if dist < minDist and graph.adjacent(dCap.id, uCap.id) == False:
-                minDist = dist
-                minCap = uCap
-
-        dCap.color = OTHER_NODE_COLOR
-        minCap.color = OTHER_NODE_COLOR
-        graph.addEdge(Edge(color=OTHER_EDGE_COLOR),dCap.id, minCap.id)
-
-    return graph
 
 
 # Takse a List of coordinates returns the coordinates of the upper left and lower right corner
@@ -423,14 +233,12 @@ def generateBoundingBox(verticesList,offset):
 def generateGraph(image):
      # Generate the Graph without the Cap connections
     union = generateWholeGraph(image,FOREGROUND,BACKGROUND)
-    # Connect Caps
-    union = connectCapsTougehter(union)
+    #call post Pattern Mathching
+    for classses in CLASS_OBJECTS.values():
+        union = classses.prePatternMatching(union)
     #combine close tougether vertices
     allVertices = list(union.ve.values())
-
-    #intersectionVertices
     intersectionVertices = list(filter(lambda x: x.color == INTERSECTION_COLOR,allVertices))
-
     union = graphProcessing.combineCloseVertices(union,intersectionVertices,INTERSECTION_COMBINATION_DIST)
     
     return union
@@ -439,7 +247,7 @@ def generateGraph(image):
 #   Tuble (boundingBoxCoordinates, matchingVertices)
 def getComponents(graph):
     patterns = list(map(lambda comp:comp.graphPattern(),CLASS_OBJECTS.values()))
-    matchingVertices = (getPatternMatches(graph, pattern) for pattern in patterns)
+    matchingVertices = (graph.getPatternMatches(pattern) for pattern in patterns)
     matches = sum(matchingVertices,[])
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,7),matches))
     components = zip(boundingBoxes,matches)
