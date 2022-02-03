@@ -73,10 +73,10 @@ class Capacitor(BaseComponent):
         to1 = toVertex1.attr["coordinates"]
         to2 = toVertex2.attr["coordinates"]
 
-        if toVertex1.color == "green":
+        if toVertex1.color == COMPONENT_COLOR:
             to1 = [position[0]+(to1[0]-position[0])/2,position[1]+(to1[1]-position[1])/2]
 
-        if toVertex2.color == "green":
+        if toVertex2.color == COMPONENT_COLOR:
             to2 = [position[0]+(to2[0]-position[0])/2,position[1]+(to2[1]-position[1])/2]
 
         if rotation == 0 or rotation == 180:

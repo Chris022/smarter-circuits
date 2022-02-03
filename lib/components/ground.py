@@ -47,7 +47,7 @@ class Ground(BaseComponent):
         toVertex = groundVertex.attr["connectionMap"][0]
         to = toVertex.attr["coordinates"]
 
-        if toVertex.color == "green":
+        if toVertex.color == COMPONENT_COLOR:
             to = [position[0]+(to[0]-position[0])/2,position[1]+(to[1]-position[1])/2]
 
         text = "FLAG {x} {y} 0\n".format(x=int(position[0]),y=int(position[1]))
