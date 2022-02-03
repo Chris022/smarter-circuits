@@ -1,7 +1,3 @@
-from lib.components.capacitor import Capacitor
-from lib.components.resistor import Resistor
-from lib.components.ground import Ground
-
 INTERSECTION_COLOR = "red"
 END_COLOR = "blue"
 
@@ -19,7 +15,7 @@ BACKGROUND = 255
 
 CLASS_NAMES = ['capacitor', 'ground', 'inductor', 'resistor', 'up', 'down', 'left', 'right']
 CLASS_OBJECT_NAMES = {"cap":'capacitor', "gnd":'ground', "ind":'inductor', "res":'resistor'}
-CLASS_OBJECTS = {"resistor":Resistor(),"ground":Ground(),"capacitor":Capacitor()}
+
 
 POSSIBLE_ROTATIONS = [0,90,180,270]
 

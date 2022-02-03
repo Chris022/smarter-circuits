@@ -6,6 +6,7 @@ from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
 
 from lib.constants import *
+from lib.components.componentCollection import CLASS_OBJECTS
 from lib.utils import convertToIgraph
 
 import igraph

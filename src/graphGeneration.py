@@ -21,6 +21,7 @@ import lib.graphProcessing as graphProcessing
 
 from lib.utils import getPixel,colorPixels,isOneColor
 from lib.constants import *
+from lib.components.componentCollection import CLASS_OBJECTS
 
 
 # Returns all Adjacent Pixels with a specific color
