@@ -1,5 +1,9 @@
 from math import dist
 from lib.components.baseComponent import BaseComponent,getMeasurePoint
+from lib.constants import *
+from lib.graphLib.vertex import Vertex
+from lib.graphLib.edge import Edge
+from lib.graphLib.graph import Graph
 
 import drawSvg as draw
 
@@ -84,3 +88,25 @@ class Capacitor(BaseComponent):
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-32),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+32),x2=int(to2[0]),y2=int(to2[1]))
         return text
+
+    @staticmethod
+    def graphPattern():
+        cap = Graph()
+        v1 = Vertex(color=END_COLOR)
+        v2 = Vertex(color=OTHER_NODE_COLOR)
+        v3 = Vertex(color=END_COLOR)
+        cap.addVertices([v1,v2,v3])
+        cap.addEdge(Edge(), v1.id, v2.id)
+        cap.addEdge(Edge(), v3.id, v2.id)
+
+        v4 = Vertex(color=END_COLOR)
+        v5 = Vertex(color=OTHER_NODE_COLOR)
+        v6 = Vertex(color=END_COLOR)
+        cap.addVertices([v4,v5,v6])
+        cap.addEdge(Edge(), v4.id, v5.id)
+        cap.addEdge(Edge(), v6.id, v5.id)
+
+        cap.addEdge(Edge(color=OTHER_EDGE_COLOR), v2.id, v5.id)
+        return cap
+
+

@@ -330,7 +330,7 @@ def getPatternMatches(graph,pattern):
 # and they get connected by a Other Line
 # returns: the modified Graph
 def connectCapsTougehter(graph):
-    groundGraph = groundPattern()
+    groundGraph = CLASS_OBJECTS["ground"].graphPattern()
 
     # Match all ground Symbols
     groundMatches = getPatternMatches(graph,groundGraph)
@@ -406,59 +406,6 @@ def connectCapsTougehter(graph):
 
     return graph
 
-# Ground Graph Patterns
-def groundPattern():
-    ground = g.Graph()
-    v1 = Vertex(color=END_COLOR)
-    v2 = Vertex(color=INTERSECTION_COLOR)
-    v3 = Vertex(color=END_COLOR)
-    ground.addVertex(v1)
-    ground.addVertex(v2)
-    ground.addVertex(v3)
-    ground.addEdge(Edge(), v1.id, v2.id)
-    ground.addEdge(Edge(), v3.id, v2.id)
-
-    return ground
-
-
-# Cap Graph Pattern
-def capPattern():
-    cap = g.Graph()
-    v1 = Vertex(color=END_COLOR)
-    v2 = Vertex(color=OTHER_NODE_COLOR)
-    v3 = Vertex(color=END_COLOR)
-    cap.addVertices([v1,v2,v3])
-    cap.addEdge(Edge(), v1.id, v2.id)
-    cap.addEdge(Edge(), v3.id, v2.id)
-
-    v4 = Vertex(color=END_COLOR)
-    v5 = Vertex(color=OTHER_NODE_COLOR)
-    v6 = Vertex(color=END_COLOR)
-    cap.addVertices([v4,v5,v6])
-    cap.addEdge(Edge(), v4.id, v5.id)
-    cap.addEdge(Edge(), v6.id, v5.id)
-
-    cap.addEdge(Edge(color=OTHER_EDGE_COLOR), v2.id, v5.id)
-    return cap
-
-# Resistor Graph Pattern
-def resistorPattern():
-    res = g.Graph()
-    v1 = Vertex(color=INTERSECTION_COLOR)
-    v2 = Vertex(color=CORNER_COLOR)
-    v3 = Vertex(color=CORNER_COLOR)
-    v4 = Vertex(color=INTERSECTION_COLOR)
-    v5 = Vertex(color=CORNER_COLOR)
-    v6 = Vertex(color=CORNER_COLOR)
-    res.addVertices([v1,v2,v3,v4,v5,v6])
-    res.addEdge(Edge(), v1.id, v2.id)
-    res.addEdge(Edge(), v2.id, v3.id)
-    res.addEdge(Edge(), v3.id, v4.id)
-    res.addEdge(Edge(), v4.id, v5.id)
-    res.addEdge(Edge(), v5.id, v6.id)
-    res.addEdge(Edge(), v6.id, v1.id)
-    
-    return res
 
 # Takse a List of coordinates returns the coordinates of the upper left and lower right corner
 def generateBoundingBox(verticesList,offset):
@@ -491,10 +438,7 @@ def generateGraph(image):
 #returns array of Tuples
 #   Tuble (boundingBoxCoordinates, matchingVertices)
 def getComponents(graph):
-    patterns =  [    capPattern(), \
-                resistorPattern(), \
-                groundPattern(), \
-            ]
+    patterns = list(map(lambda comp:comp.graphPattern(),CLASS_OBJECTS.values()))
     matchingVertices = (getPatternMatches(graph, pattern) for pattern in patterns)
     matches = sum(matchingVertices,[])
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,7),matches))
