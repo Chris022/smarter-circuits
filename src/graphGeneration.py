@@ -1,3 +1,4 @@
+from copy import deepcopy
 import sys
 sys.path.append('../')
 
@@ -44,6 +45,22 @@ def getAdjacentPixel(image,pixel,color,blacklist=[]):
 
     return validPixels
 
+def getDiagonalAdjacentPixel(image,pixel,color,blacklist=[]):
+    adjacentPixels = [  [-1,-1],[1,-1], \
+                        [-1,1], [1,1]   ]
+    #create a array with the coordinates of all adjacentPixels
+    validPixels = ([ pixel[0]+adj[0], pixel[1]+adj[1] ] for adj in adjacentPixels)
+    #filter all pixels that are not the right color
+    validPixels = list(
+        filter(lambda coords: image[coords[1]][coords[0]] == color,validPixels)
+    )
+    #filter all pixels that are in the blacklist
+    validPixels = list(
+        filter(lambda x: not x in blacklist, validPixels)
+    )
+
+    return validPixels
+
 # returns the coordinates of the first <color> pixel it finds
 # returns -1 if no staring point is found
 def findStaringPoint(image,color):
@@ -74,6 +91,57 @@ def findStaringPoint(image,color):
 #        return recursiveFindValidPoint(adjacentPixels[dir],currentPixel,dir)
 #    return recursiveFindValidPoint(startPoint,None,0)
 
+class DirGradient:
+    def __init__(self):
+        self.queueX = []
+        self.queueY = []
+
+    def addStep(self,currentPosition,lastPosition):
+        #get Direction
+        xDir = 0
+        yDir = 0
+
+        if currentPosition[0] - lastPosition[0] > 0:
+            xDir = 1
+        elif currentPosition[0] - lastPosition[0] < 0:
+            xDir = -1
+
+        if currentPosition[1] - lastPosition[1] > 0:
+            yDir = 1
+        elif currentPosition[1] - lastPosition[1] < 0:
+            yDir = -1
+
+        self.queueX.append(xDir)
+        self.queueY.append(yDir)
+    
+    def checkForEdge(self):
+        #only gives a valid answer if there are more than 10 previous values
+        if len(self.queueX) < 10: return False
+
+        cSumX = sum(self.queueX[-5:]) # the latest 5 X coordinates
+        cSumY = sum(self.queueY[-5:]) # the latest 5 Y coordinates
+        length = m.sqrt(cSumX**2 + cSumY**2)
+        currDir = (cSumX/length, cSumY/length)
+
+        
+        lSumX = sum(self.queueX[-10:-5]) # the 5 X coords 5 steps ago
+        lSumY = sum(self.queueY[-10:-5]) # the 5 Y coords 5 steps ago
+        length = m.sqrt(cSumX**2 + cSumY**2)
+        lastDir = (lSumX/length, lSumY/length)
+
+        dist = m.sqrt((currDir[0] - lastDir[0])**2 + (currDir[1] - lastDir[1])**2)
+
+        if dist <= 0.8:
+            return False
+
+        return True
+
+    def reset(self):
+        self.queueX = []
+        self.queueY = []
+
+
+
 # Converts one connected Line into a Graph
 #
 # startPoint  -> coordinates of a Intersection
@@ -85,39 +153,25 @@ def generatePartGraph(image,startPoint,color):
     #graph.add_vertex(str(startPoint), label=str(startPoint) ,color=INTERSECTION_COLOR)
     graph = g.Graph()
 
-    #check type of starting Vertex
+    #get white pixel adjacent!
     adjacentPixels = getAdjacentPixel(image,startPoint,color)
     if len(adjacentPixels) == 1:
         vertex = Vertex(color=END_COLOR, label=str(startPoint))
     elif len(adjacentPixels) == 2:
-        vertex = Vertex(color=CORNER_COLOR, label=str(startPoint))
+        vertex = Vertex(color=OTHER_NODE_COLOR, label=str(startPoint))
     else:
         vertex = Vertex(color=INTERSECTION_COLOR, label=str(startPoint))
     vertex.attr["coordinates"] = startPoint
     graph.addVertex(vertex)
     
-    def recursiveGenerateGraph(currentPixel,lastPixel,lastGraphNode,dirGradientOld):
-        dirGradient = list(dirGradientOld)
-        #get Direction
-        xDir = 0
-        yDir = 0
+    def recursiveGenerateGraph(currentPixel,lastPixel,lastGraphNode,oldDir):
 
-        if currentPixel[0] - lastPixel[0] > 0:
-            xDir = 1
-        elif currentPixel[0] - lastPixel[0] < 0:
-            xDir = -1
-
-        if currentPixel[1] - lastPixel[1] > 0:
-            yDir = 1
-        elif currentPixel[1] - lastPixel[1] < 0:
-            yDir = -1
-
-        dirGradient.append((xDir,yDir))
+        #create new copy of dir
+        dir = deepcopy(oldDir)
+        dir.addStep(currentPixel,lastPixel)
 
         #End Recursion if loop ends
         if currentPixel in visitedPixels:
-            #if len(graph.vs.select(name=str(currentPixel))):
-            #    graph.add_edge(str(lastGraphNode),str(currentPixel))
             if len(graph.verticesWithLabel(str(currentPixel))):
                 edge = Edge()
                 v1 = graph.verticesWithLabel(str(lastGraphNode))[0]
@@ -142,34 +196,19 @@ def generatePartGraph(image,startPoint,color):
 
         elif len(adjacentPixels) == 1:
             #LINE
-            if len(dirGradient) >= 10:
-                currDir = [sum(x) for x in zip(*dirGradient[-5:])]
-                length = m.sqrt(currDir[0]**2 + currDir[1]**2)
-                currDir = (currDir[0]/length, currDir[1]/length)
 
-                
-                lastDir = [sum(x) for x in zip(*dirGradient[-10:-5])]
-                length = m.sqrt(lastDir[0]**2 + lastDir[1]**2)
-                lastDir = (lastDir[0]/length, lastDir[1]/length)
-
-                dist = m.sqrt((currDir[0] - lastDir[0])**2 + (currDir[1] - lastDir[1])**2)
-
-                if dist > 0.8:
-                    #graph.add_vertex(str(currentPixel),label=str(currentPixel),color=CORNER_COLOR)
-                    #graph.add_edge(str(lastGraphNode),str(currentPixel))
-                    vertex = Vertex(color=CORNER_COLOR, label=str(currentPixel))
-                    vertex.attr["coordinates"] = currentPixel
-                    graph.addVertex(vertex)
-                    edge = Edge()
-                    v1 = graph.verticesWithLabel(str(lastGraphNode))[0]
-                    v2 = graph.verticesWithLabel(str(currentPixel))[0]
-                    graph.addEdge(edge,v1.id,v2.id)
-                    dirGradient = []
-                    recursiveGenerateGraph(adjacentPixels[0],currentPixel,str(currentPixel),dirGradient)
-                else:
-                    recursiveGenerateGraph(adjacentPixels[0],currentPixel,lastGraphNode,dirGradient)
+            if dir.checkForEdge():
+                vertex = Vertex(color=CORNER_COLOR, label=str(currentPixel))
+                vertex.attr["coordinates"] = currentPixel
+                graph.addVertex(vertex)
+                edge = Edge()
+                v1 = graph.verticesWithLabel(str(lastGraphNode))[0]
+                v2 = graph.verticesWithLabel(str(currentPixel))[0]
+                graph.addEdge(edge,v1.id,v2.id)
+                dir.reset()
+                recursiveGenerateGraph(adjacentPixels[0],currentPixel,str(currentPixel),dir)
             else:
-                recursiveGenerateGraph(adjacentPixels[0],currentPixel,lastGraphNode,dirGradient)
+                recursiveGenerateGraph(adjacentPixels[0],currentPixel,lastGraphNode,dir)
         else:
             #INTERSECTION
             if(str(currentPixel) != lastGraphNode):
@@ -182,11 +221,37 @@ def generatePartGraph(image,startPoint,color):
                 v1 = graph.verticesWithLabel(str(lastGraphNode))[0]
                 v2 = graph.verticesWithLabel(str(currentPixel))[0]
                 graph.addEdge(edge,v1.id,v2.id)
+            dir.reset()
             for adjacentPixel in adjacentPixels:
-                recursiveGenerateGraph(adjacentPixel,currentPixel,str(currentPixel),[])
+                recursiveGenerateGraph(adjacentPixel,currentPixel,str(currentPixel),dir)
 
-    recursiveGenerateGraph(startPoint,[0,0],str(startPoint),[])
+    recursiveGenerateGraph(startPoint,[0,0],str(startPoint),DirGradient())
+    #befor returning, remove all "OTHER_NOTHE_COLOR" vertices
+    clone = list(graph.ve.values())
+    for vertex in clone:
+        if vertex.color == OTHER_NODE_COLOR:
+            graph.removeVertex(vertex.id)
+
     return graph,visitedPixels
+
+#def generateGraphNew(image,startPoint):
+#
+#    visitedPixels = []
+#
+#    def traverse(currentPixel,lastPixel):
+#
+#        #end condition
+#        if currentPixel in visitedPixels:
+#            #TODO: add connection between Vertices
+#            return
+#
+#        adjacentPixel = getAdjacentPixel(image,currentPixel,FOREGROUND)
+#
+#        visitedPixels.append(currentPixel)
+#
+#        if len(adjacentPixel) == 1:
+#            pass
+
 
 def generateWholeGraph(image,foregroundColor,backgroundColor):
     graphCollection = []
