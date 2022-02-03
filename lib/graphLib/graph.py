@@ -4,6 +4,7 @@ import xml.etree.ElementTree as xml
 from lib.graphLib.edge import Edge
 from lib.graphLib.vertex import Vertex
 from lib.graphLib.table import Table
+import lib.graphLib.subisomorphismAlgorithm as algorithm
 
 
 class Graph:
@@ -321,6 +322,19 @@ class Graph:
         #add edges
         self.addEdge(Edge(),vertices[0].id,insertionVertex.id)
         self.addEdge(Edge(),insertionVertex.id,vertices[1].id)
+
+    def getPatternMatches(self,pattern):
+        mapings = algorithm.subisomorphism(self, pattern)
+
+        mapings = list(map(lambda match: set(match), mapings))
+
+
+        #remove duplicated
+        final = []
+        for i in mapings:
+            if i not in final:
+                final.append(i)
+        return list(map(lambda f: list(f), final))
 
 def union(graphList):
     union = graphList[0]

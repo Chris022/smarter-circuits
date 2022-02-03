@@ -1,4 +1,4 @@
-from lib.graphLib.graph import Graph,Vertex,Edge,Table
+from lib.graphLib.table import Table
 import copy
 
 
