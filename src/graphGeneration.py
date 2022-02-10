@@ -247,10 +247,23 @@ def generateGraph(image):
 #   Tuble (boundingBoxCoordinates, matchingVertices)
 def getComponents(graph):
     patterns = list(map(lambda comp:comp.graphPattern(),CLASS_OBJECTS.values()))
+    print(len(patterns))
+    #remove double patterins
+    filteredPatterns = []
+    for pattern in patterns:
+        isIn = False
+        for fp in filteredPatterns:
+            if len(pattern.getPatternMatches(fp)) > 0:
+                isIn = True
+        if not isIn:
+            filteredPatterns.append(pattern)
+    patterns = filteredPatterns
+    print(len(patterns))
     matchingVertices = (graph.getPatternMatches(pattern) for pattern in patterns)
     matches = sum(matchingVertices,[])
     boundingBoxes = list(map(lambda x: generateBoundingBox(x,7),matches))
     components = zip(boundingBoxes,matches)
+    print(components)
     return list(components)
 
 #imageArray = load1Pixel("./../resources/img","preprocessed.png",binary=True)

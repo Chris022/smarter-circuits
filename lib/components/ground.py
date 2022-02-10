@@ -42,7 +42,7 @@ class Ground(BaseComponent):
         ))
 
     @staticmethod
-    def generate(groundVertex):
+    def generate(groundVertex,counter):
         position = groundVertex.attr["coordinates"]
         toVertex = groundVertex.attr["connectionMap"][0]
         to = toVertex.attr["coordinates"]

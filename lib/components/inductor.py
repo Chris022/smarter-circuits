@@ -7,15 +7,13 @@ from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
 from lib.graphLib.graph import Graph
 
-import drawSvg as draw
-
 #        |-------------|
-# #0-----|             |--------#1
+# #0-----|=============|--------#1
 #        |-------------|
-class Resistor(BaseComponent):
+class Inductor(BaseComponent):
 
-    ltSpiceResistorWidth = 20
-    resistorHeight = 20
+    ltSpiceInductorWidth = 20
+    InductorHeight = 20
     relativityValue = 40
 
     @staticmethod
@@ -65,53 +63,52 @@ class Resistor(BaseComponent):
         return -1
 
     @staticmethod
-    def draw(resistorVertex,wWidth,wHeight,d):
+    def draw(inductorVertex,wWidth,wHeight,d):
         pass
 
     @staticmethod
-    def generate(resistorVertex,counter):
-        rotation = resistorVertex.attr["rotation"]
-        position = resistorVertex.attr["coordinates"]
+    def generate(inductorVertex, counter):
+        rotation = inductorVertex.attr["rotation"]
+        position = inductorVertex.attr["coordinates"]
 
-        toVertex1 = resistorVertex.attr["connectionMap"][0]
-        toVertex2 = resistorVertex.attr["connectionMap"][1]
+        toVertex1 = inductorVertex.attr["connectionMap"][0]
+        toVertex2 = inductorVertex.attr["connectionMap"][1]
 
         to1 = toVertex1.attr["coordinates"]
         to2 = toVertex2.attr["coordinates"]
 
-        if toVertex1.color == COMPONENT_COLOR:
+        if toVertex1.color == "green":
             to1 = [position[0]+(to1[0]-position[0])/2,position[1]+(to1[1]-position[1])/2]
 
-        if toVertex2.color == COMPONENT_COLOR:
+        if toVertex2.color == "green":
             to2 = [position[0]+(to2[0]-position[0])/2,position[1]+(to2[1]-position[1])/2]
 
         if rotation == 0 or rotation == 180:
-            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]-16))
-            text += "SYMATTR InstName R{n}\n".format(n=counter)
+            text = "SYMBOL ind {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]-16))
+            text += "SYMATTR InstName L{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-40),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+40),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
-            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-56))
-            text += "SYMATTR InstName R{n}\n".format(n=counter)
+            text = "SYMBOL ind {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-56))
+            text += "SYMATTR InstName L{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-40),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to2[0]),y2=int(to2[1]))
         return text
 
     @staticmethod
     def graphPattern():
-        res = Graph()
+        ind = Graph()
         v1 = Vertex(color=INTERSECTION_COLOR)
         v2 = Vertex(color=CORNER_COLOR)
         v3 = Vertex(color=CORNER_COLOR)
         v4 = Vertex(color=INTERSECTION_COLOR)
         v5 = Vertex(color=CORNER_COLOR)
         v6 = Vertex(color=CORNER_COLOR)
-        res.addVertices([v1,v2,v3,v4,v5,v6])
-        res.addEdge(Edge(), v1.id, v2.id)
-        res.addEdge(Edge(), v2.id, v3.id)
-        res.addEdge(Edge(), v3.id, v4.id)
-        res.addEdge(Edge(), v4.id, v5.id)
-        res.addEdge(Edge(), v5.id, v6.id)
-        res.addEdge(Edge(), v6.id, v1.id)
-
-        return res
+        ind.addVertices([v1,v2,v3,v4,v5,v6])
+        ind.addEdge(Edge(), v1.id, v2.id)
+        ind.addEdge(Edge(), v2.id, v3.id)
+        ind.addEdge(Edge(), v3.id, v4.id)
+        ind.addEdge(Edge(), v4.id, v5.id)
+        ind.addEdge(Edge(), v5.id, v6.id)
+        ind.addEdge(Edge(), v6.id, v1.id)
+        return ind
