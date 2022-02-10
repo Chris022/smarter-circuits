@@ -64,7 +64,7 @@ class Capacitor(BaseComponent):
         pass
 
     @staticmethod
-    def generate(resistorVertex):
+    def generate(resistorVertex,counter):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
@@ -82,10 +82,12 @@ class Capacitor(BaseComponent):
 
         if rotation == 0 or rotation == 180:
             text = "SYMBOL cap {x} {y} R90\n".format(x=int(position[0]+32),y=int(position[1]-16))
+            text += "SYMATTR InstName C{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-32),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+32),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
             text = "SYMBOL cap {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-32))
+            text += "SYMATTR InstName C{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-32),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+32),x2=int(to2[0]),y2=int(to2[1]))
         return text

@@ -67,7 +67,6 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         type_ = buildingPart[0]
 
         rotation = CLASS_OBJECTS[type_].getRotation(vertices, ROTATION_DICT)
-
         #get all intersections
         intersectionVertices = list (filter(lambda v: v.color == INTERSECTION_COLOR,vertices) )
 
@@ -78,10 +77,6 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         xDist = max(xVals) - min(xVals)
         yDist = max(yVals) - min(yVals)
         center = [min(xVals)+xDist/2,min(yVals)+yDist/2]
-
-        for vertex in intersectionVertices:
-            if vertex.color == INTERSECTION_COLOR:
-                vertex.color = "purple"
 
         component = Vertex(
                 color=COMPONENT_COLOR,
@@ -179,6 +174,10 @@ def insertConnectionNodes(graph):
     return graph
 
 def generateFile(graph,fileName):
+    counter = {}
+    for key in CLASS_OBJECTS:
+        counter.update({key:0})
+
     width,height = 1000,1000
     def generateWire(connectionVertex):
         from_ = connectionVertex.attr["from"]
@@ -189,8 +188,8 @@ def generateFile(graph,fileName):
     string = "Version 4\nSHEET 1 {w} {h}\n".format(w=width,h=height)
     for vertex in graph.ve.values():
         if not vertex.color == COMPONENT_COLOR: continue
-        string += CLASS_OBJECTS[vertex.attr["type"]].generate(vertex)
-
+        string += CLASS_OBJECTS[vertex.attr["type"]].generate(vertex, counter[vertex.attr["type"]])
+        counter[vertex.attr["type"]] += 1
     for vertex in graph.ve.values():
         if not vertex.color == CONNECTION_COLOR: continue
         string += generateWire(vertex)
