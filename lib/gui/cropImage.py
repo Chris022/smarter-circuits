@@ -34,6 +34,25 @@ class CropImage():
         return [((int)(x_left), (int)(y_top)), ((int)(x_right), (int)(y_bot))]
 
     def draw_crop(self):
+
+        if self.crop_start[0] < 0:
+            self.crop_start = (0, self.crop_start[1])
+        if self.crop_start[1] < 0:
+            self.crop_start = (self.crop_start[0], 0)
+        if self.crop_end[0] < 0:
+            self.crop_end = (0, self.crop_end[1])
+        if self.crop_end[1] < 0:
+            self.crop_end = (self.crop_end[0], 0)
+
+        if self.crop_start[0] > self.tkImg.width():
+            self.crop_start = (self.tkImg.width(), self.crop_start[1])
+        if self.crop_start[1] > self.tkImg.height():
+            self.crop_start = (self.crop_start[0], self.tkImg.height())
+        if self.crop_end[0] > self.tkImg.width():
+            self.crop_end = (self.tkImg.width(), self.crop_end[1])
+        if self.crop_end[1] > self.tkImg.height():
+            self.crop_end = (self.crop_end[0], self.tkImg.height())
+
         for rect in self.rects:
             self.canvas.delete(rect)
 
@@ -99,6 +118,7 @@ class CropImage():
         self.image_offset = ((int)(self.canvas_width/2-self.tkImg.width()/2), (int)(self.canvas_height/2-self.tkImg.height()/2))
         self.draw_crop()
 
+
     def remove(self):
          self.canvas.grid_remove()
          return self.convert_coord()
@@ -114,6 +134,7 @@ class CropImage():
         #print(event)
         self.cropped = True
         self.crop_start = (event.x-self.image_offset[0], event.y-self.image_offset[1])
+        
         self.pressed = True
         pass
 
