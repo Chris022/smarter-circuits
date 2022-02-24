@@ -65,6 +65,17 @@ class Resistor(BaseComponent):
         return -1
 
     @staticmethod
+    def prePatternMatching(graph):
+        copy = list(graph.ve.values())
+        for ve in copy:
+            if ve.color == INTERSECTION_COLOR:
+                for neib in graph.getNeighbors(ve.id):
+                    if neib.color == END_COLOR:
+                        graph.deleteVertex(neib.id)
+                        ve.color = CORNER_COLOR
+        return graph
+
+    @staticmethod
     def draw(resistorVertex,wWidth,wHeight,d):
         pass
 

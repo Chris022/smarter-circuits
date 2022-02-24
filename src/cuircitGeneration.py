@@ -10,7 +10,7 @@ from lib.components.componentCollection import CLASS_OBJECTS
 from lib.utils import convertToIgraph
 
 import igraph
-import copy
+from copy import deepcopy
 import math
 
 def recolorCap(graph):
@@ -66,9 +66,17 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         #rotation = buildingPart[1]
         type_ = buildingPart[0]
 
-        rotation = CLASS_OBJECTS[type_].getRotation(vertices, ROTATION_DICT)
-        #get all intersections
-        intersectionVertices = list (filter(lambda v: v.color == INTERSECTION_COLOR,vertices) )
+        newGraph = deepcopy(graph)
+        newGraph = CLASS_OBJECTS[type_].prePatternMatching(newGraph)
+
+        newVertices = []
+        for vertex in vertices:
+            try:
+                newVertices.append(newGraph.getVertex(vertex.id))
+            except:
+                pass
+
+        rotation = CLASS_OBJECTS[type_].getRotation(newVertices, ROTATION_DICT)
 
         #get center of the component
         xVals = list(map(lambda v: v.attr["coordinates"][0],vertices))
@@ -85,6 +93,12 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         )
         #group
         graph.group(vertices,component)
+
+    #remove all End points
+    copy = list(graph.ve.values())
+    for vertex in copy:
+        if vertex.color == END_COLOR:
+            graph.deleteVertex(vertex.id)
         
 
     for vertex in graph.ve.values():
@@ -149,7 +163,7 @@ def alignVertices(graph):
 def insertConnectionNodes(graph):
     #for every Edge
     #freeze graph
-    frozenGraph = copy.deepcopy(graph)
+    frozenGraph = deepcopy(graph)
     for edge in frozenGraph.ed.values():
         #get Vertices connected to Edge
         vertices = graph.getVerticesForEdge(edge.id)

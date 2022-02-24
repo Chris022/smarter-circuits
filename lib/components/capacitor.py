@@ -121,7 +121,7 @@ class Capacitor(BaseComponent):
     # and they get connected by a Other Line
     # returns: the modified Graph
     @staticmethod
-    def prePatternMatching(graph):
+    def graphModification(graph):
         groundGraph = Ground().graphPattern()
 
         # Match all ground Symbols
