@@ -11,14 +11,7 @@ class CropImage():
 
         self.position = position
 
-        self.rects = []
-
-        self.pressed = None
-        self.cropped = False
-
         self.canvas = Canvas(root)
-
-        self.image_offset = (0,0)
 
         self.canvas.bind('<Motion>', self.motion)
         self.canvas.bind('<Button>', self.button_pressed)
@@ -70,6 +63,14 @@ class CropImage():
         self.canvas.update()
 
     def add(self, original_image):
+
+        self.rects = []
+
+        self.pressed = None
+        self.cropped = False
+
+        self.image_offset = (0,0)
+
         self.original_image = original_image
 
         self.image_width = len(original_image[0])
@@ -109,6 +110,8 @@ class CropImage():
             self.tkImg = convert_to_tkImg(resized_image)
         self.canvas.itemconfig(self.image_on_canvas, image=self.tkImg)
 
+        self.factor = factor
+
         if self.cropped == False:
             self.crop_end = (self.tkImg.width(), self.tkImg.height()-1)
         else:
@@ -120,14 +123,34 @@ class CropImage():
 
 
     def remove(self):
-         self.canvas.grid_remove()
-         return self.convert_coord()
+        self.canvas.place_forget()
+        top, bot = self.convert_coord()
+
+        for rect in self.rects:
+            self.canvas.delete(rect)
+
+        #print(self.factor)
+        #print(self.original_image.shape)
+        #print(top)
+        #print(bot)
+        top = ((int)(top[0]/self.factor), (int)(top[1]/self.factor))
+        bot = ((int)(bot[0]/self.factor), (int)(bot[1]/self.factor))
+        #print(top)
+        #print(bot)
+
+        crop_img = self.original_image[top[1]:bot[1], top[0]:bot[0]]
+
+        #cv2.imwrite("test.png", crop_img)
+
+        return crop_img
+
 
     def motion(self, event):
         #print(event)
         if self.pressed:
             self.crop_end = (event.x-self.image_offset[0], event.y-self.image_offset[1])
             self.draw_crop()
+            #print(self.crop_end)
         pass
 
     def button_pressed(self, event):
