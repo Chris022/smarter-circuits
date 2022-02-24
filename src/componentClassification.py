@@ -6,7 +6,7 @@ from tensorflow.keras import layers, models
 
 import numpy as np
 import cv2
-from lib.constants import CLASS_NAMES, ROTATION_DICT
+from lib.constants import CLASS_NAMES#, ROTATION_DICT
 
 model = None
 
@@ -32,9 +32,10 @@ def predict(box, image):
     component = convertImg(image[box[0][1]:box[1][1], box[0][0]:box[1][0]]).reshape(-1,32,32,1)
     model_prediction = model.predict(component)[0]
 
-    prediction = [CLASS_NAMES[np.argmax(model_prediction[:-4])],CLASS_NAMES[-4:][np.argmax(model_prediction[-4:])]]
+    prediction = (CLASS_NAMES[np.argmax(model_prediction)])
+    #prediction = [CLASS_NAMES[np.argmax(model_prediction[:-4])],CLASS_NAMES[-4:][np.argmax(model_prediction[-4:])]]
 
-    return prediction[0], ROTATION_DICT[prediction[1]]
+    return prediction#[0], ROTATION_DICT[prediction[1]]
 
 def classify(boxes, image):
     global model
@@ -50,8 +51,8 @@ def classify(boxes, image):
 
     for prediction in modelPredictions:
         
-        predictions.append([CLASS_NAMES[np.argmax(prediction[:-4])],CLASS_NAMES[-4:][np.argmax(prediction[-4:])]])
+        predictions.append(CLASS_NAMES[np.argmax(prediction)])
+        #predictions.append([CLASS_NAMES[np.argmax(prediction[:-4])],CLASS_NAMES[-4:][np.argmax(prediction[-4:])]])
 
-        #predictions.append(class_names[np.argmax(prediction)])
 
     return predictions

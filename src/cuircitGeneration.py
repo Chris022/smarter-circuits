@@ -23,8 +23,8 @@ def toRelative(buildingPartDefinitons,graph):
     #get lenght of the longest resistor
     len = -1
     for buildingPart in buildingPartDefinitons:
-        vertices = buildingPart[2]
-        rotation = buildingPart[1]
+        vertices = buildingPart[1]
+        #rotation = buildingPart[1]
         type_ = buildingPart[0]
 
         if not type_ == CLASS_OBJECT_NAMES["res"]:
@@ -62,7 +62,7 @@ def snapCoordinatesToGrid(graph):
 def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
     #Get all the vertices connected to a building part
     for buildingPart in buildingPartDefinitons:
-        vertices = buildingPart[2]
+        vertices = buildingPart[1]
         #rotation = buildingPart[1]
         type_ = buildingPart[0]
 
@@ -215,7 +215,8 @@ def generateFile(graph,fileName):
 def createLTSpiceFile(predictions,graph,fileName):
     map = []
     for i in range(0, len(predictions)):
-        map.append((predictions[i][2],predictions[i][3],predictions[i][1]))
+        #map.append((predictions[i][2],predictions[i][3],predictions[i][1]))
+        map.append((predictions[i][2],predictions[i][1]))
     graph = recolorCap(graph)
     graph = toRelative(map,graph)
     graph = seperateBuildingPartsAndConnection(map,graph)
