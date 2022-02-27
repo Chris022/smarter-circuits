@@ -4,7 +4,7 @@ import xml.etree.ElementTree as xml
 from lib.graphLib.edge import Edge
 from lib.graphLib.vertex import Vertex
 from lib.graphLib.table import Table
-import lib.graphLib.subisomorphismAlgorithm as algorithm
+import lib.graphLib.subisomorphismAlgorithmV2 as algorithm
 
 
 class Graph:
@@ -324,7 +324,7 @@ class Graph:
         self.addEdge(Edge(),insertionVertex.id,vertices[1].id)
 
     def getPatternMatches(self,pattern):
-        mapings = algorithm.subisomorphism(self, pattern)
+        mapings = algorithm.ulmansSubgraph(self, pattern)
 
         mapings = list(map(lambda match: set(match), mapings))
 
@@ -335,6 +335,31 @@ class Graph:
             if i not in final:
                 final.append(i)
         return list(map(lambda f: list(f), final))
+
+    def getAdjacencyMatrix(self):
+        #generate empty Matrix
+        vertices = list(map(lambda v: v.id,self.ve.values()))
+        matrix = Table.withColumnsAndRows(vertices,vertices)
+
+        #for every Row and Column
+        for i in vertices:
+            for j in vertices:
+
+                #ignore if they are the same
+                if i == j:
+                    continue
+
+                #else get the rows in the incidence matrix
+                rowI = self.table.getRow(i)
+                rowJ = self.table.getRow(j)
+
+                newrow = [a*b for a,b in zip(rowI,rowJ)]
+
+                sumrow = sum(newrow)
+
+                matrix.setValue(i,j,sumrow)
+
+        return matrix
 
 def union(graphList):
     union = graphList[0]
