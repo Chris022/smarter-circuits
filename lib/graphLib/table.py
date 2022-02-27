@@ -13,6 +13,16 @@ class Table:
         for column in columns:
             obj.addColumn(column)
         return obj
+
+    @classmethod
+    def withColumnsAndRowsAndValues(cls,rows,columns,values):
+        obj = cls()
+        for row in rows:
+            obj.addRow(row)
+        for column in columns:
+            obj.addColumn(column)
+        obj.values = values
+        return obj
         
                 
     # Adds a row to the Table
