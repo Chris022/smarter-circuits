@@ -90,8 +90,6 @@ def outerRecurse(heystack,needle,matrix):
 
             #check if matrix is a isomorphism:
             if checkIsIsomorphism(heystack,needle,matrix):
-                print(matrix)
-                print("--------------------------")
                 possibleMappings.append(matrix)
                 #output yes and end the algorithm
                 return matrix
