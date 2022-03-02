@@ -9,10 +9,10 @@ class BaseComponent(ABC):
     def connect(rotation,intersectionVertices):
         pass
 
-    @staticmethod
-    @abstractmethod
-    def draw(vertex,rel,wWidth,wHeight,d):
-        pass
+    #@staticmethod
+    #@abstractmethod
+    #def draw(vertex,rel,wWidth,wHeight,d):
+    #    pass
 
     @staticmethod
     @abstractmethod

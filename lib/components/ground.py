@@ -23,23 +23,6 @@ class Ground(BaseComponent):
     @staticmethod
     def getRotation(vertices, ROTATION_DICT):
         return ROTATION_DICT['up']
-    
-    @staticmethod
-    def draw(groundVertex,wWidth,wHeight,d):
-
-        groundSize = 15
-        position = groundVertex.attr["connectionMap"][0]
-
-        d.append(draw.Lines(
-            position[0]             ,wHeight-position[1], 
-            position[0]-groundSize  ,wHeight-position[1]
-            ,stroke="#ff4477"
-        ))
-        d.append(draw.Lines(
-            position[0]             ,wHeight-position[1],
-            position[0]+groundSize  ,wHeight-position[1],
-            stroke="#ff4477"
-        ))
 
     @staticmethod
     def generate(groundVertex,counter):

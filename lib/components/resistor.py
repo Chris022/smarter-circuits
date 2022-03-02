@@ -76,10 +76,6 @@ class Resistor(BaseComponent):
         return graph
 
     @staticmethod
-    def draw(resistorVertex,wWidth,wHeight,d):
-        pass
-
-    @staticmethod
     def generate(resistorVertex,counter):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]

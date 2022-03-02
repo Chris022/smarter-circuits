@@ -59,9 +59,6 @@ class Capacitor(BaseComponent):
 
         return -1
 
-    @staticmethod
-    def draw(capacitorVertex,wWidth,wHeight,d):
-        pass
 
     @staticmethod
     def generate(resistorVertex,counter):

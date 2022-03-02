@@ -63,10 +63,6 @@ class Inductor(BaseComponent):
         return -1
 
     @staticmethod
-    def draw(inductorVertex,wWidth,wHeight,d):
-        pass
-
-    @staticmethod
     def generate(inductorVertex, counter):
         rotation = inductorVertex.attr["rotation"]
         position = inductorVertex.attr["coordinates"]
