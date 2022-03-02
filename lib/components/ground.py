@@ -1,6 +1,5 @@
 from lib.utils import fmap
 from math import dist
-import drawSvg as draw
 
 from lib.constants import *
 from lib.graphLib.vertex import Vertex
@@ -14,18 +13,18 @@ from lib.components.baseComponent import BaseComponent
 #             |
 class Ground(BaseComponent):
 
-    @staticmethod
-    def connect(rotation,intersectionVertices):
+    @classmethod
+    def connect(cls,rotation,intersectionVertices):
         mapings = {0: intersectionVertices[0] }
 
         return mapings
     
-    @staticmethod
-    def getRotation(vertices, ROTATION_DICT):
+    @classmethod
+    def getRotation(cls,vertices, ROTATION_DICT):
         return ROTATION_DICT['up']
 
-    @staticmethod
-    def toLTSpice(groundVertex,counter):
+    @classmethod
+    def toLTSpice(cls,groundVertex,counter):
         position = groundVertex.attr["coordinates"]
         toVertex = groundVertex.attr["connectionMap"][0]
         to = toVertex.attr["coordinates"]
@@ -37,8 +36,8 @@ class Ground(BaseComponent):
         text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]),x2=int(to[0]),y2=int(to[1]))
         return text
 
-    @staticmethod
-    def graphPattern():
+    @classmethod
+    def graphPattern(cls):
         ground = Graph()
         v1 = Vertex(color=END_COLOR)
         v2 = Vertex(color=INTERSECTION_COLOR)

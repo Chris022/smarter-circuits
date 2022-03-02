@@ -6,15 +6,13 @@ from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
 from lib.graphLib.graph import Graph
 
-import drawSvg as draw
-
 #        |    |
 # #0-----|    |--------#1
 #        |    |
 class Capacitor(BaseComponent):
 
-    @staticmethod
-    def connect(rotation,intersectionVertices):
+    @classmethod
+    def connect(cls,rotation,intersectionVertices):
         if rotation == 0 or 180:
             rotation = 0
         else:
@@ -38,8 +36,8 @@ class Capacitor(BaseComponent):
         
         return mapings
 
-    @staticmethod
-    def getRotation(vertices, ROTATION_DICT):
+    @classmethod
+    def getRotation(cls,vertices, ROTATION_DICT):
         intersections = []
         for vertex in vertices:
             if vertex.color != 'blue' and vertex.color != 'yellow':
@@ -60,8 +58,8 @@ class Capacitor(BaseComponent):
         return -1
 
 
-    @staticmethod
-    def toLTSpice(resistorVertex,counter):
+    @classmethod
+    def toLTSpice(cls,resistorVertex,counter):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
@@ -89,8 +87,8 @@ class Capacitor(BaseComponent):
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+32),x2=int(to2[0]),y2=int(to2[1]))
         return text
 
-    @staticmethod
-    def graphPattern():
+    @classmethod
+    def graphPattern(cls):
         cap = Graph()
         v1 = Vertex(color=END_COLOR)
         v2 = Vertex(color=OTHER_NODE_COLOR)
@@ -117,8 +115,8 @@ class Capacitor(BaseComponent):
     # if they are, the two Intersections are replaced with Other-Notes
     # and they get connected by a Other Line
     # returns: the modified Graph
-    @staticmethod
-    def graphModification(graph):
+    @classmethod
+    def graphModification(cls,graph):
         groundGraph = Ground().graphPattern()
 
         # Match all ground Symbols

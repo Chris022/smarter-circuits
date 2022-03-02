@@ -7,15 +7,14 @@ from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
 from lib.graphLib.graph import Graph
 
-import drawSvg as draw
 
 #        |-------------|
 # #0-----|-------------|--------#1
 #        |-------------|
 class Voltage(BaseComponent):
 
-    @staticmethod
-    def connect(rotation,intersectionVertices):
+    @classmethod
+    def connect(cls,rotation,intersectionVertices):
         if rotation == 0 or 180:
             rotation = 0
         else:
@@ -39,8 +38,8 @@ class Voltage(BaseComponent):
         
         return mapings
 
-    @staticmethod
-    def getRotation(vertices, ROTATION_DICT):
+    @classmethod
+    def getRotation(cls,vertices, ROTATION_DICT):
         intersections = []
         for vertex in vertices:
             if vertex.color == 'red':
@@ -60,12 +59,8 @@ class Voltage(BaseComponent):
 
         return -1
 
-    @staticmethod
-    def prePatternMatching(graph):
-        return graph
-
-    @staticmethod
-    def toLTSpice(resistorVertex,counter):
+    @classmethod
+    def toLTSpice(cls,resistorVertex,counter):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 
@@ -93,8 +88,8 @@ class Voltage(BaseComponent):
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to2[0]),y2=int(to2[1]))
         return text
 
-    @staticmethod
-    def graphPattern():
+    @classmethod
+    def graphPattern(cls):
         res = Graph()
         v1 = Vertex(color=INTERSECTION_COLOR)
         v2 = Vertex(color=INTERSECTION_COLOR)

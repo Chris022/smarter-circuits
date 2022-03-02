@@ -1,35 +1,34 @@
 from abc import ABC, abstractmethod
 from lib.utils import fmap
 
-
 class BaseComponent(ABC):
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def connect(rotation,intersectionVertices):
+    def connect(cls,rotation,intersectionVertices):
         pass
 
 
     # Functon that generates the LT-Spice Code for the Component and returns it as a string
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def toLTSpice(vertex):
+    def toLTSpice(cls,vertex):
         pass
 
     # Graph-Pattern of the Component
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def graphPattern():
+    def graphPattern(cls):
         pass
 
     # Gets called before Pattern mathing, does not change the original Graph!
-    @staticmethod
-    def prePatternMatching(graph):
+    @classmethod
+    def prePatternMatching(cls,graph):
         return graph
 
     # Gets called when the Graph is generated, does change the original Graph!
-    @staticmethod
-    def graphModification(graph):
+    @classmethod
+    def graphModification(cls,graph):
         return graph
 
     #takes a graph and returns a list of Lists with Vertices that belong to a occurrence of the component
