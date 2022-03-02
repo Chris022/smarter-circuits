@@ -74,7 +74,12 @@ class DetectCircuit():
 
         graph = cg.createLTSpiceFile(predictions,graph,"./out.asc")
 
-    def resize(self, img):
+    def resize(self, *arg):
+
+        img = self.original_image
+
+        if len(arg) != 0:
+            img = arg[0]
 
         self.canvas_width = self.canvas.winfo_width()
         self.canvas_height = self.canvas.winfo_height()
@@ -97,5 +102,6 @@ class DetectCircuit():
 
     def remove(self):
         self.canvas.place_forget()
+        self.detect.place_forget()
 
         return -1

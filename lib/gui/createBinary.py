@@ -52,6 +52,8 @@ class CreateBinary():
     def add(self, image):
         self.original_image = image
 
+        self.binary_image = (thresh, self.binary_image) = cv2.threshold(self.original_image, 127, 255, cv2.THRESH_BINARY)
+
         self.image_offset = (0,0)
 
         self.image_width = len(image[0])
@@ -79,7 +81,13 @@ class CreateBinary():
     def reset_image(self):
         self.resize(self.original_image)
 
-    def resize(self, img):
+    def resize(self, *arg):
+
+        img = self.binary_image
+
+        if len(arg) != 0:
+            img = arg[0]
+
 
         self.canvas_width = self.canvas.winfo_width()
         self.canvas_height = self.canvas.winfo_height()

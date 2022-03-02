@@ -99,12 +99,12 @@ class CropImage():
         factor = 1
 
         if self.image_width > self.image_height:
-            factor = self.canvas_width/self.tkImg.width()
+            factor = self.canvas_width/len(self.original_image)[0]
             k = self.image_height * (self.canvas_width/self.image_width)
             resized_image = cv2.resize(self.original_image, ((int)(self.canvas_width),(int)(k)), interpolation=cv2.INTER_AREA)
             self.tkImg = convert_to_tkImg(resized_image)
         else:
-            factor = self.canvas_height/self.tkImg.height()
+            factor = self.canvas_height/len(self.original_image)
             k = self.image_width * (self.canvas_height/self.image_height)
             resized_image = cv2.resize(self.original_image, ((int)(k), (int)(self.canvas_height)), interpolation=cv2.INTER_AREA)
             self.tkImg = convert_to_tkImg(resized_image)
@@ -124,6 +124,7 @@ class CropImage():
 
     def remove(self):
         self.canvas.place_forget()
+
         top, bot = self.convert_coord()
 
         for rect in self.rects:
@@ -135,6 +136,7 @@ class CropImage():
         #print(bot)
         top = ((int)(top[0]/self.factor), (int)(top[1]/self.factor))
         bot = ((int)(bot[0]/self.factor), (int)(bot[1]/self.factor))
+
         #print(top)
         #print(bot)
 
