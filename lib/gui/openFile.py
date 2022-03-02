@@ -20,6 +20,8 @@ class OpenFile():
         self.open_button = Button(root, text='Open File', command=self.openFile)#width=10, height=2, command=self.openFile)
         #self.canvas = Canvas(root)
 
+    def resize(self):
+        return
 
     def openFile(self):
         path = fd.askopenfilename()

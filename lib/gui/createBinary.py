@@ -19,13 +19,13 @@ class CreateBinary():
         self.scale1 = Scale(root, from_=0, to=255, orient=HORIZONTAL, variable=self.s1_value, command=self.s1_changed)
 
         self.s2_value = IntVar()
-        self.scale2 = Scale(root, from_=1, to=10, orient=HORIZONTAL, variable=self.s2_value, command=self.s2_changed)
+        self.scale2 = Scale(root, from_=1, to=20, orient=HORIZONTAL, variable=self.s2_value, command=self.s2_changed)
 
         self.s3_value = IntVar()
-        self.scale3 = Scale(root, from_=1, to=10, orient=HORIZONTAL, variable=self.s3_value, command=self.s3_changed)
+        self.scale3 = Scale(root, from_=1, to=30, orient=HORIZONTAL, variable=self.s3_value, command=self.s3_changed)
 
         self.s4_value = IntVar()
-        self.scale4 = Scale(root, from_=0, to=20, orient=HORIZONTAL, variable=self.s4_value, command=self.s4_changed)
+        self.scale4 = Scale(root, from_=0, to=30, orient=HORIZONTAL, variable=self.s4_value, command=self.s4_changed)
 
 
 
@@ -47,6 +47,7 @@ class CreateBinary():
         img = cv2.medianBlur(self.original_image,self.scale2.get()*2+1)
         self.binary_image = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,self.scale3.get()*2+1,self.scale4.get())
         self.resize(self.binary_image)
+
 
     def add(self, image):
         self.original_image = image
