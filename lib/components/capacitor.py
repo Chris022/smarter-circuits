@@ -61,7 +61,7 @@ class Capacitor(BaseComponent):
 
 
     @staticmethod
-    def generate(resistorVertex,counter):
+    def toLTSpice(resistorVertex,counter):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 

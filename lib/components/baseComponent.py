@@ -9,29 +9,37 @@ class BaseComponent(ABC):
     def connect(rotation,intersectionVertices):
         pass
 
-    #@staticmethod
-    #@abstractmethod
-    #def draw(vertex,rel,wWidth,wHeight,d):
-    #    pass
 
+    # Functon that generates the LT-Spice Code for the Component and returns it as a string
     @staticmethod
     @abstractmethod
-    def generate(vertex):
+    def toLTSpice(vertex):
         pass
 
+    # Graph-Pattern of the Component
     @staticmethod
     @abstractmethod
     def graphPattern():
         pass
 
+    # Gets called before Pattern mathing, does not change the original Graph!
     @staticmethod
     def prePatternMatching(graph):
         return graph
 
+    # Gets called when the Graph is generated, does change the original Graph!
     @staticmethod
     def graphModification(graph):
         return graph
 
+    #takes a graph and returns a list of Lists with Vertices that belong to a occurrence of the component
+    #returns := [Occurrance1,Occurrance2,...]
+    #Occurrance := [Vertex1,Vertex2,Vertex3,...]
+    #def findOccurrences(graph):
+    #    graph.getPatternMatches(graphPattern())
+
+
+#returns the point for connecting the Component, depending on its rotation
 def getMeasurePoint(rotatonOffset, rotation,intersectionVertices):
     xPositions = fmap (lambda x: x.attr["coordinates"][0],intersectionVertices)
     yPositions = fmap (lambda x: x.attr["coordinates"][1],intersectionVertices)

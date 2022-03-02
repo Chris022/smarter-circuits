@@ -14,10 +14,6 @@ import drawSvg as draw
 #        |-------------|
 class Resistor(BaseComponent):
 
-    ltSpiceResistorWidth = 20
-    resistorHeight = 20
-    relativityValue = 40
-
     @staticmethod
     def connect(rotation,intersectionVertices):
         if rotation == 0 or 180:
@@ -76,7 +72,7 @@ class Resistor(BaseComponent):
         return graph
 
     @staticmethod
-    def generate(resistorVertex,counter):
+    def toLTSpice(resistorVertex,counter):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
 

@@ -12,10 +12,6 @@ from lib.graphLib.graph import Graph
 #        |-------------|
 class Inductor(BaseComponent):
 
-    ltSpiceInductorWidth = 20
-    InductorHeight = 20
-    relativityValue = 40
-
     @staticmethod
     def connect(rotation,intersectionVertices):
         if rotation == 0 or 180:
@@ -63,7 +59,7 @@ class Inductor(BaseComponent):
         return -1
 
     @staticmethod
-    def generate(inductorVertex, counter):
+    def toLTSpice(inductorVertex, counter):
         rotation = inductorVertex.attr["rotation"]
         position = inductorVertex.attr["coordinates"]
 

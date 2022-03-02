@@ -202,7 +202,7 @@ def generateFile(graph,fileName):
     string = "Version 4\nSHEET 1 {w} {h}\n".format(w=width,h=height)
     for vertex in graph.ve.values():
         if not vertex.color == COMPONENT_COLOR: continue
-        string += CLASS_OBJECTS[vertex.attr["type"]].generate(vertex, counter[vertex.attr["type"]])
+        string += CLASS_OBJECTS[vertex.attr["type"]].toLTSpice(vertex, counter[vertex.attr["type"]])
         counter[vertex.attr["type"]] += 1
     for vertex in graph.ve.values():
         if not vertex.color == CONNECTION_COLOR: continue

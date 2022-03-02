@@ -25,7 +25,7 @@ class Ground(BaseComponent):
         return ROTATION_DICT['up']
 
     @staticmethod
-    def generate(groundVertex,counter):
+    def toLTSpice(groundVertex,counter):
         position = groundVertex.attr["coordinates"]
         toVertex = groundVertex.attr["connectionMap"][0]
         to = toVertex.attr["coordinates"]
