@@ -1,5 +1,4 @@
 from math import dist
-from turtle import pos
 from lib.components.baseComponent import BaseComponent,getMeasurePoint
 
 from lib.constants import *
