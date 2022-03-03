@@ -13,8 +13,8 @@ OTHER_EDGE_COLOR = "green"
 FOREGROUND = 0
 BACKGROUND = 255
 
-CLASS_NAMES = ['capacitor', 'ground', 'inductor', 'resistor', 'up', 'down', 'left', 'right']
-CLASS_OBJECT_NAMES = {"cap":'capacitor', "gnd":'ground', "ind":'inductor', "res":'resistor'}
+CLASS_NAMES = ['capacitor', 'ground', 'inductor', 'resistor', 'voltage']#, 'up', 'down', 'left', 'right']
+CLASS_OBJECT_NAMES = {"cap":'capacitor', "gnd":'ground', "ind":'inductor', "res":'resistor', "vol":'voltage'}
 
 
 POSSIBLE_ROTATIONS = [0,90,180,270]
