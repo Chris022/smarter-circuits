@@ -14,6 +14,8 @@ class OpenFile():
 
     def __init__(self, root, next):
 
+        self.image = np.zeros((100,100), dtype=np.uint8)
+
         #self.canvas_pos = position
         self.next = next
 
@@ -27,6 +29,7 @@ class OpenFile():
         path = fd.askopenfilename()
         
         self.image = cv2.imread(path)
+        
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
 
         #self.image = resize(self.image, (650, None))

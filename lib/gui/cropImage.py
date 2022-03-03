@@ -79,6 +79,7 @@ class CropImage():
         self.crop_start = (1,2)
 
         self.canvas.configure(bg='#8f8f8f')
+        
         self.tkImg = convert_to_tkImg(self.original_image)
         self.image_on_canvas = self.canvas.create_image(0, 0, anchor=CENTER, image=self.tkImg)
         

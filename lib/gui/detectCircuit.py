@@ -9,8 +9,11 @@ import src.cuircitGeneration as cg
 import src.componentClassification as cc
 
 import lib.utils as utils
-
 import numpy as np
+
+import _thread as thread
+
+import subprocess
 
 
 class DetectCircuit():
@@ -21,7 +24,7 @@ class DetectCircuit():
         
         self.canvas = Canvas(root)
 
-        self.detect = Button(root, text='Detect Circuit', command=self.detect_circuit)
+        self.detect = Button(root, text='Detect Circuit', command=self.start_detection)
 
 
     def add(self, image):
@@ -44,6 +47,8 @@ class DetectCircuit():
 
         self.detect.place(relx=0.8, rely=0.15, relwidth=0.1, relheight=0.05)
 
+    def start_detection(self):
+        thread.start_new_thread(self.detect_circuit, ())
 
     def detect_circuit(self):
         image = self.original_image
@@ -73,6 +78,8 @@ class DetectCircuit():
             predictions.append((box,matches,buildingType))#,rot))
 
         graph = cg.createLTSpiceFile(predictions,graph,"./out.asc")
+
+        subprocess.call(["C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe","./out.asc"])
 
     def resize(self, *arg):
 
