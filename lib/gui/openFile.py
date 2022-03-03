@@ -29,7 +29,7 @@ class OpenFile():
         path = fd.askopenfilename()
         
         self.image = cv2.imread(path)
-        
+
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
 
         #self.image = resize(self.image, (650, None))
@@ -51,6 +51,7 @@ class OpenFile():
             self.image = cv2.resize(self.image, resize, interpolation = cv2.INTER_AREA)
 
         self.next()
+
 
         #self.image = np.asarray(self.image)
         #

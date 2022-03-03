@@ -99,8 +99,9 @@ class CropImage():
 
         factor = 1
 
+
         if self.image_width > self.image_height:
-            factor = self.canvas_width/len(self.original_image)[0]
+            factor = self.canvas_width/len(self.original_image[0])
             k = self.image_height * (self.canvas_width/self.image_width)
             resized_image = cv2.resize(self.original_image, ((int)(self.canvas_width),(int)(k)), interpolation=cv2.INTER_AREA)
             self.tkImg = convert_to_tkImg(resized_image)
