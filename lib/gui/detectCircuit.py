@@ -65,7 +65,7 @@ class DetectCircuit():
         utils.saveImage(name="preprocessed.png", image=preprocessedImage)
 
         graph = gg.generateGraph(preprocessedImage)
-        components = gg.getComponents(graph)
+        components = gg.getComponents(graph, preprocessedImage)
 
         cc.loadModel()
 

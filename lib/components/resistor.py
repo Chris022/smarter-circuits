@@ -40,12 +40,14 @@ class Resistor(BaseComponent):
 
     @classmethod
     def getRotation(cls,vertices, ROTATION_DICT):
+        
         intersections = []
         for vertex in vertices:
             if vertex.color == 'red':
                 intersections.append(vertex)
         if len(intersections) > 2:
             print('Too much intersections in resistor')
+
         pos1 = intersections[0].attr['coordinates']
         pos2 = intersections[1].attr['coordinates']
 
