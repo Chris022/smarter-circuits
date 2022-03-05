@@ -48,7 +48,7 @@ def toRelative(buildingPartDefinitons,graph):
     for vertex in graph.ve.values():
         x = vertex.attr["coordinates"][0]
         y = vertex.attr["coordinates"][1]
-        vertex.attr["coordinates"] = [80*x/len,80*y/len]
+        vertex.attr["coordinates"] = [80*x/len*1.5,80*y/len*1.5] # also add a bit of spacing by multiplying *1.5
     return graph
 
 def snapCoordinatesToGrid(graph):
