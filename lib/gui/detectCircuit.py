@@ -15,6 +15,9 @@ import _thread as thread
 
 import subprocess
 
+import random
+import string
+
 
 class DetectCircuit():
 
