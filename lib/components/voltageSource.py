@@ -98,3 +98,12 @@ class Voltage(BaseComponent):
         res.addEdge(Edge(), v2.id, v1.id)
 
         return res
+
+    @classmethod
+    def prePatternMatching(cls,graph):
+        #remove all yellows
+        copy = list(graph.ve.values())
+        for v in copy:
+            if v.color == CORNER_COLOR:
+                graph.removeVertex(v.id)
+        return graph
