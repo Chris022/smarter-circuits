@@ -50,6 +50,14 @@ class DetectCircuit():
     def start_detection(self):
         thread.start_new_thread(self.detect_circuit, ())
 
+    def generateTrainData(self, boundingBoxes, image):
+        for box in boundingBoxes:
+            component = image[box[0][1]:box[1][1], box[0][0]:box[1][0]]
+            component = cv2.resize(component, (32,32), interpolation = cv2.INTER_AREA)
+            #utils.saveImage(path='./../resources/trainData/')
+            utils.saveImage(path='./../resources/trainData/', name="{i}.png".format(i=''.join(random.choice(string.ascii_lowercase) for i in range(10))), image=component)
+
+
     def detect_circuit(self):
         image = self.original_image
         s1 = np.full((len(image),10),255)
@@ -66,6 +74,9 @@ class DetectCircuit():
 
         graph = gg.generateGraph(preprocessedImage)
         components = gg.getComponents(graph, preprocessedImage)
+
+        bb = utils.fmap(lambda x: x[0],components)
+        #self.generateTrainData(bb, image)
 
         cc.loadModel()
 

@@ -47,6 +47,10 @@ class Resistor(BaseComponent):
         if len(intersections) > 2:
             print('Too much intersections in resistor')
 
+        if len(intersections) < 2:
+            print('Not enough intersections in resistor')
+            return -1
+
         pos1 = intersections[0].attr['coordinates']
         pos2 = intersections[1].attr['coordinates']
 
