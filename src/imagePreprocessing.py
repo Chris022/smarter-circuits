@@ -75,6 +75,7 @@ def getFeatures():
 
 def preprocessImage(image):
 
+    image = cv2.medianBlur(image,5)
     (thresh, binary) = cv2.threshold(image, 100, 255, cv2.THRESH_BINARY)
 
     points = []
