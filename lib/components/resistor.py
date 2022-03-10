@@ -1,5 +1,6 @@
 from math import dist
-from lib.components.baseComponent import BaseComponent,getMeasurePoint
+from copy import deepcopy
+from lib.components.baseComponent import BaseComponent,getMeasurePoint,removeDuplicateMappings
 
 from lib.constants import *
 from lib.graphLib.vertex import Vertex
@@ -64,16 +65,6 @@ class Resistor(BaseComponent):
 
         return -1
 
-    @classmethod
-    def prePatternMatching(cls,graph):
-        copy = list(graph.ve.values())
-        for ve in copy:
-            if ve.color == INTERSECTION_COLOR:
-                for neib in graph.getNeighbors(ve.id):
-                    if neib.color == END_COLOR:
-                        graph.deleteVertex(neib.id)
-                        ve.color = CORNER_COLOR
-        return graph
 
     @classmethod
     def toLTSpice(cls,resistorVertex,counter):
@@ -105,20 +96,51 @@ class Resistor(BaseComponent):
         return text
 
     @classmethod
+    def prePatternMatching2(cls,graph):
+        copy2 = list(graph.ve.values())
+        for ve in copy2:
+            if ve.color == INTERSECTION_COLOR:
+                for neib in graph.getNeighbors(ve.id):
+                    if neib.color == END_COLOR:
+                        graph.deleteVertex(neib.id)
+                        ve.color = CORNER_COLOR
+
+        return graph
+
+    @classmethod
+    def prePatternMatching1(cls,graph):
+        #remove all yellows
+        copy = list(graph.ve.values())
+        for v in copy:
+            if v.color == CORNER_COLOR:
+                graph.removeVertex(v.id)
+
+        return graph
+
+
+    @classmethod
     def graphPattern(cls):
         res = Graph()
         v1 = Vertex(color=INTERSECTION_COLOR)
-        v2 = Vertex(color=CORNER_COLOR)
-        v3 = Vertex(color=CORNER_COLOR)
-        v4 = Vertex(color=INTERSECTION_COLOR)
-        v5 = Vertex(color=CORNER_COLOR)
-        v6 = Vertex(color=CORNER_COLOR)
-        res.addVertices([v1,v2,v3,v4,v5,v6])
+        v2 = Vertex(color=INTERSECTION_COLOR)
+
+        res.addVertices([v1,v2])
         res.addEdge(Edge(), v1.id, v2.id)
-        res.addEdge(Edge(), v2.id, v3.id)
-        res.addEdge(Edge(), v3.id, v4.id)
-        res.addEdge(Edge(), v4.id, v5.id)
-        res.addEdge(Edge(), v5.id, v6.id)
-        res.addEdge(Edge(), v6.id, v1.id)
+        res.addEdge(Edge(), v2.id, v1.id)
 
         return res
+
+
+
+    @classmethod
+    def match(cls,graph):
+        graph1 = deepcopy(graph)
+        graph2 = deepcopy(graph)
+        graph1 = cls.prePatternMatching1(graph1) #only remove corners
+        graph2 = cls.prePatternMatching2(graph2) #remove pigtails
+        graph2 = cls.prePatternMatching1(graph2) #and remove corners
+        mapings =  graph1.getPatternMatches(cls.graphPattern()) + graph2.getPatternMatches(cls.graphPattern()) #match both
+        #remove doubles
+        mapings = removeDuplicateMappings(mapings)
+        return mapings
+

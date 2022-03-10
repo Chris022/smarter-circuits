@@ -247,23 +247,11 @@ def generateGraph(image):
 #returns array of Tuples
 #   Tuble (boundingBoxCoordinates, matchingVertices)
 def getComponents(graph,image):
-    patterns = list(map(lambda comp:comp.graphPattern(),CLASS_OBJECTS.values()))
-
-    #remove double patterins
-    components = []
-    for comp in CLASS_OBJECTS.values():
-        isIn = False
-        for fp in components:
-            if len(comp.graphPattern().getPatternMatches(fp.graphPattern())) > 0:
-                isIn = True
-        if not isIn:
-            components.append(comp)
 
     matches = []
-    for comp in components:
-        newGraph = deepcopy(graph)
-        newGraph = comp.prePatternMatching(newGraph)
-        matchingInCopy = newGraph.getPatternMatches(comp.graphPattern())
+    for comp in CLASS_OBJECTS.values():
+        matchingInCopy = comp.match(graph)
+        #matchingInCopy = newGraph.getPatternMatches(comp.graphPattern())
 
         for i in matchingInCopy:
             a = []
