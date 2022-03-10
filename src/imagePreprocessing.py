@@ -56,7 +56,7 @@ def getFeatures():
     features += addFeature(feature, replacement, rotate=False)
 
     feature = [[255,0,-1],[-1,0,0],[0,0,-1]]
-    replacement = [[255,0,255],[-1,0,0],[0,255,-1]]
+    replacement = [[255,0,255],[-1,255,0],[0,0,-1]]
     features += addFeature(feature, replacement, flip=True)
 
     feature = [[-1,255,0],[0,0,255],[255,0,-1]]
@@ -73,11 +73,7 @@ def getFeatures():
 
     return features
 
-def preprocessImage(image):
-
-    image = cv2.medianBlur(image,5)
-    (thresh, binary) = cv2.threshold(image, 100, 255, cv2.THRESH_BINARY)
-
+def preprocessImage(binary):
     points = []
     for y in range(0, len(binary)):
         for x in range(0, len(binary[y])):

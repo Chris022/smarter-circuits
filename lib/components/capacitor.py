@@ -44,6 +44,10 @@ class Capacitor(BaseComponent):
                 intersections.append(vertex)
         if len(intersections) > 2:
             print('Too much intersections in capacitor')
+        if len(intersections) < 2:
+            print('Not enough intersections in capacitor')
+            return -1
+            
         pos1 = intersections[0].attr['coordinates']
         pos2 = intersections[1].attr['coordinates']
 

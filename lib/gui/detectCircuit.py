@@ -70,7 +70,12 @@ class DetectCircuit():
         image = np.insert(image, [0], s2, axis=0)
         image = np.insert(image, [len(image)], s2, axis=0)
 
-        preprocessedImage = ip.preprocessImage(image)
+        utils.saveImage(name="binary.png", image=image)
+
+        newImg = np.empty_like(image)
+        newImg[:] = image
+
+        preprocessedImage = ip.preprocessImage(newImg)
 
         #test
         utils.saveImage(name="preprocessed.png", image=preprocessedImage)

@@ -43,7 +43,11 @@ class Inductor(BaseComponent):
             if vertex.color == 'red':
                 intersections.append(vertex)
         if len(intersections) > 2:
-            print('Too much intersections in resistor')
+            print('Too much intersections in inductor')
+        if len(intersections) < 2:
+            print('Not enough intersections in inductor')
+            return -1
+
         pos1 = intersections[0].attr['coordinates']
         pos2 = intersections[1].attr['coordinates']
 
