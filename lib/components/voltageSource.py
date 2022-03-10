@@ -79,12 +79,12 @@ class Voltage(BaseComponent):
             to2 = [position[0]+(to2[0]-position[0])/2,position[1]+(to2[1]-position[1])/2]
 
         if rotation == 0 or rotation == 180:
-            text = "SYMBOL voltage {x} {y} R90\n".format(x=int(position[0]-56),y=int(position[1]))
+            text = "SYMBOL voltage {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]))
             text += "SYMATTR InstName R{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-40),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+40),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
-            text = "SYMBOL voltage {x} {y} R0\n".format(x=int(position[0]),y=int(position[1]+56))
+            text = "SYMBOL voltage {x} {y} R0\n".format(x=int(position[0]),y=int(position[1]-56))
             text += "SYMATTR InstName R{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-40),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to2[0]),y2=int(to2[1]))
