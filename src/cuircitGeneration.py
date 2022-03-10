@@ -23,9 +23,8 @@ def toRelative(buildingPartDefinitons,graph):
     #get lenght of the longest resistor
     len = -1
     for buildingPart in buildingPartDefinitons:
-        vertices = buildingPart[1]
-        #rotation = buildingPart[1]
         type_ = buildingPart[0]
+        vertices = buildingPart[1]
 
         if not type_ == CLASS_OBJECT_NAMES["res"]:
             continue
@@ -43,12 +42,13 @@ def toRelative(buildingPartDefinitons,graph):
             if yDist > len:
                 len = yDist
 
-    #print(len)
     #convert all coordinates to values, relative to the resistor
     for vertex in graph.ve.values():
         x = vertex.attr["coordinates"][0]
         y = vertex.attr["coordinates"][1]
+        vertex.attr["unscaled"] = list(vertex.attr["coordinates"])
         vertex.attr["coordinates"] = [80*x/len*1.5,80*y/len*1.5] # also add a bit of spacing by multiplying *1.5
+        
     return graph
 
 def snapCoordinatesToGrid(graph):
@@ -62,9 +62,11 @@ def snapCoordinatesToGrid(graph):
 def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
     #Get all the vertices connected to a building part
     for buildingPart in buildingPartDefinitons:
-        vertices = buildingPart[1]
-        #rotation = buildingPart[1]
         type_ = buildingPart[0]
+        vertices = buildingPart[1]
+        boundingBox = buildingPart[2]
+        upperRightCorner = boundingBox[0]
+        lowerLeftCorner = boundingBox[1]
 
         newGraph = deepcopy(graph)
         newGraph = CLASS_OBJECTS[type_].prePatternMatching(newGraph)
@@ -89,10 +91,20 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         component = Vertex(
                 color=COMPONENT_COLOR,
                 label=type_,
-                attr={"connectionMap":{},"type":type_,"coordinates":center,"rotation":rotation}
+                attr={"connectionMap":{},"type":type_,"coordinates":center,"unscaled":[-1,-1],"rotation":rotation}
         )
         #group
         graph.group(vertices,component)
+
+        #remove all vertices in the bounding box, that is not the component
+        allVertices = list(graph.ve.values())
+        for v in allVertices:
+            #check if coordinates are in the bounding box
+            if upperRightCorner[0] < v.attr["unscaled"][0] and upperRightCorner[1] < v.attr["unscaled"][1]:
+                if lowerLeftCorner[0] > v.attr["unscaled"][0] and lowerLeftCorner[1] > v.attr["unscaled"][1]:
+                    #check if vertex isnt component vertex
+                    if not v == component:
+                        graph.deleteVertex(v.id)
 
     #remove all End points
     copy = list(graph.ve.values())
@@ -215,8 +227,7 @@ def generateFile(graph,fileName):
 def createLTSpiceFile(predictions,graph,fileName):
     map = []
     for i in range(0, len(predictions)):
-        #map.append((predictions[i][2],predictions[i][3],predictions[i][1]))
-        map.append((predictions[i][2],predictions[i][1]))
+        map.append([predictions[i][2],predictions[i][1],predictions[i][0]])
     graph = recolorCap(graph)
     graph = toRelative(map,graph)
     graph = seperateBuildingPartsAndConnection(map,graph)
