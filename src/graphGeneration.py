@@ -1,49 +1,22 @@
 from copy import deepcopy
+import igraph as g
+
 import sys
+from lib.components.componentCollection import PATTERNS
 sys.path.append('../')
 
-import lib.utils as utils
-#import classes
-import matplotlib.pyplot as plt
-import igraph as g
-import json
-import math as m
-import cv2
-import itertools
-import igraph
+
+from lib.utils import colorPixels,getAdjacentPixel
+from lib.dirGradient import DirGradient
+
+from lib.constants import *
+
 
 import lib.graphLib.graph as g
 from lib.graphLib.vertex import Vertex
 from lib.graphLib.edge import Edge
 
 import lib.graphProcessing as graphProcessing
-
-from lib.utils import getPixel,colorPixels,isOneColor
-from lib.constants import *
-from lib.components.componentCollection import CLASS_OBJECTS
-
-
-# Returns all Adjacent Pixels with a specific color
-# image             -> 2D array with Pixel values
-# pixel             -> coordinates of the pixel the others should be ajacent to
-# color             -> the color of the "wanted" pixels
-# blacklist         -> These pixels get ignored
-def getAdjacentPixel(image,pixel,color,blacklist=[]):    
-    adjacentPixels = [[-1,-1],[0,-1],[1,-1], \
-                        [-1,0],        [1,0], \
-                        [-1,1], [0,1], [1,1]]
-    #create a array with the coordinates of all adjacentPixels
-    validPixels = ([ pixel[0]+adj[0], pixel[1]+adj[1] ] for adj in adjacentPixels)
-    #filter all pixels that are not the right color
-    validPixels = list(
-        filter(lambda coords: image[coords[1]][coords[0]] == color,validPixels)
-    )
-    #filter all pixels that are in the blacklist
-    validPixels = list(
-        filter(lambda x: not x in blacklist, validPixels)
-    )
-
-    return validPixels
 
 
 # returns the coordinates of the first <color> pixel it finds
@@ -54,57 +27,6 @@ def findStaringPoint(image,color):
             if image[y][x] == color:
                 return [x,y]
     return -1
-
-class DirGradient:
-    def __init__(self):
-        self.queueX = []
-        self.queueY = []
-
-    def addStep(self,currentPosition,lastPosition):
-        #get Direction
-        xDir = 0
-        yDir = 0
-
-        if currentPosition[0] - lastPosition[0] > 0:
-            xDir = 1
-        elif currentPosition[0] - lastPosition[0] < 0:
-            xDir = -1
-
-        if currentPosition[1] - lastPosition[1] > 0:
-            yDir = 1
-        elif currentPosition[1] - lastPosition[1] < 0:
-            yDir = -1
-
-        self.queueX.append(xDir)
-        self.queueY.append(yDir)
-    
-    def checkForEdge(self):
-        #only gives a valid answer if there are more than 10 previous values
-        if len(self.queueX) < 10: return False
-
-        cSumX = sum(self.queueX[-5:]) # the latest 5 X coordinates
-        cSumY = sum(self.queueY[-5:]) # the latest 5 Y coordinates
-        length = m.sqrt(cSumX**2 + cSumY**2)
-        currDir = (cSumX/length, cSumY/length)
-
-        
-        lSumX = sum(self.queueX[-10:-5]) # the 5 X coords 5 steps ago
-        lSumY = sum(self.queueY[-10:-5]) # the 5 Y coords 5 steps ago
-        length = m.sqrt(cSumX**2 + cSumY**2)
-        lastDir = (lSumX/length, lSumY/length)
-
-        dist = m.sqrt((currDir[0] - lastDir[0])**2 + (currDir[1] - lastDir[1])**2)
-
-        if dist <= 0.8:
-            return False
-
-        return True
-
-    def reset(self):
-        self.queueX = []
-        self.queueY = []
-
-
 
 # Converts one connected Line into a Graph
 #
@@ -198,60 +120,36 @@ def generatePartGraph(image,startPoint,color):
 
     return graph,visitedPixels
 
-
-def generateWholeGraph(image,foregroundColor,backgroundColor):
-    graphCollection = []
-    while True:
-        startingPoint = findStaringPoint(image,foregroundColor)
-        if startingPoint == -1:
-            break
-        if(startingPoint):
-            G,visitedPixels = generatePartGraph(image,startingPoint,foregroundColor)
-            graphCollection.append(G)
-            #Remove all visited Pixels
-            image = colorPixels(image,visitedPixels,backgroundColor)
-        else:
-            break
-    return g.union(graphCollection)
-
-
-
-
-# Takse a List of coordinates returns the coordinates of the upper left and lower right corner
-def generateBoundingBox(verticesList,offset):
-
-    listOfCoords = list(map(lambda x: x.attr['coordinates'],verticesList))
-
-    xCoords = list(map(lambda x: x[0],listOfCoords))
-    yCoords = list(map(lambda y: y[1],listOfCoords))
-
-    #get smalles and biggest of each and create Box
-    from_ = [min(xCoords)-offset,min(yCoords)-offset]
-    to_ = [max(xCoords)+offset,max(yCoords)+offset]
-    return [from_,to_]
-
 def generateGraph(image):
     copyImage = deepcopy(image)
-     # Generate the Graph without the Cap connections
-    union = generateWholeGraph(copyImage,FOREGROUND,BACKGROUND)
-    #call post Pattern Mathching
-    for classses in CLASS_OBJECTS.values():
-        union = classses.graphModification(union)
-    #combine close tougether vertices
-    allVertices = list(union.ve.values())
-    intersectionVertices = list(filter(lambda x: x.color == INTERSECTION_COLOR,allVertices))
-    union = graphProcessing.combineCloseVertices(union,intersectionVertices,INTERSECTION_COMBINATION_DIST)
-    
-    return union
 
+    # Generate the Graph
+    graphList = []
+    while True:
+        startingPoint = findStaringPoint(copyImage,FOREGROUND)
+        if startingPoint == -1:
+            break
+        subGraph,visitedPixels = generatePartGraph(copyImage,startingPoint,FOREGROUND)
+        graphList.append(subGraph)
+        #Remove all visited Pixels
+        copyImage = colorPixels(copyImage,visitedPixels,BACKGROUND)
+    graph = g.union(graphList)
+
+    #combine close together vertices
+    allVertices = list(graph.ve.values())
+    intersectionVertices = list(filter(lambda x: x.color == INTERSECTION_COLOR,allVertices))
+    graph = graphProcessing.combineCloseVertices(graph,intersectionVertices,INTERSECTION_COMBINATION_DIST)
+    return graph
+
+
+    
 #returns array of Tuples
 #   Tuble (boundingBoxCoordinates, matchingVertices)
 def getComponents(graph,image):
 
     matches = []
-    for comp in CLASS_OBJECTS.values():
+    for comp in PATTERNS.values():
         matchingInCopy = comp.match(graph)
-        #matchingInCopy = newGraph.getPatternMatches(comp.graphPattern())
 
         for i in matchingInCopy:
             a = []

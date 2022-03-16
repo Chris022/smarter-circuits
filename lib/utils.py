@@ -189,3 +189,45 @@ def convertToIgraph(graph):
 
 def fmap(func,l):
     return list ( map (func, l) ) 
+
+#remove duplicate Mapping
+def removeDuplicateMappings(mappings):
+    def compairMapping(mapping1,mapping2):
+        idSet1 = set()
+        for m in mapping1:
+            idSet1.add(m.id)
+        idSet2 = set()
+        for m in mapping2:
+            idSet2.add(m.id)
+        return idSet1 == idSet2
+    newlist = []
+    for mapping in mappings:
+        add = True
+        for el in newlist:
+            if compairMapping(el,mapping):
+                add = False
+        if add:
+            newlist.append(mapping)
+    return newlist
+
+# Returns all Adjacent Pixels with a specific color
+# image             -> 2D array with Pixel values
+# pixel             -> coordinates of the pixel the others should be ajacent to
+# color             -> the color of the "wanted" pixels
+# blacklist         -> These pixels get ignored
+def getAdjacentPixel(image,pixel,color,blacklist=[]):    
+    adjacentPixels = [[-1,-1],[0,-1],[1,-1], \
+                        [-1,0],        [1,0], \
+                        [-1,1], [0,1], [1,1]]
+    #create a array with the coordinates of all adjacentPixels
+    validPixels = ([ pixel[0]+adj[0], pixel[1]+adj[1] ] for adj in adjacentPixels)
+    #filter all pixels that are not the right color
+    validPixels = list(
+        filter(lambda coords: image[coords[1]][coords[0]] == color,validPixels)
+    )
+    #filter all pixels that are in the blacklist
+    validPixels = list(
+        filter(lambda x: not x in blacklist, validPixels)
+    )
+
+    return validPixels

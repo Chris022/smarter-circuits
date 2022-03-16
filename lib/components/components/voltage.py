@@ -1,6 +1,5 @@
 from math import dist
-from copy import deepcopy
-from lib.components.baseComponent import BaseComponent,getMeasurePoint,removeDuplicateMappings
+from lib.components.components.baseComponent import BaseComponent,getMeasurePoint
 
 from lib.constants import *
 from lib.graphLib.vertex import Vertex
@@ -9,9 +8,9 @@ from lib.graphLib.graph import Graph
 
 
 #        |-------------|
-# #0-----|             |--------#1
+# #0-----|-------------|--------#1
 #        |-------------|
-class Resistor(BaseComponent):
+class Voltage(BaseComponent):
 
     @classmethod
     def connect(cls,rotation,intersectionVertices):
@@ -40,18 +39,15 @@ class Resistor(BaseComponent):
 
     @classmethod
     def getRotation(cls,vertices, ROTATION_DICT):
-        
         intersections = []
         for vertex in vertices:
             if vertex.color == 'red':
                 intersections.append(vertex)
         if len(intersections) > 2:
-            print('Too much intersections in resistor')
-
+            print('Too much intersections in voltage source')
         if len(intersections) < 2:
-            print('Not enough intersections in resistor')
+            print('Not enough intersections in voltage source')
             return -1
-
         pos1 = intersections[0].attr['coordinates']
         pos2 = intersections[1].attr['coordinates']
 
@@ -64,7 +60,6 @@ class Resistor(BaseComponent):
             return ROTATION_DICT['up']
 
         return -1
-
 
     @classmethod
     def toLTSpice(cls,resistorVertex,counter):
@@ -84,63 +79,13 @@ class Resistor(BaseComponent):
             to2 = [position[0]+(to2[0]-position[0])/2,position[1]+(to2[1]-position[1])/2]
 
         if rotation == 0 or rotation == 180:
-            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]-16))
+            text = "SYMBOL voltage {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]))
             text += "SYMATTR InstName R{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-40),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+40),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
-            text = "SYMBOL Misc\\EuropeanResistor {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-56))
+            text = "SYMBOL voltage {x} {y} R0\n".format(x=int(position[0]),y=int(position[1]-56))
             text += "SYMATTR InstName R{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-40),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to2[0]),y2=int(to2[1]))
         return text
-
-    @classmethod
-    def prePatternMatching2(cls,graph):
-        copy2 = list(graph.ve.values())
-        for ve in copy2:
-            if ve.color == INTERSECTION_COLOR:
-                for neib in graph.getNeighbors(ve.id):
-                    if neib.color == END_COLOR:
-                        graph.deleteVertex(neib.id)
-                        ve.color = CORNER_COLOR
-
-        return graph
-
-    @classmethod
-    def prePatternMatching1(cls,graph):
-        #remove all yellows
-        copy = list(graph.ve.values())
-        for v in copy:
-            if v.color == CORNER_COLOR:
-                graph.removeVertex(v.id)
-
-        return graph
-
-
-    @classmethod
-    def graphPattern(cls):
-        res = Graph()
-        v1 = Vertex(color=INTERSECTION_COLOR)
-        v2 = Vertex(color=INTERSECTION_COLOR)
-
-        res.addVertices([v1,v2])
-        res.addEdge(Edge(), v1.id, v2.id)
-        res.addEdge(Edge(), v2.id, v1.id)
-
-        return res
-
-
-
-    @classmethod
-    def match(cls,graph):
-        graph1 = deepcopy(graph)
-        graph2 = deepcopy(graph)
-        graph1 = cls.prePatternMatching1(graph1) #only remove corners
-        graph2 = cls.prePatternMatching2(graph2) #remove pigtails
-        graph2 = cls.prePatternMatching1(graph2) #and remove corners
-        mapings =  graph1.getPatternMatches(cls.graphPattern()) + graph2.getPatternMatches(cls.graphPattern()) #match both
-        #remove doubles
-        mapings = removeDuplicateMappings(mapings)
-        return mapings
-

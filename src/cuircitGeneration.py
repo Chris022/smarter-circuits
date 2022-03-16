@@ -68,7 +68,7 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         lowerLeftCorner = boundingBox[1]
 
         newGraph = deepcopy(graph)
-        newGraph = CLASS_OBJECTS[type_].prePatternMatching(newGraph)
+        #newGraph = CLASS_OBJECTS[type_].prePatternMatching(newGraph)
 
         newVertices = []
         for vertex in vertices:

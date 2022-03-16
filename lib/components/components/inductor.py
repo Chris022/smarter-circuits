@@ -1,16 +1,12 @@
 from math import dist
-from lib.components.baseComponent import BaseComponent,getMeasurePoint
+from lib.components.components.baseComponent import BaseComponent,getMeasurePoint
 
 from lib.constants import *
-from lib.graphLib.vertex import Vertex
-from lib.graphLib.edge import Edge
-from lib.graphLib.graph import Graph
-
 
 #        |-------------|
-# #0-----|-------------|--------#1
+# #0-----|=============|--------#1
 #        |-------------|
-class Voltage(BaseComponent):
+class Inductor(BaseComponent):
 
     @classmethod
     def connect(cls,rotation,intersectionVertices):
@@ -30,7 +26,7 @@ class Voltage(BaseComponent):
             distances.append((distance,intersectionVertex))
 
         #sort distances
-        mapings = map(lambda x: x[1], sorted(distances, key=lambda x:x[0]))
+        mapings = reversed(list(map(lambda x: x[1], sorted(distances, key=lambda x:x[0]))))
 
         #convert to map
         mapings = dict(enumerate(mapings)) 
@@ -44,10 +40,11 @@ class Voltage(BaseComponent):
             if vertex.color == 'red':
                 intersections.append(vertex)
         if len(intersections) > 2:
-            print('Too much intersections in voltage source')
+            print('Too much intersections in inductor')
         if len(intersections) < 2:
-            print('Not enough intersections in voltage source')
+            print('Not enough intersections in inductor')
             return -1
+
         pos1 = intersections[0].attr['coordinates']
         pos2 = intersections[1].attr['coordinates']
 
@@ -62,51 +59,30 @@ class Voltage(BaseComponent):
         return -1
 
     @classmethod
-    def toLTSpice(cls,resistorVertex,counter):
-        rotation = resistorVertex.attr["rotation"]
-        position = resistorVertex.attr["coordinates"]
+    def toLTSpice(cls,inductorVertex, counter):
+        rotation = inductorVertex.attr["rotation"]
+        position = inductorVertex.attr["coordinates"]
 
-        toVertex1 = resistorVertex.attr["connectionMap"][0]
-        toVertex2 = resistorVertex.attr["connectionMap"][1]
+        toVertex1 = inductorVertex.attr["connectionMap"][0]
+        toVertex2 = inductorVertex.attr["connectionMap"][1]
 
         to1 = toVertex1.attr["coordinates"]
         to2 = toVertex2.attr["coordinates"]
 
-        if toVertex1.color == COMPONENT_COLOR:
+        if toVertex1.color == "green":
             to1 = [position[0]+(to1[0]-position[0])/2,position[1]+(to1[1]-position[1])/2]
 
-        if toVertex2.color == COMPONENT_COLOR:
+        if toVertex2.color == "green":
             to2 = [position[0]+(to2[0]-position[0])/2,position[1]+(to2[1]-position[1])/2]
 
         if rotation == 0 or rotation == 180:
-            text = "SYMBOL voltage {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]))
-            text += "SYMATTR InstName R{n}\n".format(n=counter)
+            text = "SYMBOL ind {x} {y} R90\n".format(x=int(position[0]+56),y=int(position[1]-16))
+            text += "SYMATTR InstName L{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]-40),y1=int(position[1]),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]+40),y1=int(position[1]),x2=int(to2[0]),y2=int(to2[1]))
         else:
-            text = "SYMBOL voltage {x} {y} R0\n".format(x=int(position[0]),y=int(position[1]-56))
-            text += "SYMATTR InstName R{n}\n".format(n=counter)
+            text = "SYMBOL ind {x} {y} R0\n".format(x=int(position[0]-16),y=int(position[1]-56))
+            text += "SYMATTR InstName L{n}\n".format(n=counter)
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]-40),x2=int(to1[0]),y2=int(to1[1]))
             text += "WIRE {x1} {y1} {x2} {y2}\n".format(x1=int(position[0]),y1=int(position[1]+40),x2=int(to2[0]),y2=int(to2[1]))
         return text
-
-    @classmethod
-    def graphPattern(cls):
-        res = Graph()
-        v1 = Vertex(color=INTERSECTION_COLOR)
-        v2 = Vertex(color=INTERSECTION_COLOR)
-        res.addVertices([v1,v2])
-        res.addEdge(Edge(), v2.id, v1.id)
-        res.addEdge(Edge(), v2.id, v1.id)
-        res.addEdge(Edge(), v2.id, v1.id)
-
-        return res
-
-    @classmethod
-    def prePatternMatching(cls,graph):
-        #remove all yellows
-        copy = list(graph.ve.values())
-        for v in copy:
-            if v.color == CORNER_COLOR:
-                graph.removeVertex(v.id)
-        return graph
