@@ -361,6 +361,18 @@ class Graph:
 
         return matrix
 
+    def getNeighborsWithAdjacencyMatrix(self,matrix,vertex_id):
+        columns = matrix.columns
+        row = matrix.getRow(vertex_id)
+        neighbors = []
+        for j in range(len(row)):
+            if row[j] >= 1:
+                id = columns[j]
+                neighbors.append(self.ve[id])
+        return neighbors
+
+
+
 def union(graphList):
     union = graphList[0]
     for i in range(1, len(graphList)):
