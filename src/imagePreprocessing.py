@@ -104,18 +104,12 @@ def getMeanLineThickness(img):
 
 
 def preprocessImage(binary):
-    points = []
-    for y in range(0, len(binary)):
-        for x in range(0, len(binary[y])):
-            if binary[y][x] == 0:
-                points.append((x, y))
-
     thickness = getMeanLineThickness(binary)
     #for cleaning flip colors
     img = 255-binary
     # clean image
-    img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones(
-        (int(thickness*0.5), int(thickness*0.5)), np.uint8))
+    #img = cv2.morphologyEx(img, cv2.MORPH_OPEN, np.ones(
+    #    (int(thickness*0.5), int(thickness*0.5)), np.uint8))
 
     # only get inductances
     kernel = np.ones((thickness+5, thickness+5), np.uint8)
@@ -127,6 +121,12 @@ def preprocessImage(binary):
 
     #flip colors
     img = 255-img
+
+    points = []
+    for y in range(0, len(binary)):
+        for x in range(0, len(binary[y])):
+            if binary[y][x] == 0:
+                points.append((x, y))
 
     thinn = utils.thinnImage(img)
 

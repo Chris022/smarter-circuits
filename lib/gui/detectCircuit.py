@@ -18,6 +18,8 @@ import subprocess
 import random
 import string
 
+import igraph
+
 
 class DetectCircuit():
 
@@ -60,6 +62,24 @@ class DetectCircuit():
             #utils.saveImage(path='./../resources/trainData/')
             utils.saveImage(path='./../resources/trainData/', name="{i}.png".format(i=''.join(random.choice(string.ascii_lowercase) for i in range(10))), image=component)
 
+    def drawRect(self, image,boundingBoxes,color):
+        corner1 = boundingBoxes[0]
+        corner2 = boundingBoxes[1]
+        startX = corner1[0]
+        startY = corner1[1]
+
+        endX = corner2[0]
+        endY = corner2[1]
+
+        for x in range(startX,endX):
+            image[startY][x] = color
+            image[endY][x] = color
+
+        for y in range(startY,endY):
+            image[y][startX] = color
+            image[y][endX] = color
+
+        return image
 
     def detect_circuit(self):
         image = self.original_image
@@ -72,19 +92,25 @@ class DetectCircuit():
 
         utils.saveImage(name="binary.png", image=image)
 
-        newImg = np.empty_like(image)
-        newImg[:] = image
-
-        preprocessedImage = ip.preprocessImage(newImg)
+        preprocessedImage = ip.preprocessImage(image.copy())
 
         #test
         utils.saveImage(name="preprocessed.png", image=preprocessedImage)
 
         graph = gg.generateGraph(preprocessedImage)
+
+        igraphUnion = utils.convertToIgraph(graph)
+        layout = igraphUnion.layout("large_graph")
+        igraph.plot(igraphUnion, "graph.png",layout=layout, bbox = (1000,1000), vertex_label=None)
+
         components = gg.getComponents(graph, preprocessedImage)
 
         bb = utils.fmap(lambda x: x[0],components)
         #self.generateTrainData(bb, image)
+
+        for boundingBox in bb:
+            img = self.drawRect(image,boundingBox,0)
+        utils.saveImage(name="box.png", image=img)
 
         cc.loadModel()
 
@@ -94,6 +120,7 @@ class DetectCircuit():
             box = comp[0]
             matches = comp[1]
             buildingType = cc.predict(box,image)#[0]
+            print(buildingType)
             predictions.append((box,matches,buildingType))#,rot))
 
         graph = cg.createLTSpiceFile(predictions,graph,"./out.asc")

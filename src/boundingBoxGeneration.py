@@ -52,4 +52,4 @@ def generateBoundingBox(verticesList,image):
         if passesTop <= 1 and passesBottom <= 1:
             break
 
-    return [[from_[0]-addXLeft,from_[1]-addYTop],[to_[0]+addXRight,to_[1]+addYBottom]]
+    return [[from_[0]-addXLeft-5,from_[1]-addYTop-5],[to_[0]+addXRight+5,to_[1]+addYBottom+5]]

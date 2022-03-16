@@ -16,30 +16,32 @@ class CreateBinary():
 
 
         self.s0_value = IntVar()
-        self.scale0 = Scale(root, from_=0, to=100, orient=HORIZONTAL, variable=self.s0_value, command=self.s0_changed)
+        self.scale0 = Scale(root, from_=0, to=20, orient=HORIZONTAL, variable=self.s0_value, command=self.s0_changed)
 
         self.s1_value = IntVar()
         self.scale1 = Scale(root, from_=0, to=255, orient=HORIZONTAL, variable=self.s1_value, command=self.s1_changed)
 
         self.s2_value = IntVar()
-        self.scale2 = Scale(root, from_=1, to=20, orient=HORIZONTAL, variable=self.s2_value, command=self.s2_changed)
+        self.scale2 = Scale(root, from_=1, to=10, orient=HORIZONTAL, variable=self.s2_value, command=self.s2_changed)
 
         self.s3_value = IntVar()
-        self.scale3 = Scale(root, from_=1, to=50, orient=HORIZONTAL, variable=self.s3_value, command=self.s3_changed)
+        self.scale3 = Scale(root, from_=1, to=200, orient=HORIZONTAL, variable=self.s3_value, command=self.s3_changed)
 
         self.s4_value = IntVar()
         self.scale4 = Scale(root, from_=0, to=30, orient=HORIZONTAL, variable=self.s4_value, command=self.s4_changed)
 
     def s0_changed(self, event):
-        value = self.scale0.get()*2+1
-        self.binary_image = cv2.GaussianBlur(self.original_image, (value,value), 0)
         (thresh, self.binary_image) = cv2.threshold(self.original_image, self.scale1.get(), 255, cv2.THRESH_BINARY)
+        value = self.scale0.get()*2+1
+        self.binary_image = cv2.GaussianBlur(self.binary_image, (value,value), 0)
+        (thresh, self.binary_image) = cv2.threshold(self.binary_image, self.scale1.get(), 255, cv2.THRESH_BINARY)
         self.resize(self.binary_image)
 
     def s1_changed(self, event):
-        value = self.scale0.get()*2+1
-        self.binary_image = cv2.GaussianBlur(self.original_image, (value,value), 0)
         (thresh, self.binary_image) = cv2.threshold(self.original_image, self.scale1.get(), 255, cv2.THRESH_BINARY)
+        value = self.scale0.get()*2+1
+        self.binary_image = cv2.GaussianBlur(self.binary_image, (value,value), 0)
+        (thresh, self.binary_image) = cv2.threshold(self.binary_image, self.scale1.get(), 255, cv2.THRESH_BINARY)
         self.resize(self.binary_image)
     
     def s2_changed(self, event):
@@ -79,7 +81,6 @@ class CreateBinary():
         self.resize(self.original_image)
 
         self.reset.place(relx=0.8, rely=0.1, relwidth=0.1, relheight=0.05)
-
 
 
         self.scale0.place(relx=0.72, rely=0.2, relwidth=0.23, relheight=0.1)

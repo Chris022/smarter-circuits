@@ -34,22 +34,6 @@ class OpenFile():
 
         #self.image = resize(self.image, (650, None))
 
-        resize = (650, None)
-
-        width = len(self.image[0])
-        height = len(self.image)
-
-        if resize[0] != None and resize[1] == None:
-            resize = (resize[0], (int)(height * resize[0] / width))
-            self.image = cv2.resize(self.image, resize, interpolation = cv2.INTER_AREA)
-
-        if resize[0] == None and resize[1] != None:
-            resize = ((int)(width * resize[1] / height), resize[1])
-            self.image = cv2.resize(self.image, resize, interpolation = cv2.INTER_AREA)
-
-        if resize[0] != None and resize[1] != None:
-            self.image = cv2.resize(self.image, resize, interpolation = cv2.INTER_AREA)
-
         self.next()
 
 

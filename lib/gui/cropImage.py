@@ -146,6 +146,23 @@ class CropImage():
 
         #cv2.imwrite("test.png", crop_img)
 
+        resize = (650, None)
+
+        width = len(crop_img[0])
+        height = len(crop_img)
+
+        if resize[0] != None and resize[1] == None:
+            resize = (resize[0], (int)(height * resize[0] / width))
+            crop_img = cv2.resize(crop_img, resize, interpolation = cv2.INTER_AREA)
+
+        if resize[0] == None and resize[1] != None:
+            resize = ((int)(width * resize[1] / height), resize[1])
+            crop_img = cv2.resize(crop_img, resize, interpolation = cv2.INTER_AREA)
+
+        if resize[0] != None and resize[1] != None:
+            crop_img = cv2.resize(crop_img, resize, interpolation = cv2.INTER_AREA)
+
+
         return crop_img
 
 
