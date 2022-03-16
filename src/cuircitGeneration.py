@@ -1,3 +1,6 @@
+from copy import deepcopy
+import math
+
 import sys
 sys.path.append('../')
 
@@ -10,14 +13,6 @@ from lib.components.componentCollection import CLASS_OBJECTS
 from lib.utils import convertToIgraph
 
 import igraph
-from copy import deepcopy
-import math
-
-def recolorCap(graph):
-    for vertex in graph.ve.values():
-        if vertex.color == OTHER_NODE_COLOR:
-            vertex.color = INTERSECTION_COLOR
-    return graph
 
 def toRelative(buildingPartDefinitons,graph):
     #get lenght of the longest resistor
@@ -40,7 +35,7 @@ def toRelative(buildingPartDefinitons,graph):
         else:
             if yDist > len:
                 len = yDist
-    print(len)
+    print("Biggest lenght of resistor " + str(len))
     #convert all coordinates to values, relative to the resistor
     for vertex in graph.ve.values():
         x = vertex.attr["coordinates"][0]
@@ -62,12 +57,16 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
     #Get all the vertices connected to a building part
     for buildingPart in buildingPartDefinitons:
         type_ = buildingPart[0]
+
         vertices = buildingPart[1]
+
         boundingBox = buildingPart[2]
+
         upperRightCorner = boundingBox[0]
         lowerLeftCorner = boundingBox[1]
 
         newGraph = deepcopy(graph)
+        #TODO
         #newGraph = CLASS_OBJECTS[type_].prePatternMatching(newGraph)
 
         newVertices = []
@@ -223,11 +222,10 @@ def generateFile(graph,fileName):
     file.write(string)
     file.close()
 
-def createLTSpiceFile(predictions,graph,fileName):
+def createLTSpiceFile(matches,boundingBoxes,predictions,graph,fileName):
     map = []
     for i in range(0, len(predictions)):
-        map.append([predictions[i][2],predictions[i][1],predictions[i][0]])
-    graph = recolorCap(graph)
+        map.append([predictions[i],matches[i],boundingBoxes[i]])
     graph = toRelative(map,graph)
     graph = seperateBuildingPartsAndConnection(map,graph)
 
@@ -236,4 +234,4 @@ def createLTSpiceFile(predictions,graph,fileName):
     generateFile(insertConnectionNodes(graph),fileName)
     return graph
 
-
+    

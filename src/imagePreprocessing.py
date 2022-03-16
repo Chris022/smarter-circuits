@@ -121,6 +121,8 @@ def preprocessImage(binary):
     kernel = np.ones((thickness+5, thickness+5), np.uint8)
     erosion = cv2.erode(img, kernel, iterations=1)
 
+    utils.saveImage("resources/img/inductance.png",erosion)
+
     img = cv2.absdiff(img.copy(), erosion.copy())
 
     #flip colors
