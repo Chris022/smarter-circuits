@@ -21,11 +21,10 @@ def recolorCap(graph):
 
 def toRelative(buildingPartDefinitons,graph):
     #get lenght of the longest resistor
-    len = -1
+    len = 80
     for buildingPart in buildingPartDefinitons:
         type_ = buildingPart[0]
         vertices = buildingPart[1]
-
         if not type_ == CLASS_OBJECT_NAMES["res"]:
             continue
         
@@ -41,7 +40,7 @@ def toRelative(buildingPartDefinitons,graph):
         else:
             if yDist > len:
                 len = yDist
-
+    print(len)
     #convert all coordinates to values, relative to the resistor
     for vertex in graph.ve.values():
         x = vertex.attr["coordinates"][0]
