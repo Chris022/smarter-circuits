@@ -104,6 +104,7 @@ def checkIsIsomorphism(heystack,heystack_adj_matrix,needle,needle_adj_matrix,map
     if not is_valid:
         return False
 
+    #TODO: Add Vertex Color checking!
     #TODO: IMPROVE COLOR CHECKING
     #get all edges in needle
     needle_edge_colors = list(map(lambda x: x.color,needle.ed.values()))
