@@ -7,9 +7,7 @@ import cv2
 
 class CropImage():
 
-    def __init__(self, root, position):
-
-        self.position = position
+    def __init__(self, root):
 
         self.canvas = Canvas(root)
 
@@ -83,7 +81,7 @@ class CropImage():
         self.tkImg = convert_to_tkImg(self.original_image)
         self.image_on_canvas = self.canvas.create_image(0, 0, anchor=CENTER, image=self.tkImg)
         
-        self.canvas.place(relx=self.position[0], rely=self.position[1], relwidth=self.position[2], relheight=self.position[3])
+        self.canvas.place(relx=0.01, rely=0.01, relwidth=0.7, relheight=0.95)
         
         self.canvas.update()
         self.resize()

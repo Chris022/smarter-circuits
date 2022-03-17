@@ -30,10 +30,8 @@ from lib.gui.popup import createPopUp
 
 class DetectCircuit():
 
-    def __init__(self, root, position):
+    def __init__(self, root):
 
-        self.position = position
-        
         self.canvas = Canvas(root)
 
         self.detect = Button(root, text='Detect Circuit', command=self.start_detection)
@@ -53,7 +51,7 @@ class DetectCircuit():
         self.image_on_canvas = self.canvas.create_image(0, 0, anchor=CENTER, image=self.tkImg)
         
 
-        self.canvas.place(relx=self.position[0], rely=self.position[1], relwidth=self.position[2], relheight=self.position[3])
+        self.canvas.place(relx=0.01, rely=0.01, relwidth=0.7, relheight=0.95)
         self.canvas.update()
         self.resize(self.original_image)
 
