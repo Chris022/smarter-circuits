@@ -130,12 +130,12 @@ class DetectCircuit():
                 img = self.drawRect(image,boundingBox,0)
             utils.saveImage(name="box.png", image=img)
 
-            cc.loadModel()
+            model = cc.loadModel()
 
             predictions = []
 
             for box in boundingBoxes_:
-                buildingType = cc.predict(box,image)
+                buildingType = cc.predict(box, image, model)
                 #print(buildingType)
                 predictions.append(buildingType)
 

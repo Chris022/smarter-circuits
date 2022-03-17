@@ -6,9 +6,7 @@ from tensorflow.keras import layers, models
 
 import numpy as np
 import cv2
-from lib.constants import CLASS_NAMES#, ROTATION_DICT
-
-model = None
+from lib.constants import CLASS_NAMES
 
 
 def convertImg(image, size=(32,32)):
@@ -21,13 +19,11 @@ def convertImg(image, size=(32,32)):
     converted = converted/255
     return converted
 
-
 def loadModel():
-    global model
     model = tf.keras.models.load_model('./../resources/saved_model/my_model')
+    return model
 
-def predict(box, image):
-    global model
+def predict(box, image, model):
 
     component = convertImg(image[box[0][1]:box[1][1], box[0][0]:box[1][0]]).reshape(-1,32,32,1)
     model_prediction = model.predict(component)[0]
@@ -37,8 +33,7 @@ def predict(box, image):
 
     return prediction#[0], ROTATION_DICT[prediction[1]]
 
-def classify(boxes, image):
-    global model
+def classify(boxes, image, model):
 
     components = []
     for box in boxes:
