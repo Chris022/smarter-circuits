@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from keras.models import load_model
 
 import numpy as np
 import cv2
@@ -20,7 +20,7 @@ def convertImg(image, size=(32,32)):
     return converted
 
 def loadModel():
-    model = tf.keras.models.load_model('./../resources/saved_model/my_model')
+    model = load_model('./../resources/saved_model/my_model.h5')
     return model
 
 def predict(box, image, model):
