@@ -1,10 +1,8 @@
 from copy import deepcopy
-from random import shuffle
+from itertools import product
+import numpy as np
 
 from lib.graphLib.table import Table
-import numpy as np
-import time
-from itertools import product
 
 #checkes of a vertex I in needle can be mapped to a vertex J in heystack
 #does this by checking:
@@ -24,6 +22,21 @@ def checkMapping(needle,I,heystack,J):
         return False
 
     return True
+
+#Taks a mapping and a heystack graph
+#Removes all vertices from the heystack graph, that are not mapped to anything
+#So that in the end, only the mapped Graph is left
+def heystackGraphToMappedGraph(mapping,heystack):
+
+    #remove all vertices from the heystack, that are not mapped to anything!
+    heystack_copy = deepcopy(heystack)
+    heystack_copy_vertices = list(heystack_copy.ve.values())
+    for j in range(0,len(heystack_copy_vertices)):
+        if sum(mapping[:,j]) == 0: # if there is no 1 in the row in the mapping (the vertex is not used in the mapping)
+            not_used_vertex = heystack_copy_vertices[j]
+            heystack_copy.deleteVertex(not_used_vertex.id)
+
+    return heystack_copy
 
 #used to remove impossible mappings
 #get all neighbors x of every heystack vertex
@@ -86,9 +99,22 @@ def checkIsIsomorphism(heystack,heystack_adj_matrix,needle,needle_adj_matrix,map
     #M*(M*H)T == N wenn isomorphism
     newN = M*((M*H).getT())
 
-    #TODO: Check colors!
+    is_valid = N.tolist() == newN.tolist()
 
-    return N.tolist() == newN.tolist()
+    if not is_valid:
+        return False
+
+    #TODO: IMPROVE COLOR CHECKING
+    #get all edges in needle
+    needle_edge_colors = list(map(lambda x: x.color,needle.ed.values()))
+    
+    mapped_heystack_vertex = heystackGraphToMappedGraph(mapping,heystack)
+    heystack_edge_colors = list(map(lambda x: x.color,mapped_heystack_vertex.ed.values()))
+
+    #check if edges are the same
+    is_valid = sorted(needle_edge_colors) == sorted(heystack_edge_colors)
+
+    return is_valid
 
 
 def outerRecurse(heystack,needle,matrix):
