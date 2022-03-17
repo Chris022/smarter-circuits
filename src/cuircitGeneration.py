@@ -65,18 +65,13 @@ def seperateBuildingPartsAndConnection(buildingPartDefinitons,graph):
         upperRightCorner = boundingBox[0]
         lowerLeftCorner = boundingBox[1]
 
-        newGraph = deepcopy(graph)
-        #TODO
-        #newGraph = CLASS_OBJECTS[type_].prePatternMatching(newGraph)
+        rotation = CLASS_OBJECTS[type_].getRotation(vertices, ROTATION_DICT)
 
-        newVertices = []
-        for vertex in vertices:
-            try:
-                newVertices.append(newGraph.getVertex(vertex.id))
-            except:
-                pass
-
-        rotation = CLASS_OBJECTS[type_].getRotation(newVertices, ROTATION_DICT)
+        #if rotation is -1 (an error occurred) -> Ignore component
+        if rotation == -1:
+            #remove all vertices
+            map(lambda vertex: graph.deleteVertex(vertex),vertices)
+            continue
 
         #get center of the component
         xVals = list(map(lambda v: v.attr["coordinates"][0],vertices))
