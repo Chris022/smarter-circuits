@@ -25,6 +25,7 @@ import string
 import igraph
 
 import time
+from lib.gui.popup import createPopUp
 
 
 class DetectCircuit():
@@ -89,69 +90,71 @@ class DetectCircuit():
 
     def detect_circuit(self):
 
-        start_time = time.time()
-        print("Start detection")
+        try:
+            start_time = time.time()
+            print("Start detection")
 
-        image = self.original_image
-        s1 = np.full((len(image),10),255)
-        image = np.insert(image, [0], s1, axis=1)
-        image = np.insert(image, [len(image[0])], s1, axis=1)
-        s2 = np.full((10,len(image[0])),255)
-        image = np.insert(image, [0], s2, axis=0)
-        image = np.insert(image, [len(image)], s2, axis=0)
+            image = self.original_image
+            s1 = np.full((len(image),10),255)
+            image = np.insert(image, [0], s1, axis=1)
+            image = np.insert(image, [len(image[0])], s1, axis=1)
+            s2 = np.full((10,len(image[0])),255)
+            image = np.insert(image, [0], s2, axis=0)
+            image = np.insert(image, [len(image)], s2, axis=0)
 
-        utils.saveImage(name="binary.png", image=image)
+            utils.saveImage(name="binary.png", image=image)
 
-        preprocessedImage = ip.preprocessImage(image.copy())
+            preprocessedImage = ip.preprocessImage(image.copy())
 
-        print("Preprocessed")
-        print("--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
+            print("Preprocessed")
+            print("--- %s seconds ---" % (time.time() - start_time))
+            start_time = time.time()
 
-        #test
-        utils.saveImage(name="preprocessed.png", image=preprocessedImage)
+            #test
+            utils.saveImage(name="preprocessed.png", image=preprocessedImage)
 
-        graph = gg.generateGraph(preprocessedImage)
-        matches_ = pm.getComponents(graph)
-        boundingBoxes_ = utils.fmap(lambda x: bbg.generateBoundingBox(x,preprocessedImage),matches_)
+            graph = gg.generateGraph(preprocessedImage)
+            matches_ = pm.getComponents(graph)
+            boundingBoxes_ = utils.fmap(lambda x: bbg.generateBoundingBox(x,preprocessedImage),matches_)
 
-        print("Bounding Boxes")
-        print("--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
+            print("Bounding Boxes")
+            print("--- %s seconds ---" % (time.time() - start_time))
+            start_time = time.time()
 
-        igraphUnion = utils.convertToIgraph(graph)
-        layout = igraphUnion.layout("large_graph")
-        igraph.plot(igraphUnion, "graph.png",layout=layout, bbox = (1000,1000), vertex_label=None)
-
-        
-        #self.generateTrainData(boundingBoxes_, image)
-
-        for boundingBox in boundingBoxes_:
-            img = self.drawRect(image,boundingBox,0)
-        utils.saveImage(name="box.png", image=img)
-
-        cc.loadModel()
-
-        predictions = []
-
-        for box in boundingBoxes_:
-            buildingType = cc.predict(box,image)
-            #print(buildingType)
-            predictions.append(buildingType)
-
-        print("Predictions")
-        print("--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
+            igraphUnion = utils.convertToIgraph(graph)
+            layout = igraphUnion.layout("large_graph")
+            igraph.plot(igraphUnion, "graph.png",layout=layout, bbox = (1000,1000), vertex_label=None)
 
 
-        graph = cg.createLTSpiceFile(matches_,boundingBoxes_,predictions,copy.copy(graph),"./out.asc")
+            #self.generateTrainData(boundingBoxes_, image)
 
-        print("File Generated")
-        print("--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
+            for boundingBox in boundingBoxes_:
+                img = self.drawRect(image,boundingBox,0)
+            utils.saveImage(name="box.png", image=img)
 
-        subprocess.call(["C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe","./out.asc"])
+            cc.loadModel()
 
+            predictions = []
+
+            for box in boundingBoxes_:
+                buildingType = cc.predict(box,image)
+                #print(buildingType)
+                predictions.append(buildingType)
+
+            print("Predictions")
+            print("--- %s seconds ---" % (time.time() - start_time))
+            start_time = time.time()
+
+
+            graph = cg.createLTSpiceFile(matches_,boundingBoxes_,predictions,copy.copy(graph),"./out.asc")
+
+            print("File Generated")
+            print("--- %s seconds ---" % (time.time() - start_time))
+            start_time = time.time()
+
+            subprocess.call(["C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe","./out.asc"])
+        except Exception as e:
+            createPopUp(str(e))
     def resize(self, *arg):
 
         img = self.original_image
