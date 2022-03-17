@@ -1,7 +1,8 @@
 from copy import deepcopy
+from itertools import product
+import numpy as np
 
 from lib.graphLib.table import Table
-import numpy as np
 
 #checkes of a vertex I in needle can be mapped to a vertex J in heystack
 #does this by checking:
@@ -22,74 +23,116 @@ def checkMapping(needle,I,heystack,J):
 
     return True
 
+#Taks a mapping and a heystack graph
+#Removes all vertices from the heystack graph, that are not mapped to anything
+#So that in the end, only the mapped Graph is left
+def heystackGraphToMappedGraph(mapping,heystack):
+
+    #remove all vertices from the heystack, that are not mapped to anything!
+    heystack_copy = deepcopy(heystack)
+    heystack_copy_vertices = list(heystack_copy.ve.values())
+    for j in range(0,len(heystack_copy_vertices)):
+        if sum(mapping[:,j]) == 0: # if there is no 1 in the row in the mapping (the vertex is not used in the mapping)
+            not_used_vertex = heystack_copy_vertices[j]
+            heystack_copy.deleteVertex(not_used_vertex.id)
+
+    return heystack_copy
+
 #used to remove impossible mappings
 #get all neighbors x of every heystack vertex
 #get all neighbors y of the neighbor of the needle vertex
 #only if all y are also neighbors of x the mapping is possible
-def simplify(heystack,needle,matrix):
+def simplify(heystack,heystack_adj_matrix,needle,needle_adj_matrix,matrix):
+
+    heystack_vertices= list(heystack.ve.values())
+    heystack_indices = list(range(0,len(heystack_vertices)))
+    
+    needle_vertex = list(needle.ve.values())
+    needle_indices = list(range(0,len(needle_vertex)))
 
     #as long as the matrix still was changed!
     matrixWasSimplified = True
     while matrixWasSimplified:
         matrixWasSimplified = False
         #for all Values in the matrix
-        for j in range(0,len(heystack.ve)):
-            x = list((heystack.ve).values())[j]
-            for i in range(0,len(needle.ve)):
-                y = list((needle.ve).values())[i]
+        pairs = list(product(heystack_indices,needle_indices))
+        for (j,i) in pairs:
 
-                if matrix[i,j] == 0:
-                    continue
+            if matrix[i,j] == 0:
+                continue
 
-                #get the neighbors of x
-                heystackNeighbors = heystack.getNeighbors(x.id)
-                #get all neighbors of y
-                needleNeighbors = needle.getNeighbors(y.id)
+            x = heystack_vertices[j]
+            y = needle_vertex[i]
 
-                #for all neighbors of the heystack
-                for needleNeighbor in needleNeighbors:
-                    isThereOne = False
-                    #for all neighbors of the needle
-                    for heystackNeighbor in heystackNeighbors:
-                        #get the indices of the heystack- and needle-Neighbors
-                        hesytackIndex = list(heystack.ve.values()).index(heystackNeighbor)
-                        needleIndex = list(needle.ve.values()).index(needleNeighbor)
+            #get the neighbors of x
+            heystackNeighbors = heystack.getNeighborsWithAdjacencyMatrix(heystack_adj_matrix,x.id)
+            #get all neighbors of y
+            needleNeighbors =  needle.getNeighborsWithAdjacencyMatrix(needle_adj_matrix,y.id)
 
-                        if matrix[needleIndex,hesytackIndex] == 1:
-                            isThereOne = True
+            #for all neighbors of the heystack
+            for needleNeighbor in needleNeighbors:
+                isThereOne = False
+                #for all neighbors of the needle
+                for heystackNeighbor in heystackNeighbors:
+                    #get the indices of the heystack- and needle-Neighbors
+                    hesytackIndex = heystack_vertices.index(heystackNeighbor)
+                    needleIndex = needle_vertex.index(needleNeighbor)
 
-                    if not isThereOne:
-                        matrix[i,j] = 0
-                        matrixWasSimplified = True
+                    if matrix[needleIndex,hesytackIndex] == 1:
+                        isThereOne = True
+
+                if not isThereOne:
+                    matrix[i,j] = 0
+                    matrixWasSimplified = True              
 
     return matrix
 
 
-def checkIsIsomorphism(heystack,needle,mapping):
+def checkIsIsomorphism(heystack,heystack_adj_matrix,needle,needle_adj_matrix,mapping):
 
     M = np.matrix(mapping)
 
     #get all adjacency matrixes
-    H = np.matrix(heystack.getAdjacencyMatrix().values)
-    N = np.matrix(needle.getAdjacencyMatrix().values)
+    H = np.matrix(heystack_adj_matrix.values)
+    N = np.matrix(needle_adj_matrix.values)
 
     #M*(M*H)T == N wenn isomorphism
     newN = M*((M*H).getT())
 
-    #TODO: Check colors!
+    is_valid = N.tolist() == newN.tolist()
 
-    return N.tolist() == newN.tolist()
+    if not is_valid:
+        return False
+
+    #TODO: IMPROVE COLOR CHECKING
+    #get all colors in needle
+    needle_edge_colors = list(map(lambda x: x.color,needle.ed.values()))
+    needle_vertex_colors = list(map(lambda x: x.color,needle.ve.values()))
+    
+    #get all colors in mapped heystack
+    mapped_heystack_vertex = heystackGraphToMappedGraph(mapping,heystack)
+    heystack_edge_colors = list(map(lambda x: x.color,mapped_heystack_vertex.ed.values()))
+    heystack_vertex_colors = list(map(lambda x: x.color,mapped_heystack_vertex.ve.values()))
+
+    #check if vertex_colors are the same
+    is_valid = is_valid and sorted(needle_vertex_colors) == sorted(heystack_vertex_colors)
+    #check if edges_colors  are the same
+    is_valid = is_valid and sorted(needle_edge_colors) == sorted(heystack_edge_colors)
+
+    return is_valid
 
 
 def outerRecurse(heystack,needle,matrix):
     possibleMappings = []
+    heystack_adj_matrix = heystack.getAdjacencyMatrix()
+    needle_adj_matrix   = needle.getAdjacencyMatrix()
     # recursive function for generation all mappings
     def recurse(used_columns,cur_row,heystack,needle,matrix):
 
         if cur_row == len(matrix):
 
             #check if matrix is a isomorphism:
-            if checkIsIsomorphism(heystack,needle,matrix):
+            if checkIsIsomorphism(heystack,heystack_adj_matrix,needle,needle_adj_matrix,matrix):
                 possibleMappings.append(matrix)
                 #output yes and end the algorithm
                 return matrix
@@ -97,7 +140,9 @@ def outerRecurse(heystack,needle,matrix):
             return None
 
         #simplify
-        matrix = simplify(heystack,needle,matrix)
+        matrix = simplify(heystack,heystack_adj_matrix,needle,needle_adj_matrix,matrix)
+        #if delta_time:
+        #    print(delta_time)
 
         for column in range(0,len(matrix[0])):
             if column in used_columns:
