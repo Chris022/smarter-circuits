@@ -18,6 +18,13 @@ class Ground(BaseComponent):
     
     @classmethod
     def getRotation(cls,vertices, ROTATION_DICT):
+        intersections = []
+        for vertex in vertices:
+            if vertex.color == 'red':
+                intersections.append(vertex)
+        if len(intersections) > 1:
+            print('Too much intersections in gound')
+            return -1
         return ROTATION_DICT['up']
 
     @classmethod
