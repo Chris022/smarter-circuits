@@ -65,7 +65,8 @@ class Voltage(BaseComponent):
     def toLTSpice(cls,resistorVertex,counter):
         rotation = resistorVertex.attr["rotation"]
         position = resistorVertex.attr["coordinates"]
-
+        if len (resistorVertex.attr["connectionMap"]) !== 0:
+            return ""
         toVertex1 = resistorVertex.attr["connectionMap"][0]
         toVertex2 = resistorVertex.attr["connectionMap"][1]
 
