@@ -24,10 +24,12 @@ class Resistor():
         copy2 = list(graph.ve.values())
         for ve in copy2:
             if ve.color == INTERSECTION_COLOR:
-                for neib in graph.getNeighbors(ve.id):
+                neighbors = graph.getNeighbors(ve.id)
+                for neib in neighbors:
                     if neib.color == END_COLOR:
                         graph.deleteVertex(neib.id)
-                        ve.color = CORNER_COLOR
+                        if len(neighbors) == 3:
+                            ve.color = CORNER_COLOR
 
         return graph
 
