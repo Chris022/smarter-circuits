@@ -104,16 +104,20 @@ def checkIsIsomorphism(heystack,heystack_adj_matrix,needle,needle_adj_matrix,map
     if not is_valid:
         return False
 
-    #TODO: Add Vertex Color checking!
     #TODO: IMPROVE COLOR CHECKING
-    #get all edges in needle
+    #get all colors in needle
     needle_edge_colors = list(map(lambda x: x.color,needle.ed.values()))
+    needle_vertex_colors = list(map(lambda x: x.color,needle.ve.values()))
     
+    #get all colors in mapped heystack
     mapped_heystack_vertex = heystackGraphToMappedGraph(mapping,heystack)
     heystack_edge_colors = list(map(lambda x: x.color,mapped_heystack_vertex.ed.values()))
+    heystack_vertex_colors = list(map(lambda x: x.color,mapped_heystack_vertex.ve.values()))
 
-    #check if edges are the same
-    is_valid = sorted(needle_edge_colors) == sorted(heystack_edge_colors)
+    #check if vertex_colors are the same
+    is_valid = is_valid and sorted(needle_vertex_colors) == sorted(heystack_vertex_colors)
+    #check if edges_colors  are the same
+    is_valid = is_valid and sorted(needle_edge_colors) == sorted(heystack_edge_colors)
 
     return is_valid
 
