@@ -112,7 +112,7 @@ def preprocessImage(binary):
     #    (int(thickness*0.5), int(thickness*0.5)), np.uint8))
 
     # only get inductances
-    kernel = np.ones((thickness+5, thickness+5), np.uint8)
+    kernel = np.ones((thickness*3, thickness*3), np.uint8)
     erosion = cv2.erode(img, kernel, iterations=1)
 
     utils.saveImage("resources/img/inductance.png",erosion)

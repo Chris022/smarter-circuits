@@ -5,8 +5,12 @@ from lib.gui.guiUtils import *
 
 import src.imagePreprocessing as ip
 import src.graphGeneration as gg
+import src.patternMatching as pm
+import src.boundingBoxGeneration as bbg
 import src.cuircitGeneration as cg
 import src.componentClassification as cc
+
+import copy
 
 import lib.utils as utils
 import numpy as np
@@ -19,6 +23,8 @@ import random
 import string
 
 import igraph
+
+import time
 
 
 class DetectCircuit():
@@ -82,6 +88,10 @@ class DetectCircuit():
         return image
 
     def detect_circuit(self):
+
+        start_time = time.time()
+        print("Start detection")
+
         image = self.original_image
         s1 = np.full((len(image),10),255)
         image = np.insert(image, [0], s1, axis=1)
@@ -94,21 +104,29 @@ class DetectCircuit():
 
         preprocessedImage = ip.preprocessImage(image.copy())
 
+        print("Preprocessed")
+        print("--- %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
+
         #test
         utils.saveImage(name="preprocessed.png", image=preprocessedImage)
 
         graph = gg.generateGraph(preprocessedImage)
+        matches_ = pm.getComponents(graph)
+        boundingBoxes_ = utils.fmap(lambda x: bbg.generateBoundingBox(x,preprocessedImage),matches_)
+
+        print("Bounding Boxes")
+        print("--- %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
 
         igraphUnion = utils.convertToIgraph(graph)
         layout = igraphUnion.layout("large_graph")
         igraph.plot(igraphUnion, "graph.png",layout=layout, bbox = (1000,1000), vertex_label=None)
 
-        components = gg.getComponents(graph, preprocessedImage)
+        
+        #self.generateTrainData(boundingBoxes_, image)
 
-        bb = utils.fmap(lambda x: x[0],components)
-        #self.generateTrainData(bb, image)
-
-        for boundingBox in bb:
+        for boundingBox in boundingBoxes_:
             img = self.drawRect(image,boundingBox,0)
         utils.saveImage(name="box.png", image=img)
 
@@ -116,14 +134,21 @@ class DetectCircuit():
 
         predictions = []
 
-        for comp in components:
-            box = comp[0]
-            matches = comp[1]
-            buildingType = cc.predict(box,image)#[0]
-            print(buildingType)
-            predictions.append((box,matches,buildingType))#,rot))
+        for box in boundingBoxes_:
+            buildingType = cc.predict(box,image)
+            #print(buildingType)
+            predictions.append(buildingType)
 
-        graph = cg.createLTSpiceFile(predictions,graph,"./out.asc")
+        print("Predictions")
+        print("--- %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
+
+
+        graph = cg.createLTSpiceFile(matches_,boundingBoxes_,predictions,copy.copy(graph),"./out.asc")
+
+        print("File Generated")
+        print("--- %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
 
         subprocess.call(["C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe","./out.asc"])
 
