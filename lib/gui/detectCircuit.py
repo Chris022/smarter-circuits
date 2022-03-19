@@ -124,7 +124,7 @@ class DetectCircuit():
             igraph.plot(igraphUnion, "graph.png",layout=layout, bbox = (1000,1000), vertex_label=None)
 
 
-            #self.generateTrainData(boundingBoxes_, image)
+            self.generateTrainData(boundingBoxes_, image)
 
             for boundingBox in boundingBoxes_:
                 img = self.drawRect(image,boundingBox,0)
@@ -149,10 +149,12 @@ class DetectCircuit():
             print("File Generated")
             print("--- %s seconds ---" % (time.time() - start_time))
             start_time = time.time()
-
+            
             subprocess.call(["C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe","./out.asc"])
         except Exception as e:
             createPopUp(str(e))
+            raise e
+
     def resize(self, *arg):
 
         img = self.original_image
