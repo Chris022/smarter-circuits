@@ -40,7 +40,7 @@ class DirGradient:
 
         dist = m.sqrt((currDir[0] - lastDir[0])**2 + (currDir[1] - lastDir[1])**2)
 
-        if dist <= 0.8:
+        if dist <= 0.7:
             return False
 
         return True
