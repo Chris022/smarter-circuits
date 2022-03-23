@@ -68,11 +68,14 @@ class Resistor(BaseComponent):
 
     @classmethod
     def toLTSpice(cls,resistorVertex,counter):
-        rotation = resistorVertex.attr["rotation"]
-        position = resistorVertex.attr["coordinates"]
+        try:
+            rotation = resistorVertex.attr["rotation"]
+            position = resistorVertex.attr["coordinates"]
 
-        toVertex1 = resistorVertex.attr["connectionMap"][0]
-        toVertex2 = resistorVertex.attr["connectionMap"][1]
+            toVertex1 = resistorVertex.attr["connectionMap"][0]
+            toVertex2 = resistorVertex.attr["connectionMap"][1]
+        except:
+            return ""
 
         to1 = toVertex1.attr["coordinates"]
         to2 = toVertex2.attr["coordinates"]

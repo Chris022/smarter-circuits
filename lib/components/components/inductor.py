@@ -60,11 +60,14 @@ class Inductor(BaseComponent):
 
     @classmethod
     def toLTSpice(cls,inductorVertex, counter):
-        rotation = inductorVertex.attr["rotation"]
-        position = inductorVertex.attr["coordinates"]
+        try:
+            rotation = inductorVertex.attr["rotation"]
+            position = inductorVertex.attr["coordinates"]
 
-        toVertex1 = inductorVertex.attr["connectionMap"][0]
-        toVertex2 = inductorVertex.attr["connectionMap"][1]
+            toVertex1 = inductorVertex.attr["connectionMap"][0]
+            toVertex2 = inductorVertex.attr["connectionMap"][1]
+        except:
+            return ""
 
         to1 = toVertex1.attr["coordinates"]
         to2 = toVertex2.attr["coordinates"]

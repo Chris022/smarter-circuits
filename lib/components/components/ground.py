@@ -29,9 +29,12 @@ class Ground(BaseComponent):
 
     @classmethod
     def toLTSpice(cls,groundVertex,counter):
-        position = groundVertex.attr["coordinates"]
-        toVertex = groundVertex.attr["connectionMap"][0]
-        to = toVertex.attr["coordinates"]
+        try:
+            position = groundVertex.attr["coordinates"]
+            toVertex = groundVertex.attr["connectionMap"][0]
+            to = toVertex.attr["coordinates"]
+        except:
+            return ""
 
         if toVertex.color == COMPONENT_COLOR:
             to = [position[0]+(to[0]-position[0])/2,position[1]+(to[1]-position[1])/2]
