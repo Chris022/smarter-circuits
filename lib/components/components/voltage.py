@@ -70,6 +70,8 @@ class Voltage(BaseComponent):
             toVertex1 = resistorVertex.attr["connectionMap"][0]
             toVertex2 = resistorVertex.attr["connectionMap"][1]
         except:
+            print("Did not find something. Here is some information that might help: rotation:{rotation}, \
+                connectionMap: {connectionMap}".format(rotation=rotation,connectionMap=resistorVertex.attr["connectionMap"]))
             return ""
 
         to1 = toVertex1.attr["coordinates"]
