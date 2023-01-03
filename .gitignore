@@ -1,0 +1,7 @@
+dev/img
+src/img
+# Byte-compiled / optimized / DLL files
+__pycache__/
+dev/__pycache__
+resources/trainData_new
+resources/trainData
